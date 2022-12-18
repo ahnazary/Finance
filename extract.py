@@ -1,7 +1,5 @@
-import yfinance as yf
+import yahooquery
 
-msft = yf.Ticker("MSFT")
-
-# show balance sheet
-msft.balance_sheet
-msft.quarterly_balance_sheet
+# print balance sheet of Apple
+ticker = yahooquery.Ticker('AAPL')
+print(ticker.balance_sheet())
