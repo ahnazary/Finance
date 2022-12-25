@@ -1,4 +1,7 @@
 from src import extract
 
 ticker = extract.Ticker(["USA", "Germany"])
-ticker.extract_tickers()
+
+filtered_tickers = ticker.extract_tickers_into_db()
+
+ticker.filter_by_balance_sheet(filtered_tickers)

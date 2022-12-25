@@ -1,3 +1,6 @@
+import logging
+
+
 def are_incremental(input_list: list):
 
     flag_list = []
@@ -12,3 +15,14 @@ def are_incremental(input_list: list):
         return False
     else:
         return True
+
+
+class Logger:
+    def __init__(self, level: int = logging.INFO):
+        self.logger = logging.getLogger("my_logger")
+
+    def info(self, message: str):
+        self.logger.info(message)
+
+    def warning(self, message: str):
+        self.logger.warning(message)
