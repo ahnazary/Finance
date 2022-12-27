@@ -6,7 +6,7 @@ repos:
     - id: black
       language: python
       types: [python]
-      args: [--line-length=99]
+      args: [--line-length=99, --diff, --check]
 
   - repo: https://github.com/pycqa/isort
     rev: 5.11.2

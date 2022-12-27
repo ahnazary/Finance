@@ -26,3 +26,9 @@ class Logger:
 
     def warning(self, message: str):
         self.logger.warning(message)
+
+    def error(self, message: str):
+        self.logger.error(message)
+
+    def critical(self, message: str):
+        self.logger.critical(message)

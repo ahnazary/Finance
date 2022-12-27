@@ -1,0 +1,83 @@
+{
+    "git.confirmSync": false,
+    "editor.inlineSuggest.enabled": true,
+    "debug.autoExpandLazyVariables": true,
+    "git.suggestSmartCommit": false,
+    "github.copilot.enable": {
+        "*": true,
+        "yaml": true,
+        "plaintext": true,
+        "markdown": true,
+        "python": true
+    },
+    "jupyter.askForKernelRestart": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.suggest.showMethods": true,
+    "editor.suggest.preview": true,
+    "editor.acceptSuggestionOnEnter": "on",
+    "editor.snippetSuggestions": "top",
+    //"editor.wordWrap": "wordWrapColumn",
+    "editor.wrappingIndent": "same",
+    "gitlens.views.searchAndCompare.files.layout": "tree",
+    "python.linting.ignorePatterns": [
+        "**/site-packages/**/*.py",
+        ".vscode/*.py",
+        ".*test.*"
+    ],
+    "python.linting.flake8Args": [
+        "--max-line-length=100"
+    ],
+    "yaml.customTags": [
+        "!And",
+        "!And sequence",
+        "!If",
+        "!If sequence",
+        "!Not",
+        "!Not sequence",
+        "!Equals",
+        "!Equals sequence",
+        "!Or",
+        "!Or sequence",
+        "!FindInMap",
+        "!FindInMap sequence",
+        "!Base64",
+        "!Join",
+        "!Join sequence",
+        "!Cidr",
+        "!Ref",
+        "!Sub",
+        "!Sub sequence",
+        "!GetAtt",
+        "!GetAZs",
+        "!ImportValue",
+        "!ImportValue sequence",
+        "!Select",
+        "!Select sequence",
+        "!Split",
+        "!Split sequence"
+    ],
+    "explorer.confirmDelete": false,
+    "editor.formatOnSave": true,
+    "autoDocstring.docstringFormat": "numpy",
+    "debug.terminal.clearBeforeReusing": true,
+    "editor.rulers": [
+        80,
+        99
+    ],
+    "python.envFile": "${workspaceFolder}/.env",
+    "redhat.telemetry.enabled": false,
+    "terminal.integrated.inheritEnv": false,
+    "[python]": {},
+    "terminal.integrated.persistentSessionScrollback": 1000,
+    "notebook.undoRedoPerCell": false,
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": [
+        "--line-length=99"
+    ],
+    "editor.formatOnPaste": false,
+    "files.insertFinalNewline": true,
+    "python.linting.banditEnabled": true,
+    "python.linting.banditArgs": [
+        "-c '/Users/gustavonascimento/ACCURE/code/shared/lint/.bandit.yml'"
+    ]
+}

@@ -23,7 +23,7 @@ class Ticker:
 
         my_db = TickersDatabaseInterface()
         for _, row in self.filtered_df.iterrows():
-            my_db.insert_tickers(
+            my_db.insert_into_tickers(
                 ticker=row["Ticker"],
                 name=row["Name"],
                 exchange=row["Exchange"],

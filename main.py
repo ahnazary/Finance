@@ -9,4 +9,4 @@ from src.filter_tickers import FilterTickers
 
 filter_tickers = FilterTickers()
 
-filter_tickers.filter_by_balance_sheet()
+filter_tickers.update_balance_sheet_table()
