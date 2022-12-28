@@ -4,8 +4,7 @@ import pandas as pd
 import yahooquery
 
 from src.database import TickersDatabaseInterface
-from src.utils import are_incremental
-from src.utils import Logger
+from src.utils import Logger, are_incremental
 
 
 class FilterTickers:
