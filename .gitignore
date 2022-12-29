@@ -1,3 +1,2 @@
 **/__pycache__
-settings.json
-.pre-commit-config.yaml
+**/settings.json
