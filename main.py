@@ -1,4 +1,5 @@
 from src import extract
+from src.database import TickersDatabaseInterface
 from src.filter_tickers import FilterTickers
 
 # ticker = extract.Ticker(["USA", "Germany"])
@@ -7,6 +8,10 @@ from src.filter_tickers import FilterTickers
 
 # ticker.filter_by_balance_sheet(filtered_tickers)
 
-filter_tickers = FilterTickers()
+# filter_tickers = FilterTickers()
 
-filter_tickers.update_balance_sheet_table()
+# filter_tickers.update_balance_sheet_table()
+
+db_interface = TickersDatabaseInterface()
+
+db_interface.update_tickers_status()

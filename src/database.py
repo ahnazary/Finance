@@ -3,6 +3,11 @@ import re
 import sqlite3
 from typing import List
 
+import numpy as np
+import yahooquery
+
+from src.utils import Logger
+
 
 class TickersDatabaseInterface:
     def __init__(self):
@@ -14,6 +19,7 @@ class TickersDatabaseInterface:
         self.cur = self.conn.cursor()
         self.create_data_table()
         self.create_blance_sheet_table()
+        self.logger = Logger()
 
     def create_data_table(self):
         self.cur.execute(
@@ -164,3 +170,22 @@ class TickersDatabaseInterface:
         self.cur.execute("SELECT ticker FROM tickers WHERE active != 'Inactive'")
         tickers = self.cur.fetchall()
         return [ticker[0] for ticker in tickers]
+
+    def update_tickers_status(self):
+        """
+        Method that updates the active status of the tickers
+        If the latest market cap of the ticker is nan, then the ticker is set to inactive
+
+        Returns
+        -------
+        None
+        """
+
+        active_tickers = self.get_active_tickers()
+
+        for ticker in active_tickers:
+            if np.isnan(yahooquery.Ticker(ticker).valuation_measures["MarketCap"][0]):
+                self.set_active_status(ticker, "Inactive")
+                self.logger.warning(
+                    f"{ticker} is set to inactive due to market cap being nan"
+                )
