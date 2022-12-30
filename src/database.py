@@ -174,18 +174,26 @@ class TickersDatabaseInterface:
     def update_tickers_status(self):
         """
         Method that updates the active status of the tickers
-        If the latest market cap of the ticker is nan, then the ticker is set to inactive
+        If has pervious close price then it is active, else it is inactive
 
         Returns
         -------
         None
         """
 
-        active_tickers = self.get_active_tickers()
+        active_tickers = self.get_tickers()
 
         for ticker in active_tickers:
-            if np.isnan(yahooquery.Ticker(ticker).valuation_measures["MarketCap"][0]):
-                self.set_active_status(ticker, "Inactive")
-                self.logger.warning(
-                    f"{ticker} is set to inactive due to market cap being nan"
+            try:
+                previous_close = (
+                    yahooquery.Ticker(ticker)
+                    .summary_detail.get(ticker)
+                    .get("previousClose")
                 )
+                self.logger.warning(
+                    f"{ticker} is active with previousClose {previous_close}"
+                )
+                self.set_active_status(ticker, "Active")
+            except Exception as e:
+                self.logger.warning(f"{ticker} is inactive")
+                self.set_active_status(ticker, "Inactive")
