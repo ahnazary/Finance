@@ -39,5 +39,59 @@ class FilterTickers:
                     f"ticker {ticker} is active, balance sheet data inserted into database"
                 )
             except:
-                self.logger.warning(f"ticker {ticker} does not exist on yahoo finance")
-                self.database_interface.set_active_status(ticker, "Inactive")
+                self.logger.warning(
+                    f"Balance sheet {ticker} does not exist on yahoo finance"
+                )
+
+    def update_income_statement_table(self, params: List[str] = None):
+        params = params or [
+            "TotalRevenue",
+            "PretaxIncome",
+            "BasicEPS",
+            "EBITDA",
+            "EBIT",
+            "GrossProfit",
+            "NetIncome",
+            "NetIncomeCommonStockholders",
+            "OperatingIncome",
+            "OperatingRevenue",
+            "ResearchAndDevelopment",
+        ]
+
+        for ticker in self.tickers_list:
+            try:
+                income_statement = yahooquery.Ticker(ticker).income_statement(
+                    frequency=self.frequency
+                )
+
+                self.database_interface.insert_into_income_statement(
+                    ticker=ticker,
+                    asofDate=income_statement["asOfDate"].tolist(),
+                    periodType=income_statement["periodType"].tolist(),
+                    currencyCode=income_statement["currencyCode"].tolist(),
+                    TotalRevenue=income_statement["TotalRevenue"].tolist(),
+                    PretaxIncome=income_statement["PretaxIncome"].tolist(),
+                    BasicEPS=income_statement["BasicEPS"].tolist(),
+                    EBITDA=income_statement["EBITDA"].tolist(),
+                    EBIT=income_statement["EBIT"].tolist(),
+                    GrossProfit=income_statement["GrossProfit"].tolist(),
+                    NetIncome=income_statement["NetIncome"].tolist(),
+                    NetIncomeCommonStockholders=income_statement[
+                        "NetIncomeCommonStockholders"
+                    ].tolist(),
+                    OperatingIncome=income_statement["OperatingIncome"].tolist(),
+                    OperatingRevenue=income_statement["OperatingRevenue"].tolist(),
+                    ResearchAndDevelopment=income_statement[
+                        "ResearchAndDevelopment"
+                    ].tolist(),
+                )
+                # if not are_incremental(balance_sheet[param].tolist()):
+                #     self.data_df = self.data_df[self.data_df["Ticker"] != ticker]
+                self.database_interface.set_active_status(ticker)
+                self.logger.warning(
+                    f"ticker {ticker} is active, income statement data inserted into database"
+                )
+            except:
+                self.logger.warning(
+                    f"Income statement for {ticker} does not exist on yahoo finance"
+                )

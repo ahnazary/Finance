@@ -9,9 +9,10 @@ from src.filter_tickers import FilterTickers
 # ticker.filter_by_balance_sheet(filtered_tickers)
 
 # filter_tickers = FilterTickers()
-
 # filter_tickers.update_balance_sheet_table()
 
-db_interface = TickersDatabaseInterface()
+# db_interface = TickersDatabaseInterface()
+# db_interface.update_tickers_status()
 
-db_interface.update_tickers_status()
+filter_tickers = FilterTickers()
+filter_tickers.update_income_statement_table()
