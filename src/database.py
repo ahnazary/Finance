@@ -22,6 +22,7 @@ class TickersDatabaseInterface:
         self.create_data_table()
         self.create_blance_sheet_table()
         self.create_income_statement_table()
+        self.create_cash_flow_table()
 
         self.logger = Logger()
 
@@ -79,6 +80,70 @@ class TickersDatabaseInterface:
             )   
             """
         )
+        self.conn.commit()
+
+    def create_cash_flow_table(self):
+        self.cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS cash_flow (
+                ticker TEXT PRIMARY KEY UNIQUE,
+                asofDate TEXT,
+                periodType TEXT,
+                currencyCode TEXT,
+                CapitalExpenditure TEXT,
+                CashDividendsPaid TEXT,
+                ChangeInInventory TEXT,
+                ChangesInCash TEXT,
+                CommonStockDividendsPaid TEXT,
+                DeferredIncomeTax TEXT,
+                DeferredTax TEXT,
+                EndCashPosition TEXT,
+                FinancingCashFlow TEXT,
+                FreeCashFlow TEXT,
+                InvestingCashFlow TEXT,
+                NetIncome TEXT,
+                NetInvestmentPurchaseAndSale TEXT,
+                Unique (ticker, asofDate, periodType)
+            )
+            """
+        )
+        self.conn.commit()
+
+    def insert_into_cash_flow(
+        self,
+        ticker: List[str],
+        asofDate: List[str],
+        periodType: List[str],
+        currencyCode: List[str],
+        CapitalExpenditure: List[float],
+        CashDividendsPaid: List[float],
+        ChangeInInventory: List[float],
+        ChangesInCash: List[float],
+        CommonStockDividendPaid: List[float],
+        DeferredIncomeTax: List[float],
+        DeferredTax: List[float],
+        EndCashPosition: List[float],
+        FinancingCashFlow: List[float],
+        FreeCashFlow: List[float],
+        InvestingCashFlow: List[float],
+        NetIncome: List[float],
+        NetInvestmentPurchaseAndSale: List[float],
+    ):
+        """
+        Method to insert rows into the cash_flow table
+
+        Returns:
+        --------
+        None
+
+        """
+
+        sql_command = f"""
+            INSERT OR REPLACE INTO cash_flow (ticker, asofDate, periodType, currencyCode, CapitalExpenditure, CashDividendsPaid, ChangeInInventory, ChangesInCash, CommonStockDividendPaid, DeferredIncomeTax, DeferredTax, EndCashPosition, FinancingCashFlow, FreeCashFlow, InvestingCashFlow, NetIncome, NetInvestmentPurchaseAndSale)
+            VALUES ("{ticker}", "{asofDate}", "{periodType}", "{currencyCode}", "{CapitalExpenditure}", "{CashDividendsPaid}", "{ChangeInInventory}", "{ChangesInCash}", "{CommonStockDividendPaid}", "{DeferredIncomeTax}", "{DeferredTax}", "{EndCashPosition}", "{FinancingCashFlow}", "{FreeCashFlow}", "{InvestingCashFlow}", "{NetIncome}", "{NetInvestmentPurchaseAndSale}")
+            """
+
+        self.cur.executescript(sql_command)
         self.conn.commit()
 
     def insert_into_income_statement(

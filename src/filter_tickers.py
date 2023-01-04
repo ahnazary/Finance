@@ -95,3 +95,57 @@ class FilterTickers:
                 self.logger.warning(
                     f"Income statement for {ticker} does not exist on yahoo finance"
                 )
+
+    def update_cash_flow_table(self, params: List[str] = None):
+        params = params or [
+            "otalRevenue",
+            "PretaxIncome",
+            "BasicEPS",
+            "EBITDA",
+            "EBIT",
+            "GrossProfit",
+            "NetIncome",
+            "NetIncomeCommonStockholders",
+            "OperatingIncome",
+            "OperatingRevenue",
+            "ResearchAndDevelopment",
+        ]
+        for ticker in self.tickers_list:
+            try:
+                cash_flow = yahooquery.Ticker(ticker).cash_flow(
+                    frequency=self.frequency
+                )
+
+                self.database_interface.insert_into_cash_flow(
+                    ticker=ticker,
+                    asofDate=cash_flow["asOfDate"].tolist(),
+                    periodType=cash_flow["periodType"].tolist(),
+                    currencyCode=cash_flow["currencyCode"].tolist(),
+                    CapitalExpenditure=cash_flow["CapitalExpenditure"].tolist(),
+                    CashDividendsPaid=cash_flow["CashDividendsPaid"].tolist(),
+                    ChangeInInventory=cash_flow["ChangeInInventory"].tolist(),
+                    ChangesInCash=cash_flow["ChangesInCash"].tolist(),
+                    CommonStockDividendPaid=cash_flow[
+                        "CommonStockDividendPaid"
+                    ].tolist(),
+                    DeferredTax=cash_flow["DeferredTax"].tolist(),
+                    DeferredIncomeTax=cash_flow["DeferredIncomeTax"].tolist(),
+                    EndCashPosition=cash_flow["EndCashPosition"].tolist(),
+                    FinancingCashFlow=cash_flow["FinancingCashFlow"].tolist(),
+                    FreeCashFlow=cash_flow["FreeCashFlow"].tolist(),
+                    InvestingCashFlow=cash_flow["InvestingCashFlow"].tolist(),
+                    NetIncome=cash_flow["NetIncome"].tolist(),
+                    NetInvestmentPurchaseAndSale=cash_flow[
+                        "NetInvestmentPurchaseAndSale"
+                    ].tolist(),
+                )
+                # if not are_incremental(balance_sheet[param].tolist()):
+                #     self.data_df = self.data_df[self.data_df["Ticker"] != ticker]
+                self.database_interface.set_active_status(ticker)
+                self.logger.warning(
+                    f"ticker {ticker} is active, cash flow data inserted into database"
+                )
+            except:
+                self.logger.warning(
+                    f"Cash flow for {ticker} does not exist on yahoo finance"
+                )
