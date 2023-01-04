@@ -94,7 +94,7 @@ class TickersDatabaseInterface:
                 CashDividendsPaid TEXT,
                 ChangeInInventory TEXT,
                 ChangesInCash TEXT,
-                CommonStockDividendsPaid TEXT,
+                CommonStockDividendPaid TEXT,
                 DeferredIncomeTax TEXT,
                 DeferredTax TEXT,
                 EndCashPosition TEXT,
