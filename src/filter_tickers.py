@@ -6,6 +6,7 @@ import yahooquery
 
 from src.database import TickersDatabaseInterface
 from src.utils import Logger, are_incremental
+import re
 
 
 class FilterTickers:
@@ -169,8 +170,14 @@ class FilterTickers:
         )
         # iterate over all revenue and net income columns
         for col in data.itertuples():
-            revenue_list = ast.literal_eval((col.TotalRevenue))
-            net_income_list = ast.literal_eval((col.NetIncome))
+            revenue = col.TotalRevenue
+            net_income = col.NetIncome
+            if "nan" in col.TotalRevenue or "nan" in col.NetIncome:
+                revenue = re.sub(r"nan", "0", col.TotalRevenue)
+                net_income = re.sub(r"nan", "0", col.NetIncome)
+
+            revenue_list = ast.literal_eval((revenue))
+            net_income_list = ast.literal_eval((net_income))
             if are_incremental(revenue_list) and are_incremental(net_income_list):
                 self.logger.warning(
                     f"ticker {col.ticker} has incremental revenue and net income"
