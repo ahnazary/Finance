@@ -23,6 +23,7 @@ class TickersDatabaseInterface:
         self.create_blance_sheet_table()
         self.create_income_statement_table()
         self.create_cash_flow_table()
+        self.create_growth_stocks()
 
         self.logger = Logger()
 
@@ -104,6 +105,20 @@ class TickersDatabaseInterface:
                 NetIncome TEXT,
                 NetInvestmentPurchaseAndSale TEXT,
                 Unique (ticker, asofDate, periodType)
+            )
+            """
+        )
+        self.conn.commit()
+
+    def create_growth_stocks(self):
+        self.cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS growth_stocks (
+                ticker TEXT,
+                asofDate TEXT,
+                periodType TEXT,
+                currencyCode TEXT,
+                PRIMARY KEY (ticker, asofDate, periodType)
             )
             """
         )
@@ -243,6 +258,24 @@ class TickersDatabaseInterface:
         sql_command = f"""
             INSERT OR REPLACE INTO tickers (ticker, name, exchange, category, country, active)
             VALUES ("{ticker}", "{name}", "{exchange}", "{category}", "{country}", "{active}")
+            """
+
+        self.cur.executescript(sql_command)
+        self.conn.commit()
+
+    def insert_into_growth_stocks(self, ticker, asofDate, periodType, currencyCode):
+        """
+        Method to insert rows into the growth_stocks table
+
+        Returns:
+        --------
+        None
+
+        """
+
+        sql_command = f"""
+            INSERT OR REPLACE INTO growth_stocks (ticker, asofDate, periodType, currencyCode)
+            VALUES ("{ticker}", "{asofDate}", "{periodType}", "{currencyCode}")
             """
 
         self.cur.executescript(sql_command)

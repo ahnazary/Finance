@@ -17,5 +17,8 @@ from src.filter_tickers import FilterTickers
 # filter_tickers = FilterTickers()
 # filter_tickers.update_income_statement_table()
 
+# filter_tickers = FilterTickers()
+# filter_tickers.update_cash_flow_table()
+
 filter_tickers = FilterTickers()
-filter_tickers.update_cash_flow_table()
+filter_tickers.filter_revenue_net_income()

@@ -1,3 +1,4 @@
+import ast
 from typing import List, Literal, Union
 
 import pandas as pd
@@ -148,4 +149,39 @@ class FilterTickers:
             except:
                 self.logger.warning(
                     f"Cash flow for {ticker} does not exist on yahoo finance"
+                )
+
+    def filter_revenue_net_income(self):
+        self.database_interface.cur.execute(
+            "SELECT ticker, asofDate, periodType, currencyCode, TotalRevenue, NetIncomeCommonStockholders FROM income_statement"
+        )
+        data = self.database_interface.cur.fetchall()
+        data = pd.DataFrame(
+            data,
+            columns=[
+                "ticker",
+                "asofDate",
+                "periodType",
+                "currencyCode",
+                "TotalRevenue",
+                "NetIncome",
+            ],
+        )
+        # iterate over all revenue and net income columns
+        for col in data.itertuples():
+            revenue_list = ast.literal_eval((col.TotalRevenue))
+            net_income_list = ast.literal_eval((col.NetIncome))
+            if are_incremental(revenue_list) and are_incremental(net_income_list):
+                self.logger.warning(
+                    f"ticker {col.ticker} has incremental revenue and net income"
+                )
+                self.database_interface.insert_into_growth_stocks(
+                    ticker=col.ticker,
+                    asofDate=col.asofDate,
+                    periodType=col.periodType,
+                    currencyCode=col.currencyCode,
+                )
+            else:
+                self.logger.warning(
+                    f"ticker {col.ticker} does not have incremental revenue and net income"
                 )
