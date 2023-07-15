@@ -1,74 +1,43 @@
 from typing import List, Literal, Union
 
 import pandas as pd
-import yahooquery
-
-from .database import TickersDatabaseInterface
-from .utils import Logger, are_incremental
+import yfinance as yf
+from sqlalchemy import text
+from src.postgres_interface import PostgresInterface
+from .utils import are_incremental
 
 
 class Ticker:
-    def __init__(self, countries: Union[str, List[str]]):
-        self.countries = countries
-        self.data_df = pd.read_excel("src/data/Yahoo Ticker Symbols - September 2017.xlsx")
-        self.logger = Logger()
-
-    def extract_tickers_into_db(self) -> pd.DataFrame:
+    def __init__(self, countries: Union[str, List[str]] = None):
+        self.postgres_interface = PostgresInterface()
+    
+    def update_tickers_list_table(self):
         """
-        Method that extracts teickers that are from the given countries
-        and inserts them into the database
+        Method to update the tickers_list table in postgres
+        Gets all the data in the data dir excel file and inserts it into the database
         """
+        df = pd.read_excel("src/data/tickers_list.xlsx")
+        # rename columns to match the database
+        df.rename(
+            columns={
+                "Ticker": "ticker",
+                "Name": "name",
+                "Exchange": "exchange",
+                "Category Name": "category_name",
+                "Country": "country",
+            },
+            inplace=True,
+        )
 
-        self.filtered_df = self.data_df[self.data_df["Country"].isin(self.countries)]
+        engine = self.postgres_interface.create_engine()
 
-        my_db = TickersDatabaseInterface()
-        for _, row in self.filtered_df.iterrows():
-            my_db.insert_into_tickers(
-                ticker=row["Ticker"],
-                name=row["Name"],
-                exchange=row["Exchange"],
-                category=row["Category Name"],
-                country=row["Country"],
-            )
-            self.logger.info(
-                f"inserted ticker {row['Ticker']} and country {row['Country']} into database"
-            )
-        return self.filtered_df
-
-    def filter_by_balance_sheet(
-        self,
-        tickers: pd.DataFrame,
-        params: List[str] = None,
-        frequency: Literal["annual", "quarterly"] = "annual",
-    ) -> pd.DataFrame:
-        """
-        method that filters the tickers if their passed parameters are increasing
-
-        parameters:
-        ----------
-        params: List[str]
-            list of parameters to filter by
-
-        tickers: list[str]
-            list of tickers to filter by
-
-        frequency: Literal["annual", "quarterly"]
-            frequency of the balance sheet
-
-
-        """
-
-        if params is None:
-            params = ["TotalAssets"]
-
-        tickers = tickers["Ticker"].tolist()
-
-        for ticker in tickers:
-            try:
-                balance_sheet = yahooquery.Ticker(ticker).balance_sheet(frequency=frequency)
-                for param in params:
-                    if not are_incremental(balance_sheet[param].tolist()):
-                        self.data_df = self.data_df[self.data_df["Ticker"] != ticker]
-            except:
-                self.logger.warning(f"ticker {ticker} does not exist on yahoo finance")
-                continue
+        # insert the data into the database
+        df.to_sql(
+            name="tickers_list",
+            con=engine,
+            if_exists="replace",
+            schema="stocks",
+            index=False,
+            method="multi",
+            chunksize=1000,
+        )

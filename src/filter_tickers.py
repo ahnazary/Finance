@@ -4,7 +4,7 @@ from typing import List, Literal, Union
 import pandas as pd
 import yahooquery
 
-from src.database import TickersDatabaseInterface
+from src.postgres_interface import TickersDatabaseInterface
 from src.utils import Logger, are_incremental
 import re
 
