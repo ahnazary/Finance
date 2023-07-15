@@ -11,11 +11,13 @@ CREATE TABLE IF NOT EXISTS stocks.tickers_list(
 )
 
 CREATE TABLE IF NOT EXISTS stocks.valid_tickers(
-    ticker varchar(10) NOT NULL,
+    ticker varchar(10) NOT NULL PRIMARY KEY,
     date date NOT NULL DEFAULT now(),
-    currencyCode varchar(10),
-    OperatingRevenue bigint,
-    TotalAssets bigint,
-    FreeCashFlow bigint,
+    currency_code varchar(10),
+    market_cap bigint,
+    currency varchar(10),
+    total_revenue bigint,
+    free_cash_flow bigint,
+    total_assets bigint,
     validity boolean NOT NULL
 )
