@@ -1,9 +1,10 @@
+from logging import getLogger
 from typing import List, Union
 
 import pandas as pd
-from src.postgres_interface import PostgresInterface
 import yfinance as yf
-from logging import getLogger
+
+from src.postgres_interface import PostgresInterface
 
 
 class Ticker:
@@ -11,10 +12,10 @@ class Ticker:
         self.logger = getLogger(__name__)
         self.countries = countries
         self.chunksize = chunksize
-        
+
         self.postgres_interface = PostgresInterface()
         self.engine = self.postgres_interface.create_engine()
-    
+
     def update_tickers_list_table(self):
         """
         Method to update the tickers_list table in postgres
@@ -48,12 +49,12 @@ class Ticker:
         """
         Method to update the valid_tickers table in postgres
         Gets all the tickers from the tickers_list table and checks if they are valid
-        
-        validity check: 
+
+        validity check:
             - ticker must have market cap > 0
             - ticker must have total revenue > 0
             - ticker must have free cash flow > 0
-            - ticker must have total assets > 0 
+            - ticker must have total assets > 0
         """
 
         # query all the tickers from the tickers_list table that are not in valid_tickers table
@@ -65,12 +66,22 @@ class Ticker:
             WHERE valid_tickers.ticker IS NULL;
         """
         tickers = self.postgres_interface.execute_query(query)
-        valids_df = pd.DataFrame(columns=["ticker", "currency_code", "market_cap", "total_revenue", "free_cash_flow", "total_assets","validity"])
+        valids_df = pd.DataFrame(
+            columns=[
+                "ticker",
+                "currency_code",
+                "market_cap",
+                "total_revenue",
+                "free_cash_flow",
+                "total_assets",
+                "validity",
+            ]
+        )
         invalids_df = pd.DataFrame(columns=["ticker", "validity"])
 
         for ticker_symbol in tickers:
             ticker = yf.Ticker(ticker_symbol)
-            
+
             if len(valids_df) > self.chunksize:
                 # insert the data into the database
                 valids_df.to_sql(
@@ -79,7 +90,7 @@ class Ticker:
                     if_exists="append",
                     schema="stocks",
                     index=False,
-                    method="multi"
+                    method="multi",
                 )
                 # empty the valids_df
                 valids_df = valids_df.iloc[0:0]
@@ -94,12 +105,14 @@ class Ticker:
                     if_exists="append",
                     schema="stocks",
                     index=False,
-                    method="multi"
+                    method="multi",
                 )
                 # empty the invalids_df
                 invalids_df = invalids_df.iloc[0:0]
 
-                self.logger.warning(f"Inserted {self.chunksize} rows for invalid tickers")
+                self.logger.warning(
+                    f"Inserted {self.chunksize} rows for invalid tickers"
+                )
 
             # check if the ticker is valid
             try:

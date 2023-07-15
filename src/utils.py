@@ -2,7 +2,6 @@ import logging
 
 
 def are_incremental(input_list: list):
-
     flag_list = []
 
     for i in range(len(input_list) - 1):

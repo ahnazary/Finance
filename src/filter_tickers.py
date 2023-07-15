@@ -1,4 +1,5 @@
 import ast
+import re
 from typing import List, Literal, Union
 
 import pandas as pd
@@ -6,7 +7,6 @@ import yfinance as yf
 
 from src.postgres_interface import TickersDatabaseInterface
 from src.utils import Logger, are_incremental
-import re
 
 
 class FilterTickers:
