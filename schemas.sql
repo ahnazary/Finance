@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS stocks.valid_tickers(
     date date NOT NULL DEFAULT now(),
     currency_code varchar(10),
     market_cap bigint,
-    currency varchar(10),
     total_revenue bigint,
     free_cash_flow bigint,
     total_assets bigint,
