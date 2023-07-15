@@ -51,10 +51,11 @@ class Ticker:
         Gets all the tickers from the tickers_list table and checks if they are valid
 
         validity check:
-            - ticker must have market cap > 0
-            - ticker must have total revenue > 0
-            - ticker must have free cash flow > 0
-            - ticker must have total assets > 0
+            - ticker must have market cap
+            - ticker must have total revenue
+            - ticker must have free cash flow
+            - ticker must have total assets
+            - ticker must have currency code
         """
 
         # query all the tickers from the tickers_list table that are not in valid_tickers table
