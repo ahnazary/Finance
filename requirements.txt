@@ -1,0 +1,3 @@
+numpy==1.25.1
+pandas==2.0.3
+yahooquery==2.3.1
