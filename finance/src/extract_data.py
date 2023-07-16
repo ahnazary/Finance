@@ -1,6 +1,6 @@
 """ Extract data from yahoo finance and store it in a postgres database"""
 
-from typing import List, Literal
+from typing import Literal
 
 
 class FilterTickers:
