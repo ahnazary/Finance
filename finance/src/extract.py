@@ -3,6 +3,7 @@ from typing import List, Literal, Union
 
 import pandas as pd
 import yfinance as yf
+from src.columns import FINANCIALS_COLUMNS
 from src.postgres_interface import PostgresInterface
 
 
@@ -158,14 +159,16 @@ class Ticker:
         Method to load the valid tickers from the database
         """
         query = """
-            SELECT ticker
+            SELECT stocks.valid_tickers.ticker
             FROM stocks.valid_tickers
-            WHERE validity = True;
+            LEFT JOIN stocks.financials
+            ON valid_tickers.ticker = financials.ticker
+            WHERE financials.ticker IS NULL AND validity = True;
         """
         valid_tickers = self.postgres_interface.execute_query(query)
         return valid_tickers
 
-    def update_financials(self):
+    def insert_financials(self):
         """
         Method to populate the stocks.financials table
         """
@@ -173,11 +176,20 @@ class Ticker:
         valid_tickers = self.load_valid_tickers()
 
         for ticker in valid_tickers:
+            self.logger.warning(f"Updating financials for {ticker}")
+
             ticker = yf.Ticker(ticker)
             financials_df = ticker.financials.T
             financials_df["ticker"] = ticker.ticker
             financials_df["currency_code"] = ticker.info["currency"]
             financials_df["frequency"] = self.frequency
+            financials_df.reset_index(inplace=True)
+            financials_df.rename(columns={"index": "report_date"}, inplace=True)
+
+            # if a column does not exist in the stocks.financials table, drop it from the df
+            for column in financials_df.columns:
+                if column not in FINANCIALS_COLUMNS:
+                    financials_df.drop(column, axis=1, inplace=True)
 
             # insert the data into the database
             financials_df.to_sql(
