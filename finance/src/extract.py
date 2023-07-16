@@ -1,17 +1,23 @@
 from logging import getLogger
-from typing import List, Union
+from typing import List, Union, Literal
 
 import pandas as pd
 import yfinance as yf
 
-from finance.src.postgres_interface import PostgresInterface
+from src.postgres_interface import PostgresInterface
 
 
 class Ticker:
-    def __init__(self, countries: Union[str, List[str]] = None, chunksize: int = 20):
+    def __init__(
+        self,
+        countries: Union[str, List[str]] = None,
+        chunksize: int = 20,
+        frequency: Literal["annual", "quarterly"] = "annual",
+    ):
         self.logger = getLogger(__name__)
         self.countries = countries
         self.chunksize = chunksize
+        self.frequency = frequency
 
         self.postgres_interface = PostgresInterface()
         self.engine = self.postgres_interface.create_engine()
@@ -147,3 +153,39 @@ class Ticker:
                 invalids_df.loc[len(invalids_df)] = pd.Series(
                     {"ticker": ticker_symbol, "validity": False}
                 )
+
+    def load_valid_tickers(self):
+        """
+        Method to load the valid tickers from the database
+        """
+        query = """
+            SELECT ticker
+            FROM stocks.valid_tickers
+            WHERE validity = True;
+        """
+        valid_tickers = self.postgres_interface.execute_query(query)
+        return valid_tickers
+
+    def update_financials(self):
+        """
+        Method to populate the stocks.financials table
+        """
+
+        valid_tickers = self.load_valid_tickers()
+
+        for ticker in valid_tickers:
+            ticker = yf.Ticker(ticker)
+            financials_df = ticker.financials.T
+            financials_df["ticker"] = ticker.ticker
+            financials_df["currency_code"] = ticker.info["currency"]
+            financials_df["frequency"] = self.frequency
+
+            # insert the data into the database
+            financials_df.to_sql(
+                name="financials",
+                con=self.engine,
+                if_exists="append",
+                schema="stocks",
+                index=False,
+                method="multi",
+            )

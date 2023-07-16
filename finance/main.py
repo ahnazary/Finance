@@ -1,4 +1,4 @@
-from finance.src.extract import Ticker
+from src.extract import Ticker
 
 ticker = Ticker()
-ticker.update_valid_tickers_table()
+ticker.update_financials()
