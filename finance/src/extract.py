@@ -1,9 +1,8 @@
 from logging import getLogger
-from typing import List, Union, Literal
+from typing import List, Literal, Union
 
 import pandas as pd
 import yfinance as yf
-
 from src.postgres_interface import PostgresInterface
 
 
