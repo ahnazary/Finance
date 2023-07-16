@@ -4,7 +4,7 @@ from typing import List, Union
 import pandas as pd
 import yfinance as yf
 
-from src.postgres_interface import PostgresInterface
+from finance.src.postgres_interface import PostgresInterface
 
 
 class Ticker:
