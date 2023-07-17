@@ -97,8 +97,11 @@ jobs:
         cd docs/source
         make html
 
-        mkdir ../../Finance/docs
-        mv _build/html build
+        cd ..
+        cd ..
+        cd Finance
+        mkdir docs
+        mv _build build
         cp -r build ../../Finance/docs
 
     - name: Deploy 🚀
