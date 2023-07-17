@@ -102,4 +102,4 @@ jobs:
       with:
         # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         branch: sphinx-pages # This is the branch the action will deploy to.
-        folder: build # This is the folder the action will deploy.
+        folder:  ../docs/_build/html # This is the folder the action will deploy.
