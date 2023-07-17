@@ -99,6 +99,7 @@ jobs:
 
         cd ../
         cd ../
+        pwd
         cd Finance
         mkdir docs
         mv _build build
