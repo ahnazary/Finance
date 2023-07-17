@@ -96,7 +96,8 @@ jobs:
         sphinx-apidoc -o docs/source finance/
         cd docs/source
         make html
-        
+
+        mkdir ../../Finance/docs
         mv _build/html build
         cp -r build ../../Finance/docs
 
