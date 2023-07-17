@@ -101,4 +101,4 @@ jobs:
       with:
         # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         branch: master
-        folder:  ../docs/source/_build/html # This is the folder the action will deploy.
+        folder:  docs/source/_build/html # This is the folder the action will deploy.
