@@ -97,8 +97,8 @@ jobs:
         cd docs/source
         make html
 
-        cd ..
-        cd ..
+        cd ../
+        cd ../
         cd Finance
         mkdir docs
         mv _build build
