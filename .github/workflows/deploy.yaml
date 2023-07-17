@@ -93,8 +93,8 @@ jobs:
         
     - name: Generate docs
       run: |
-        sphinx-apidoc -o docs finance/
-        cd docs
+        sphinx-apidoc -o docs/source finance/
+        cd docs/source
         make html
         cd ..
         cd ..
