@@ -102,5 +102,6 @@ jobs:
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@4.1.5
       with:
+        # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         branch: sphinx-pages # This is the branch the action will deploy to.
         folder: docs/build/html # This is the folder the action will deploy.
