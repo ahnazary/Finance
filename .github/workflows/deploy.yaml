@@ -100,5 +100,5 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@4.1.5
       with:
         # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        branch: main
+        branch: master
         folder:  ../docs/source/_build/html # This is the folder the action will deploy.
