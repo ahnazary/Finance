@@ -179,12 +179,16 @@ class Ticker:
             self.logger.warning(f"Updating financials for {ticker}")
 
             ticker = yf.Ticker(ticker)
-            financials_df = ticker.financials.T
-            financials_df["ticker"] = ticker.ticker
-            financials_df["currency_code"] = ticker.info["currency"]
-            financials_df["frequency"] = self.frequency
-            financials_df.reset_index(inplace=True)
-            financials_df.rename(columns={"index": "report_date"}, inplace=True)
+            try:
+                financials_df = ticker.financials.T
+                financials_df["ticker"] = ticker.ticker
+                financials_df["currency_code"] = ticker.info["currency"]
+                financials_df["frequency"] = self.frequency
+                financials_df.reset_index(inplace=True)
+                financials_df.rename(columns={"index": "report_date"}, inplace=True)
+            except:
+                self.logger.warning(f"Ticker {ticker} has no financials")
+                continue
 
             # if a column does not exist in the stocks.financials table, drop it from the df
             for column in financials_df.columns:
