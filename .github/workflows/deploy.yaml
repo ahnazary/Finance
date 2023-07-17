@@ -96,8 +96,9 @@ jobs:
         sphinx-apidoc -o docs/source finance/
         cd docs/source
         make html
-        cd ..
-        cd ..
+        
+        mv _build/html build
+        cp -r build ../../Finance/docs
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@4.1.5
