@@ -97,14 +97,6 @@ jobs:
         cd docs/source
         make html
 
-        cd ../
-        cd ../
-        pwd
-        cd Finance
-        mkdir docs
-        mv _build build
-        cp -r build ../../Finance/docs
-
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@4.1.5
       with:
