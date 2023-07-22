@@ -1,3 +1,5 @@
+# This workflow will install Python dependencies, run tests and lint
+
 name: pre-deploy
 
 on:
