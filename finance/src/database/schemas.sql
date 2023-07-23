@@ -68,12 +68,6 @@ CREATE TABLE stocks.financials (
 	CONSTRAINT financials_pkey PRIMARY KEY (ticker, report_date)
 );
 
--- stocks.cash_flow definition
-
--- Drop table
-
--- DROP TABLE stocks.cash_flow;
-
 CREATE TABLE stocks.cash_flow (
 	ticker varchar(100) NOT NULL,
 	insert_date date NOT NULL DEFAULT now(),
@@ -135,7 +129,7 @@ CREATE TABLE stocks.cash_flow (
 	"Net Income From Continuing Operations" float8 NULL,
 	currency_code varchar(10) NULL,
 	frequency varchar(10) NULL,
-	CONSTRAINT cash_flow_pkey PRIMARY KEY (ticker)
+	CONSTRAINT cash_flow_pkey PRIMARY KEY (ticker, report_date)
 );
 
 CREATE TABLE stocks.balance_sheet (
