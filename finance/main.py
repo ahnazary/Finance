@@ -1,4 +1,4 @@
 from src.extract import Ticker
 
 ticker = Ticker()
-ticker.insert_financials()
+ticker.update_cash_flow()

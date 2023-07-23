@@ -161,13 +161,17 @@ class Ticker:
         query = """
             SELECT stocks.valid_tickers.ticker
             FROM stocks.valid_tickers
-            LEFT JOIN stocks.financials
-            ON valid_tickers.ticker = financials.ticker
-            WHERE financials.ticker IS NULL AND validity = True;
+            LEFT JOIN stocks.cash_flow
+            ON valid_tickers.ticker = cash_flow.ticker
+            WHERE cash_flow.ticker IS NULL AND validity = True;
         """
         valid_tickers = self.postgres_interface.execute_query(query)
         return valid_tickers
 
+    def update_cash_flow(self):
+        valid_tickers = self.load_valid_tickers()
+
+    
     def insert_financials(self):
         """
         Method to populate the stocks.financials table
