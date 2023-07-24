@@ -1,3 +1,0 @@
-# Finance
-
-Test Readme
