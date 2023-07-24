@@ -38,6 +38,10 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
 
+      # copy the entire docs folder to the root of project
+      - name: Copy docs folder to root of project
+        run: cp -r ./docs/_build/* ./
+
   # Deployment job
   deploy:
     environment:
