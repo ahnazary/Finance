@@ -4,7 +4,7 @@ name: Build sphinx docs and deploy to GitHub Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["*"]
+    branches: ["master"]
 
 jobs:
   build:
@@ -25,7 +25,7 @@ jobs:
     - name: Build Sphinx documentation
       run: |
         cd docs
-        make html
+        sphinx-build -b html . _build/html
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
