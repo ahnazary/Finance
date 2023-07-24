@@ -2,19 +2,7 @@ name: Build documentation
 
 on: [push]
 
-jobs:
-  install:
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: 3.11
-    - run: |
-        python -m pip install --upgrade pip
-        pip install -r finance/requirements.txt
-        pip install sphinx-rtd-theme
-  
+jobs:  
   pages:
     runs-on: ubuntu-20.04
     steps:
@@ -26,3 +14,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ${{ steps.deployment.outputs.artifact }}
+        requirements_path: finance/requirements.txt
