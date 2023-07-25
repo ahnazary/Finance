@@ -15,7 +15,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.11'
+        python-version: '3.11.4'
 
     - name: Install dependencies
       run: |
@@ -24,13 +24,12 @@ jobs:
 
     - name: Build Sphinx documentation
       run: |
-        cd docs
-        sphinx-build -b html . _build/html
+        sphinx-build docs _build  
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/_build/html
+        publish_dir: ./docs/_build
         publish_branch: gh-pages
         destination_dir: docs
