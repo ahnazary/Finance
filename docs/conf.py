@@ -9,9 +9,8 @@
 import os
 import sys
 
-sys.path.append(os.path.abspath('..'))
-sys.path.append(os.path.abspath('../finance'))
-
+sys.path.append(os.path.abspath(".."))
+sys.path.append(os.path.abspath("../finance"))
 
 
 project = "Finance"
