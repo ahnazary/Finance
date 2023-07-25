@@ -9,7 +9,10 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src")))
+sys.path.append(os.path.abspath('..'))
+sys.path.append(os.path.abspath('../finance'))
+
+
 
 project = "Finance"
 copyright = "2023, Amir Nazary"
@@ -34,4 +37,4 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # html_theme = 'alabaster'
 html_theme = "sphinx_rtd_theme"
-html_static_path = ["static"]
+html_static_path = ["_static"]
