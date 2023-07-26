@@ -3,7 +3,7 @@ from typing import List, Literal, Union
 
 import pandas as pd
 import yfinance as yf
-from src.columns import FINANCIALS_COLUMNS
+from src.columns import FINANCIALS_COLUMNS, CASH_FLOW_COLUMNS
 from src.postgres_interface import PostgresInterface
 
 
@@ -161,13 +161,46 @@ class Ticker:
         query = """
             SELECT stocks.valid_tickers.ticker
             FROM stocks.valid_tickers
-            LEFT JOIN stocks.financials
-            ON valid_tickers.ticker = financials.ticker
-            WHERE financials.ticker IS NULL AND validity = True;
+            LEFT JOIN stocks.cash_flow
+            ON valid_tickers.ticker = cash_flow.ticker
+            WHERE cash_flow.ticker IS NULL AND validity = True;
         """
         valid_tickers = self.postgres_interface.execute_query(query)
         return valid_tickers
 
+    def update_cash_flow(self):
+        valid_tickers = self.load_valid_tickers()
+
+        for ticker in valid_tickers:
+            self.logger.warning(f"Updating cash flow for {ticker}")
+
+            ticker = yf.Ticker(ticker)
+            try:
+                cash_flow_df = ticker.cashflow.T
+                cash_flow_df["ticker"] = ticker.ticker
+                cash_flow_df["currency_code"] = ticker.info["currency"]
+                cash_flow_df["frequency"] = self.frequency
+                cash_flow_df.reset_index(inplace=True)
+                cash_flow_df.rename(columns={"index": "report_date"}, inplace=True)
+            except:
+                self.logger.warning(f"Ticker {ticker} has no cash flow")
+                continue
+
+            # if a column does not exist in the stocks.cash_flow table, drop it from the df
+            for column in cash_flow_df.columns:
+                if column not in CASH_FLOW_COLUMNS:
+                    cash_flow_df.drop(columns=column, inplace=True)
+
+            # insert the data into the database
+            cash_flow_df.to_sql(
+                name="cash_flow",
+                con=self.engine,
+                if_exists="append",
+                schema="stocks",
+                index=False,
+                method="multi",
+            )
+    
     def insert_financials(self):
         """
         Method to populate the stocks.financials table
