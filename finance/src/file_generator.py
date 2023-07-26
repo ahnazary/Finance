@@ -12,8 +12,15 @@ def generate_valid_tickers_csv():
     SELECT * FROM stocks.valid_tickers WHERE validity = True
     """
 
+    columns_query = """
+    SELECT column_name FROM information_schema.columns WHERE table_name = 'valid_tickers'
+    """
+    columns = pg_interface.execute(columns_query)
+    columns = tuple([c[0] for c in columns])
+
     result = pg_interface.execute(query)
     with open("finance/src/database/valid_tickers.csv", "w") as f:
+        f.write(f"{columns}\n")
         for row in result:
             f.write(f"{row}\n")
 

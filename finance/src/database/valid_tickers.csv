@@ -1,3 +1,4 @@
+('validity', 'date', 'free_cash_flow', 'total_assets', 'market_cap', 'total_revenue', 'currency_code', 'ticker')
 ('AAPL', datetime.date(2023, 7, 15), 'USD', 2999305895936, 394328000000, 111443000000, 352755000000, True)
 ('T', datetime.date(2023, 7, 15), 'USD', 103660503040, 120741000000, 12397000000, 402853000000, True)
 ('GOOG', datetime.date(2023, 7, 15), 'USD', 1594014302208, 282836000000, 60010000000, 365264000000, True)
