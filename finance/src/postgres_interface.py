@@ -26,3 +26,27 @@ class PostgresInterface:
             result = conn.execute(text(query)).fetchall()
         result = [r[0] for r in result]
         return result
+
+    def execute(self, sql_sttm):
+        """
+        Method to execute a sql statement
+
+        Parameters
+        ----------
+        sql_sttm : str
+            sql statement to execute
+
+        Returns
+        -------
+        list
+            list of tuples with the results of the query
+        """
+
+        engine = self.create_engine()
+        with engine.connect() as conn:
+            if isinstance(sql_sttm, str):
+                result = conn.execute(text(sql_sttm))
+            else:
+                result = conn.execute(sql_sttm)
+
+        return result.fetchall()
