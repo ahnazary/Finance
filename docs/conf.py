@@ -9,7 +9,9 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src")))
+sys.path.append(os.path.abspath(".."))
+sys.path.append(os.path.abspath("../finance"))
+
 
 project = "Finance"
 copyright = "2023, Amir Nazary"
@@ -18,7 +20,12 @@ author = "Amir Nazary"
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.viewcode", "sphinx.ext.napoleon"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.napoleon",
+    "sphinx_rtd_theme",
+]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
