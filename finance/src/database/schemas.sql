@@ -196,6 +196,6 @@ CREATE TABLE stocks.balance_sheet (
 	"Cash And Cash Equivalents" float8 NULL,
 	"Cash Equivalents" float8 NULL,
 	"Cash Financial" float8 NULL,
-	CONSTRAINT balance_sheet_pkey PRIMARY KEY (ticker)
+	CONSTRAINT balance_sheet_pkey PRIMARY KEY (ticker, report_date)
 );
 

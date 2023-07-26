@@ -3,7 +3,8 @@ from typing import List, Literal, Union
 
 import pandas as pd
 import yfinance as yf
-from src.columns import FINANCIALS_COLUMNS, CASH_FLOW_COLUMNS
+from src.columns import (BALANCE_SHEET_COLUMNS, CASH_FLOW_COLUMNS,
+                         FINANCIALS_COLUMNS)
 from src.postgres_interface import PostgresInterface
 
 
@@ -161,9 +162,9 @@ class Ticker:
         query = """
             SELECT stocks.valid_tickers.ticker
             FROM stocks.valid_tickers
-            LEFT JOIN stocks.cash_flow
-            ON valid_tickers.ticker = cash_flow.ticker
-            WHERE cash_flow.ticker IS NULL AND validity = True;
+            LEFT JOIN stocks.balance_sheet
+            ON valid_tickers.ticker = balance_sheet.ticker
+            WHERE balance_sheet.ticker IS NULL AND validity = True;
         """
         valid_tickers = self.postgres_interface.execute_query(query)
         return valid_tickers
@@ -200,7 +201,7 @@ class Ticker:
                 index=False,
                 method="multi",
             )
-    
+
     def insert_financials(self):
         """
         Method to populate the stocks.financials table
@@ -231,6 +232,40 @@ class Ticker:
             # insert the data into the database
             financials_df.to_sql(
                 name="financials",
+                con=self.engine,
+                if_exists="append",
+                schema="stocks",
+                index=False,
+                method="multi",
+            )
+
+    def update_balance_sheet(self):
+        valid_tickers = self.load_valid_tickers()
+
+        for ticker in valid_tickers:
+            self.logger.warning(f"Updating balance sheet for {ticker}")
+
+            ticker = yf.Ticker(ticker)
+            try:
+                balance_sheet_df = ticker.balance_sheet.T
+                balance_sheet_df["ticker"] = ticker.ticker
+                balance_sheet_df["currency_code"] = ticker.info["currency"]
+                balance_sheet_df["frequency"] = self.frequency
+                balance_sheet_df.reset_index(inplace=True)
+                balance_sheet_df.rename(columns={"index": "report_date"}, inplace=True)
+            except:
+                self.logger.warning(f"Ticker {ticker} has no balance sheet")
+                continue
+
+            # if a column does not exist in the stocks.balance_sheet table, drop it from the df
+            for column in balance_sheet_df.columns:
+                if column not in BALANCE_SHEET_COLUMNS:
+                    balance_sheet_df.drop(column, axis=1, inplace=True)
+
+            # TODO: df.to_sql does not support on conflict do nothing. replace with a stored procedure
+            # insert the data into the database
+            balance_sheet_df.to_sql(
+                name="balance_sheet",
                 con=self.engine,
                 if_exists="append",
                 schema="stocks",
