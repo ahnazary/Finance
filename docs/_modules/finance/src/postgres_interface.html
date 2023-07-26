@@ -96,7 +96,31 @@
         <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="n">query</span><span class="p">))</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">result</span></div></div>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="PostgresInterface.execute"><a class="viewcode-back" href="../../../finance.src.html#finance.src.postgres_interface.PostgresInterface.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_sttm</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to execute a sql statement</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sql_sttm : str</span>
+<span class="sd">            sql statement to execute</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            list of tuples with the results of the query</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sql_sttm</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="n">sql_sttm</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_sttm</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>
