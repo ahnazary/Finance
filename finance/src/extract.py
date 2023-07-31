@@ -3,6 +3,8 @@ from typing import List, Literal, Union
 
 import pandas as pd
 import yfinance as yf
+from sqlalchemy import MetaData, Table, create_engine, select
+from sqlalchemy.sql import null
 from src.columns import (BALANCE_SHEET_COLUMNS, CASH_FLOW_COLUMNS,
                          FINANCIALS_COLUMNS)
 from src.postgres_interface import PostgresInterface
@@ -14,11 +16,13 @@ class Ticker:
         countries: Union[str, List[str]] = None,
         chunksize: int = 20,
         frequency: Literal["annual", "quarterly"] = "annual",
+        schema: str = "stocks",
     ):
         self.logger = getLogger(__name__)
         self.countries = countries
         self.chunksize = chunksize
         self.frequency = frequency
+        self.schema = schema
 
         self.postgres_interface = PostgresInterface()
         self.engine = self.postgres_interface.create_engine()
@@ -155,22 +159,31 @@ class Ticker:
                     {"ticker": ticker_symbol, "validity": False}
                 )
 
-    def load_valid_tickers(self):
+    def load_valid_tickers(self, sink_table: str):
         """
         Method to load the valid tickers from the database
         """
-        query = """
-            SELECT stocks.valid_tickers.ticker
-            FROM stocks.valid_tickers
-            LEFT JOIN stocks.balance_sheet
-            ON valid_tickers.ticker = balance_sheet.ticker
-            WHERE balance_sheet.ticker IS NULL AND validity = True;
-        """
-        valid_tickers = self.postgres_interface.execute_query(query)
+
+        valid_tickers = Table(
+            "valid_tickers", MetaData(), autoload_with=self.engine, schema=self.schema
+        )
+        balance_sheet = Table(
+            sink_table, MetaData(), autoload_with=self.engine, schema=self.schema
+        )
+        query = (
+            select(valid_tickers.c.ticker)
+            .outerjoin(balance_sheet, valid_tickers.c.ticker == balance_sheet.c.ticker)
+            .where(balance_sheet.c.ticker == null())
+            .where(valid_tickers.c.validity == True)
+        )
+
+        with self.engine.connect() as conn:
+            valid_tickers = [result[0] for result in conn.execute(query).fetchall()]
+
         return valid_tickers
 
     def update_cash_flow(self):
-        valid_tickers = self.load_valid_tickers()
+        valid_tickers = self.load_valid_tickers(sink_table="cash_flow")
 
         for ticker in valid_tickers:
             self.logger.warning(f"Updating cash flow for {ticker}")
@@ -207,7 +220,7 @@ class Ticker:
         Method to populate the stocks.financials table
         """
 
-        valid_tickers = self.load_valid_tickers()
+        valid_tickers = self.load_valid_tickers(sink_table="financials")
 
         for ticker in valid_tickers:
             self.logger.warning(f"Updating financials for {ticker}")
@@ -240,7 +253,7 @@ class Ticker:
             )
 
     def update_balance_sheet(self):
-        valid_tickers = self.load_valid_tickers()
+        valid_tickers = self.load_valid_tickers(sink_table="balance_sheet")
 
         for ticker in valid_tickers:
             self.logger.warning(f"Updating balance sheet for {ticker}")
