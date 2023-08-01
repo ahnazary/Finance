@@ -1,3 +1,5 @@
+""" Module to extract data from the yahoo finance API and load it into the database """
+
 from logging import getLogger
 from typing import List, Literal, Union
 

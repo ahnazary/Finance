@@ -20,13 +20,6 @@ class PostgresInterface:
         )
         return engine
 
-    def execute_query(self, query):
-        engine = self.create_engine()
-        with engine.connect() as conn:
-            result = conn.execute(text(query)).fetchall()
-        result = [r[0] for r in result]
-        return result
-
     def execute(self, sql_sttm):
         """
         Method to execute a sql statement

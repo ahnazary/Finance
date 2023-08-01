@@ -1,4 +1,4 @@
-import logging
+""" This module contains utility functions for the finance package. """
 
 
 def are_incremental(input_list: list):
