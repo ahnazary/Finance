@@ -3,9 +3,10 @@ from typing import List, Literal, Union
 
 import pandas as pd
 import yfinance as yf
-from sqlalchemy import MetaData, Table, create_engine, select
+from sqlalchemy import MetaData, Table, select
 from sqlalchemy.sql import null
-from src.columns import BALANCE_SHEET_COLUMNS, CASH_FLOW_COLUMNS, FINANCIALS_COLUMNS
+from src.columns import (BALANCE_SHEET_COLUMNS, CASH_FLOW_COLUMNS,
+                         FINANCIALS_COLUMNS)
 from src.postgres_interface import PostgresInterface
 
 
@@ -69,14 +70,23 @@ class Ticker:
         """
 
         # query all the tickers from the tickers_list table that are not in valid_tickers table
-        query = """ 
-            SELECT tickers_list.ticker
-            FROM stocks.tickers_list 
-            LEFT JOIN stocks.valid_tickers 
-            ON tickers_list.ticker = valid_tickers.ticker
-            WHERE valid_tickers.ticker IS NULL;
-        """
-        tickers = self.postgres_interface.execute_query(query)
+
+        tickers_list = Table(
+            "tickers_list", MetaData(), autoload_with=self.engine, schema="stocks"
+        )
+        valid_tickers = Table(
+            "valid_tickers", MetaData(), autoload_with=self.engine, schema="stocks"
+        )
+
+        query = (
+            select(tickers_list.c.ticker)
+            .outerjoin(valid_tickers, tickers_list.c.ticker == valid_tickers.c.ticker)
+            .where(valid_tickers.c.ticker == null())
+        )
+
+        with self.engine.connect() as conn:
+            tickers = [result[0] for result in conn.execute(query).fetchall()]
+
         valids_df = pd.DataFrame(
             columns=[
                 "ticker",
