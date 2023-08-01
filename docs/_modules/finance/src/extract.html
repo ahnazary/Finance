@@ -69,12 +69,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for finance.src.extract</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">getLogger</span>
+<span></span><span class="sd">&quot;&quot;&quot; Module to extract data from the yahoo finance API and load it into the database &quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">getLogger</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">select</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">select</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql</span> <span class="kn">import</span> <span class="n">null</span>
 <span class="kn">from</span> <span class="nn">src.columns</span> <span class="kn">import</span> <span class="p">(</span><span class="n">BALANCE_SHEET_COLUMNS</span><span class="p">,</span> <span class="n">CASH_FLOW_COLUMNS</span><span class="p">,</span>
                          <span class="n">FINANCIALS_COLUMNS</span><span class="p">)</span>
@@ -141,14 +143,23 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># query all the tickers from the tickers_list table that are not in valid_tickers table</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; </span>
-<span class="s2">            SELECT tickers_list.ticker</span>
-<span class="s2">            FROM stocks.tickers_list </span>
-<span class="s2">            LEFT JOIN stocks.valid_tickers </span>
-<span class="s2">            ON tickers_list.ticker = valid_tickers.ticker</span>
-<span class="s2">            WHERE valid_tickers.ticker IS NULL;</span>
-<span class="s2">        &quot;&quot;&quot;</span>
-        <span class="n">tickers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="n">tickers_list</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+            <span class="s2">&quot;tickers_list&quot;</span><span class="p">,</span> <span class="n">MetaData</span><span class="p">(),</span> <span class="n">autoload_with</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span>
+        <span class="p">)</span>
+        <span class="n">valid_tickers</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+            <span class="s2">&quot;valid_tickers&quot;</span><span class="p">,</span> <span class="n">MetaData</span><span class="p">(),</span> <span class="n">autoload_with</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">select</span><span class="p">(</span><span class="n">tickers_list</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">outerjoin</span><span class="p">(</span><span class="n">valid_tickers</span><span class="p">,</span> <span class="n">tickers_list</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span> <span class="o">==</span> <span class="n">valid_tickers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span> <span class="o">==</span> <span class="n">null</span><span class="p">())</span>
+        <span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">tickers</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()]</span>
+
         <span class="n">valids_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
             <span class="n">columns</span><span class="o">=</span><span class="p">[</span>
                 <span class="s2">&quot;ticker&quot;</span><span class="p">,</span>
