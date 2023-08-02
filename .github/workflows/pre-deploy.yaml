@@ -52,7 +52,7 @@ jobs:
           
       - name: Run isort
         run: |
-          isort . --check --diff
+          isort --profile black --check --diff .
 
   build:
     runs-on: ubuntu-latest

@@ -25,10 +25,10 @@ def generate_valid_tickers_csv():
         columns = [row[3] for row in conn.execute(columns_query).fetchall()]
 
     result = pg_interface.execute(query)
-    with open("finance/src/database/valid_tickers.csv", "w") as f:
-        f.write(f"{columns}\n")
+    with open("finance/src/database/valid_tickers.csv", "w") as file_handler:
+        file_handler.write(f"{columns}\n")
         for row in result:
-            f.write(f"{row}\n")
+            file_handler.write(f"{row}\n")
 
 
 generate_valid_tickers_csv()
