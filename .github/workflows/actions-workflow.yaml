@@ -10,6 +10,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-            - uses: ahnazary/actions-library/linting-workflows/pylint.yml@master
-            - uses: ahnazary/actions-library/linting-workflows/black.yml@master
-            - uses: ahnazary/actions-library/linting-workflows/isort.yml@master
+            - uses: ahnazary/actions-library/linting-workflows/pylint.yml@v1
+            - uses: ahnazary/actions-library/linting-workflows/black.yml@v1
+            - uses: ahnazary/actions-library/linting-workflows/isort.yml@v1
