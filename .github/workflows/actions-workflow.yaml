@@ -1,0 +1,15 @@
+# actions to be imported from https://github.com/ahnazary/actions-library repo
+on:
+    push:
+      branches: [ master ]
+    pull_request:
+      branches: [ master ]
+
+jobs:
+    linters:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: ahnazary/actions-library/linting-workflows/pylint.yml@master
+            - uses: ahnazary/actions-library/linting-workflows/black.yml@master
+            - uses: ahnazary/actions-library/linting-workflows/isort.yml@master
