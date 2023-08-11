@@ -7,6 +7,6 @@
 
 ## Description
 
-A Python program to scrap stocks data from Yahoo Finance and store them in a database.
+A Python program to scrap stocks data from Yahoo Finance and store them in a database. Raw data are then processed and used to create materrialized views. 
 
 Documentation: available on [this page](https://ahnazary.github.io/Finance/).
