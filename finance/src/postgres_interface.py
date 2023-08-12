@@ -1,45 +1,91 @@
 import os
+from logging import getLogger
 
 import sqlalchemy
 from dotenv import load_dotenv
-from sqlalchemy import text
+from sqlalchemy import MetaData, Table, create_engine, select, text
 
 
 class PostgresInterface:
     def __init__(self):
         load_dotenv()
+        self.logger = getLogger(__name__)
 
-    def create_engine(self):
-        user = os.environ.get("POSTGRES_USER")
-        password = os.environ.get("POSTGRES_PASSWORD")
-        host = os.environ.get("POSTGRES_HOST")
-        port = os.environ.get("POSTGRES_PORT")
-
-        engine = sqlalchemy.create_engine(
-            f"postgresql://{user}:{password}@{host}:{port}/postgres"
-        )
-        return engine
-
-    def execute(self, sql_sttm):
+    def create_engine(self) -> dict:
         """
-        Method to execute a sql statement
-
-        Parameters
-        ----------
-        sql_sttm : str
-            sql statement to execute
+        function that creates engines to connect to postgres databases
 
         Returns
         -------
-        list
-            list of tuples with the results of the query
+        dict
+            dictionary with the engines to connect to the databases
         """
+        local_user = os.environ.get("POSTGRES_USER")
+        local_password = os.environ.get("POSTGRES_PASSWORD")
+        local_host = os.environ.get("POSTGRES_HOST")
+        local_port = os.environ.get("POSTGRES_PORT")
 
-        engine = self.create_engine()
-        with engine.connect() as conn:
-            if isinstance(sql_sttm, str):
-                result = conn.execute(text(sql_sttm))
-            else:
-                result = conn.execute(sql_sttm)
+        engine_local = sqlalchemy.create_engine(
+            f"postgresql://{local_user}:{local_password}@{local_host}:{local_port}/"
+        )
 
-        return result.fetchall()
+        neon_user = os.environ.get("NEON_POSTGRES_USER")
+        neon_password = os.environ.get("NEON_POSTGRES_PASSWORD")
+        neon_host = os.environ.get("NEON_POSTGRES_HOST")
+        neon_port = os.environ.get("NEON_POSTGRES_PORT")
+        neon_db = os.environ.get("NEON_POSTGRES_DB")
+
+        # use sslmode=require to connect to the database
+        engine_neon = sqlalchemy.create_engine(
+            f"postgresql://{neon_user}:{neon_password}@{neon_host}:{neon_port}/{neon_db}?sslmode=require"
+        )
+
+        engine_dict = {"local": engine_local, "neon": engine_neon}
+
+        return engine_dict
+
+    def migrate_local_to_neon(self):
+        """
+        Method to migrate the local database to the neon database
+        """
+        engines = self.create_engine()
+        engine_local = engines["local"]
+        engine_neon = engines["neon"]
+
+        # List of tables in local postgres database in stocks schema
+        metadata = MetaData()
+        information_schema_tables = Table(
+            "tables", metadata, autoload_with=engine_local, schema="information_schema"
+        )
+        query = (
+            select(information_schema_tables.c.table_name)
+            .where(information_schema_tables.c.table_schema == "stocks")
+            .order_by(information_schema_tables.c.table_name)
+        )
+
+        with engine_local.connect() as conn_local:
+            tables = [table[0] for table in conn_local.execute(query).fetchall()]
+
+        # insert table'S data into neon database
+        for table in tables:
+            self.logger.warning(f"Inserting data from {table} into neon database")
+            with engine_local.connect() as conn_local:
+                with engine_neon.connect() as conn_neon:
+                    table = Table(
+                        table, metadata, autoload_with=engine_local, schema="stocks"
+                    )
+                    query = select(table)
+                    data = [tuple(row) for row in conn_local.execute(query).fetchall()]
+
+                    # cast data into batches of 1000 rows
+                    data = [data[i : i + 1000] for i in range(0, len(data), 1000)]
+                    for batch in data:
+                        # statement to insert data into neon database
+                        self.logger.warning(f"Inserting batch of {len(batch)} rows")
+                        insert_statement = table.insert().values(batch)
+                        conn_neon.execute(insert_statement)
+                        self.logger.warning(f"Inserted batch of {len(batch)} rows")
+
+
+postgres_interface = PostgresInterface()
+postgres_interface.migrate_local_to_neon()

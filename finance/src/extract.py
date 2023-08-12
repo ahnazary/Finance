@@ -26,7 +26,9 @@ class Ticker:
         self.schema = schema
 
         self.postgres_interface = PostgresInterface()
-        self.engine = self.postgres_interface.create_engine()
+        engines = self.postgres_interface.create_engine()
+        self.engine_local = engines["local"]
+        self.engine_neon = engines["neon"]
 
     def update_tickers_list_table(self):
         """
@@ -49,7 +51,7 @@ class Ticker:
         # insert the data into the database
         valids_df.to_sql(
             name="tickers_list",
-            con=self.engine,
+            con=self.engine_local,
             if_exists="replace",
             schema="stocks",
             index=False,
@@ -73,10 +75,13 @@ class Ticker:
         # query all the tickers from the tickers_list table that are not in valid_tickers table
 
         tickers_list = Table(
-            "tickers_list", MetaData(), autoload_with=self.engine, schema="stocks"
+            "tickers_list", MetaData(), autoload_with=self.engine_local, schema="stocks"
         )
         valid_tickers = Table(
-            "valid_tickers", MetaData(), autoload_with=self.engine, schema="stocks"
+            "valid_tickers",
+            MetaData(),
+            autoload_with=self.engine_local,
+            schema="stocks",
         )
 
         query = (
@@ -85,7 +90,7 @@ class Ticker:
             .where(valid_tickers.c.ticker == null())
         )
 
-        with self.engine.connect() as conn:
+        with self.engine_local.connect() as conn:
             tickers = [result[0] for result in conn.execute(query).fetchall()]
 
         valids_df = pd.DataFrame(
@@ -108,7 +113,7 @@ class Ticker:
                 # insert the data into the database
                 valids_df.to_sql(
                     name="valid_tickers",
-                    con=self.engine,
+                    con=self.engine_local,
                     if_exists="append",
                     schema="stocks",
                     index=False,
@@ -123,7 +128,7 @@ class Ticker:
                 # insert the data into the database
                 invalids_df.to_sql(
                     name="valid_tickers",
-                    con=self.engine,
+                    con=self.engine_local,
                     if_exists="append",
                     schema="stocks",
                     index=False,
@@ -175,10 +180,13 @@ class Ticker:
         """
 
         valid_tickers = Table(
-            "valid_tickers", MetaData(), autoload_with=self.engine, schema=self.schema
+            "valid_tickers",
+            MetaData(),
+            autoload_with=self.engine_local,
+            schema=self.schema,
         )
         balance_sheet = Table(
-            sink_table, MetaData(), autoload_with=self.engine, schema=self.schema
+            sink_table, MetaData(), autoload_with=self.engine_local, schema=self.schema
         )
         query = (
             select(valid_tickers.c.ticker)
@@ -187,7 +195,7 @@ class Ticker:
             .where(valid_tickers.c.validity == True)
         )
 
-        with self.engine.connect() as conn:
+        with self.engine_local.connect() as conn:
             valid_tickers = [result[0] for result in conn.execute(query).fetchall()]
 
         return valid_tickers
@@ -218,7 +226,7 @@ class Ticker:
             # insert the data into the database
             cash_flow_df.to_sql(
                 name="cash_flow",
-                con=self.engine,
+                con=self.engine_local,
                 if_exists="append",
                 schema="stocks",
                 index=False,
@@ -255,7 +263,7 @@ class Ticker:
             # insert the data into the database
             financials_df.to_sql(
                 name="financials",
-                con=self.engine,
+                con=self.engine_local,
                 if_exists="append",
                 schema="stocks",
                 index=False,
@@ -289,7 +297,7 @@ class Ticker:
             # insert the data into the database
             balance_sheet_df.to_sql(
                 name="balance_sheet",
-                con=self.engine,
+                con=self.engine_local,
                 if_exists="append",
                 schema="stocks",
                 index=False,
