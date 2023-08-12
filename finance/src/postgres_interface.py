@@ -4,6 +4,7 @@ from logging import getLogger
 import sqlalchemy
 from dotenv import load_dotenv
 from sqlalchemy import MetaData, Table, create_engine, select, text
+from sqlalchemy.dialects.postgresql import insert
 
 
 class PostgresInterface:
@@ -71,20 +72,29 @@ class PostgresInterface:
             self.logger.warning(f"Inserting data from {table} into neon database")
             with engine_local.connect() as conn_local:
                 with engine_neon.connect() as conn_neon:
-                    table = Table(
+                    table_local = Table(
                         table, metadata, autoload_with=engine_local, schema="stocks"
                     )
-                    query = select(table)
+                    query = select(table_local)
                     data = [tuple(row) for row in conn_local.execute(query).fetchall()]
 
                     # cast data into batches of 1000 rows
                     data = [data[i : i + 1000] for i in range(0, len(data), 1000)]
+
+                    table_neon = Table(
+                        table, metadata, autoload_with=engine_neon, schema="stocks"
+                    )
+                    inserted_batches = 0
                     for batch in data:
                         # statement to insert data into neon database
                         self.logger.warning(f"Inserting batch of {len(batch)} rows")
-                        insert_statement = table.insert().values(batch)
+                        insert_statement = (
+                            insert(table_neon).values(batch).on_conflict_do_nothing()
+                        )
                         conn_neon.execute(insert_statement)
-                        self.logger.warning(f"Inserted batch of {len(batch)} rows")
+                        conn_neon.commit()
+                        inserted_batches += 1
+                        self.logger.warning(f"Inserted {inserted_batches} batches")
 
 
 postgres_interface = PostgresInterface()
