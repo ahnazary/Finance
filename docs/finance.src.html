@@ -94,61 +94,8 @@
 <section id="module-finance.src.columns">
 <span id="finance-src-columns-module"></span><h2>finance.src.columns module<a class="headerlink" href="#module-finance.src.columns" title="Permalink to this heading"></a></h2>
 </section>
-<section id="module-finance.src.extract">
-<span id="finance-src-extract-module"></span><h2>finance.src.extract module<a class="headerlink" href="#module-finance.src.extract" title="Permalink to this heading"></a></h2>
-<p>Module to extract data from the yahoo finance API and load it into the database</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">finance.src.extract.</span></span><span class="sig-name descname"><span class="pre">Ticker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">countries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'annual'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'quarterly'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'annual'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'stocks'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.insert_financials">
-<span class="sig-name descname"><span class="pre">insert_financials</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.insert_financials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.insert_financials" title="Permalink to this definition"></a></dt>
-<dd><p>Method to populate the stocks.financials table</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.load_valid_tickers">
-<span class="sig-name descname"><span class="pre">load_valid_tickers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sink_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.load_valid_tickers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.load_valid_tickers" title="Permalink to this definition"></a></dt>
-<dd><p>Method to load the valid tickers from the database</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.update_balance_sheet">
-<span class="sig-name descname"><span class="pre">update_balance_sheet</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_balance_sheet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_balance_sheet" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.update_cash_flow">
-<span class="sig-name descname"><span class="pre">update_cash_flow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_cash_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_cash_flow" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.update_tickers_list_table">
-<span class="sig-name descname"><span class="pre">update_tickers_list_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_tickers_list_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_tickers_list_table" title="Permalink to this definition"></a></dt>
-<dd><p>Method to update the tickers_list table in postgres
-Gets all the data in the data dir excel file and inserts it into the database</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.update_valid_tickers_table">
-<span class="sig-name descname"><span class="pre">update_valid_tickers_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_valid_tickers_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_valid_tickers_table" title="Permalink to this definition"></a></dt>
-<dd><p>Method to update the valid_tickers table in postgres
-Gets all the tickers from the tickers_list table and checks if they are valid</p>
-<dl class="simple">
-<dt>validity check:</dt><dd><ul class="simple">
-<li><p>ticker must have market cap</p></li>
-<li><p>ticker must have total revenue</p></li>
-<li><p>ticker must have free cash flow</p></li>
-<li><p>ticker must have total assets</p></li>
-<li><p>ticker must have currency code</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<section id="finance-src-extract-module">
+<h2>finance.src.extract module<a class="headerlink" href="#finance-src-extract-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-finance.src.extract_data">
 <span id="finance-src-extract-data-module"></span><h2>finance.src.extract_data module<a class="headerlink" href="#module-finance.src.extract_data" title="Permalink to this heading"></a></h2>
@@ -160,36 +107,8 @@ Gets all the tickers from the tickers_list table and checks if they are valid</p
 </dd></dl>
 
 </section>
-<section id="module-finance.src.postgres_interface">
-<span id="finance-src-postgres-interface-module"></span><h2>finance.src.postgres_interface module<a class="headerlink" href="#module-finance.src.postgres_interface" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="finance.src.postgres_interface.PostgresInterface">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">finance.src.postgres_interface.</span></span><span class="sig-name descname"><span class="pre">PostgresInterface</span></span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.postgres_interface.PostgresInterface.create_engine">
-<span class="sig-name descname"><span class="pre">create_engine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface.create_engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface.create_engine" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.postgres_interface.PostgresInterface.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql_sttm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface.execute" title="Permalink to this definition"></a></dt>
-<dd><p>Method to execute a sql statement</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>sql_sttm</strong> (<em>str</em>) – sql statement to execute</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of tuples with the results of the query</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<section id="finance-src-postgres-interface-module">
+<h2>finance.src.postgres_interface module<a class="headerlink" href="#finance-src-postgres-interface-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-finance.src.utils">
 <span id="finance-src-utils-module"></span><h2>finance.src.utils module<a class="headerlink" href="#module-finance.src.utils" title="Permalink to this heading"></a></h2>
