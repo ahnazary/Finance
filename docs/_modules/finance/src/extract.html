@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>finance.src.extract &mdash; Finance  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Finance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">finance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Finance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">finance.src.extract</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for finance.src.extract</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Module to extract data from the yahoo finance API and load it into the database &quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">getLogger</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">select</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.sql</span> <span class="kn">import</span> <span class="n">null</span>
+<span class="kn">from</span> <span class="nn">src.columns</span> <span class="kn">import</span> <span class="n">BALANCE_SHEET_COLUMNS</span><span class="p">,</span> <span class="n">CASH_FLOW_COLUMNS</span><span class="p">,</span> <span class="n">FINANCIALS_COLUMNS</span>
+<span class="kn">from</span> <span class="nn">src.postgres_interface</span> <span class="kn">import</span> <span class="n">PostgresInterface</span>
+
+
+<div class="viewcode-block" id="Ticker"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker">[docs]</a><span class="k">class</span> <span class="nc">Ticker</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">countries</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">chunksize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="n">frequency</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;annual&quot;</span><span class="p">,</span> <span class="s2">&quot;quarterly&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;annual&quot;</span><span class="p">,</span>
+        <span class="n">schema</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;stocks&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">countries</span> <span class="o">=</span> <span class="n">countries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chunksize</span> <span class="o">=</span> <span class="n">chunksize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="n">frequency</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span> <span class="o">=</span> <span class="n">PostgresInterface</span><span class="p">()</span>
+        <span class="n">engines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span> <span class="o">=</span> <span class="n">engines</span><span class="p">[</span><span class="s2">&quot;local&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine_neon</span> <span class="o">=</span> <span class="n">engines</span><span class="p">[</span><span class="s2">&quot;neon&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Ticker.update_tickers_list_table"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_tickers_list_table">[docs]</a>    <span class="k">def</span> <span class="nf">update_tickers_list_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to update the tickers_list table in postgres</span>
+<span class="sd">        Gets all the data in the data dir excel file and inserts it into the database</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">valids_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s2">&quot;src/data/tickers_list.xlsx&quot;</span><span class="p">)</span>
+        <span class="c1"># rename columns to match the database</span>
+        <span class="n">valids_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;Ticker&quot;</span><span class="p">:</span> <span class="s2">&quot;ticker&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Exchange&quot;</span><span class="p">:</span> <span class="s2">&quot;exchange&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Category Name&quot;</span><span class="p">:</span> <span class="s2">&quot;category_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;country&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># insert the data into the database</span>
+        <span class="n">valids_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tickers_list&quot;</span><span class="p">,</span>
+            <span class="n">con</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="p">,</span>
+            <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">,</span>
+            <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span>
+            <span class="n">chunksize</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ticker.update_valid_tickers_table"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_valid_tickers_table">[docs]</a>    <span class="k">def</span> <span class="nf">update_valid_tickers_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to update the valid_tickers table in postgres</span>
+<span class="sd">        Gets all the tickers from the tickers_list table and checks if they are valid</span>
+
+<span class="sd">        validity check:</span>
+<span class="sd">            - ticker must have market cap</span>
+<span class="sd">            - ticker must have total revenue</span>
+<span class="sd">            - ticker must have free cash flow</span>
+<span class="sd">            - ticker must have total assets</span>
+<span class="sd">            - ticker must have currency code</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># query all the tickers from the tickers_list table that are not in valid_tickers table</span>
+
+        <span class="n">tickers_list</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+            <span class="s2">&quot;tickers_list&quot;</span><span class="p">,</span> <span class="n">MetaData</span><span class="p">(),</span> <span class="n">autoload_with</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span>
+        <span class="p">)</span>
+        <span class="n">valid_tickers</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+            <span class="s2">&quot;valid_tickers&quot;</span><span class="p">,</span>
+            <span class="n">MetaData</span><span class="p">(),</span>
+            <span class="n">autoload_with</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="p">,</span>
+            <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">select</span><span class="p">(</span><span class="n">tickers_list</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">outerjoin</span><span class="p">(</span><span class="n">valid_tickers</span><span class="p">,</span> <span class="n">tickers_list</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span> <span class="o">==</span> <span class="n">valid_tickers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span> <span class="o">==</span> <span class="n">null</span><span class="p">())</span>
+        <span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">tickers</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()]</span>
+
+        <span class="n">valids_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span>
+                <span class="s2">&quot;ticker&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;currency_code&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;market_cap&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;total_revenue&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;free_cash_flow&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;total_assets&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;validity&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">invalids_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">,</span> <span class="s2">&quot;validity&quot;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">ticker_symbol</span> <span class="ow">in</span> <span class="n">tickers</span><span class="p">:</span>
+            <span class="n">ticker</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">ticker_symbol</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valids_df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunksize</span><span class="p">:</span>
+                <span class="c1"># insert the data into the database</span>
+                <span class="n">valids_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;valid_tickers&quot;</span><span class="p">,</span>
+                    <span class="n">con</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="p">,</span>
+                    <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+                    <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span><span class="p">,</span>
+                    <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="c1"># empty the valids_df</span>
+                <span class="n">valids_df</span> <span class="o">=</span> <span class="n">valids_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inserted </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chunksize</span><span class="si">}</span><span class="s2"> rows for valid tickers&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalids_df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunksize</span><span class="p">:</span>
+                <span class="c1"># insert the data into the database</span>
+                <span class="n">invalids_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;valid_tickers&quot;</span><span class="p">,</span>
+                    <span class="n">con</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="p">,</span>
+                    <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+                    <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span><span class="p">,</span>
+                    <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="c1"># empty the invalids_df</span>
+                <span class="n">invalids_df</span> <span class="o">=</span> <span class="n">invalids_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Inserted </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chunksize</span><span class="si">}</span><span class="s2"> rows for invalid tickers&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># check if the ticker is valid</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;marketCap&quot;</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="n">ticker</span><span class="o">.</span><span class="n">financials</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;Total Revenue&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="n">ticker</span><span class="o">.</span><span class="n">cashflow</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;Free Cash Flow&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="n">ticker</span><span class="o">.</span><span class="n">balance_sheet</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;Total Assets&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;currency&quot;</span><span class="p">]</span>
+                <span class="p">):</span>
+                    <span class="n">valids_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">valids_df</span><span class="p">)]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;ticker&quot;</span><span class="p">:</span> <span class="n">ticker_symbol</span><span class="p">,</span>
+                            <span class="s2">&quot;currency_code&quot;</span><span class="p">:</span> <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;currency&quot;</span><span class="p">],</span>
+                            <span class="s2">&quot;market_cap&quot;</span><span class="p">:</span> <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;marketCap&quot;</span><span class="p">],</span>
+                            <span class="s2">&quot;total_revenue&quot;</span><span class="p">:</span> <span class="n">ticker</span><span class="o">.</span><span class="n">financials</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                                <span class="s2">&quot;Total Revenue&quot;</span>
+                            <span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="s2">&quot;free_cash_flow&quot;</span><span class="p">:</span> <span class="n">ticker</span><span class="o">.</span><span class="n">cashflow</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                                <span class="s2">&quot;Free Cash Flow&quot;</span>
+                            <span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="s2">&quot;total_assets&quot;</span><span class="p">:</span> <span class="n">ticker</span><span class="o">.</span><span class="n">balance_sheet</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                                <span class="s2">&quot;Total Assets&quot;</span>
+                            <span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="s2">&quot;validity&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ticker </span><span class="si">{</span><span class="n">ticker_symbol</span><span class="si">}</span><span class="s2"> is invalid&quot;</span><span class="p">)</span>
+                <span class="n">invalids_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">invalids_df</span><span class="p">)]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s2">&quot;ticker&quot;</span><span class="p">:</span> <span class="n">ticker_symbol</span><span class="p">,</span> <span class="s2">&quot;validity&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ticker.load_valid_tickers"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.load_valid_tickers">[docs]</a>    <span class="k">def</span> <span class="nf">load_valid_tickers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sink_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to load the valid tickers from the database</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">valid_tickers</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+            <span class="s2">&quot;valid_tickers&quot;</span><span class="p">,</span>
+            <span class="n">MetaData</span><span class="p">(),</span>
+            <span class="n">autoload_with</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="p">,</span>
+            <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">balance_sheet</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+            <span class="n">sink_table</span><span class="p">,</span> <span class="n">MetaData</span><span class="p">(),</span> <span class="n">autoload_with</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span>
+        <span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">select</span><span class="p">(</span><span class="n">valid_tickers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">outerjoin</span><span class="p">(</span><span class="n">balance_sheet</span><span class="p">,</span> <span class="n">valid_tickers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span> <span class="o">==</span> <span class="n">balance_sheet</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">balance_sheet</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span> <span class="o">==</span> <span class="n">null</span><span class="p">())</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">validity</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">valid_tickers</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()]</span>
+
+        <span class="k">return</span> <span class="n">valid_tickers</span></div>
+
+<div class="viewcode-block" id="Ticker.update_cash_flow"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_cash_flow">[docs]</a>    <span class="k">def</span> <span class="nf">update_cash_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">valid_tickers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_valid_tickers</span><span class="p">(</span><span class="n">sink_table</span><span class="o">=</span><span class="s2">&quot;cash_flow&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">valid_tickers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating cash flow for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">ticker</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">ticker</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cash_flow_df</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">cashflow</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">cash_flow_df</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span>
+                <span class="n">cash_flow_df</span><span class="p">[</span><span class="s2">&quot;currency_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;currency&quot;</span><span class="p">]</span>
+                <span class="n">cash_flow_df</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span>
+                <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;report_date&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ticker </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has no cash flow&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># if a column does not exist in the stocks.cash_flow table, drop it from the df</span>
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CASH_FLOW_COLUMNS</span><span class="p">:</span>
+                    <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># insert the data into the database</span>
+            <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cash_flow&quot;</span><span class="p">,</span>
+                <span class="n">con</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="p">,</span>
+                <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+                <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ticker.insert_financials"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.insert_financials">[docs]</a>    <span class="k">def</span> <span class="nf">insert_financials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to populate the stocks.financials table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">valid_tickers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_valid_tickers</span><span class="p">(</span><span class="n">sink_table</span><span class="o">=</span><span class="s2">&quot;financials&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">valid_tickers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating financials for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">ticker</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">ticker</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">financials_df</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">financials</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">financials_df</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span>
+                <span class="n">financials_df</span><span class="p">[</span><span class="s2">&quot;currency_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;currency&quot;</span><span class="p">]</span>
+                <span class="n">financials_df</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span>
+                <span class="n">financials_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">financials_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;report_date&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ticker </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has no financials&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># if a column does not exist in the stocks.financials table, drop it from the df</span>
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">financials_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">FINANCIALS_COLUMNS</span><span class="p">:</span>
+                    <span class="n">financials_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># insert the data into the database</span>
+            <span class="n">financials_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;financials&quot;</span><span class="p">,</span>
+                <span class="n">con</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="p">,</span>
+                <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+                <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Ticker.update_balance_sheet"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_balance_sheet">[docs]</a>    <span class="k">def</span> <span class="nf">update_balance_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">valid_tickers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_valid_tickers</span><span class="p">(</span><span class="n">sink_table</span><span class="o">=</span><span class="s2">&quot;balance_sheet&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">valid_tickers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating balance sheet for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">ticker</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">ticker</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">balance_sheet_df</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">balance_sheet</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">balance_sheet_df</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span>
+                <span class="n">balance_sheet_df</span><span class="p">[</span><span class="s2">&quot;currency_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;currency&quot;</span><span class="p">]</span>
+                <span class="n">balance_sheet_df</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span>
+                <span class="n">balance_sheet_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">balance_sheet_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;report_date&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ticker </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has no balance sheet&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># if a column does not exist in the stocks.balance_sheet table, drop it from the df</span>
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">balance_sheet_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">BALANCE_SHEET_COLUMNS</span><span class="p">:</span>
+                    <span class="n">balance_sheet_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># TODO: df.to_sql does not support on conflict do nothing. replace with a stored procedure</span>
+            <span class="c1"># insert the data into the database</span>
+            <span class="n">balance_sheet_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;balance_sheet&quot;</span><span class="p">,</span>
+                <span class="n">con</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="p">,</span>
+                <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+                <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Amir Nazary.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
