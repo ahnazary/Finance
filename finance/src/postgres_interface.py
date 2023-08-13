@@ -67,7 +67,7 @@ class PostgresInterface:
         with engine_local.connect() as conn_local:
             tables = [table[0] for table in conn_local.execute(query).fetchall()]
 
-        # insert table'S data into neon database
+        # insert table's data into neon database
         for table in tables:
             self.logger.warning(f"Inserting data from {table} into neon database")
             with engine_local.connect() as conn_local:
@@ -88,14 +88,25 @@ class PostgresInterface:
                     for batch in data:
                         # statement to insert data into neon database
                         self.logger.warning(f"Inserting batch of {len(batch)} rows")
-                        insert_statement = (
-                            insert(table_neon).values(batch).on_conflict_do_nothing()
-                        )
-                        conn_neon.execute(insert_statement)
-                        conn_neon.commit()
-                        inserted_batches += 1
+                        self.insert_batch(table=table_neon, batch=batch, conn=conn_neon)
                         self.logger.warning(f"Inserted {inserted_batches} batches")
 
+    def insert_batch(
+        self, table: sqlalchemy.Table, batch: list, conn: sqlalchemy.engine.Connection
+    ):
+        """
+        Method to insert a batch of data into a table
 
-postgres_interface = PostgresInterface()
-postgres_interface.migrate_local_to_neon()
+        Parameters
+        ----------
+        table : str
+            table to insert data into
+        data : list
+            list of tuples with the data to insert into the table
+        """
+
+        # statement to insert data into neon database
+        self.logger.warning(f"Inserting batch of {len(batch)} rows")
+        insert_statement = insert(table).values(batch).on_conflict_do_nothing()
+        conn.execute(insert_statement)
+        conn.commit()
