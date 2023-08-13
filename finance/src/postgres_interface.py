@@ -110,7 +110,3 @@ class PostgresInterface:
         insert_statement = insert(table).values(batch).on_conflict_do_nothing()
         conn.execute(insert_statement)
         conn.commit()
-
-
-postgres_interface = PostgresInterface()
-postgres_interface.migrate_local_to_neon()
