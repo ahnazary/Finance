@@ -20,4 +20,4 @@ jobs:
                   repository: ahnazary/actions-library
                   path: custom-actions/.github
             - name: run black
-              uses: ./custom-actions/.github/actions/black
+              uses: ./custom-actions/.github/workflows/black
