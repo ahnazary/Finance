@@ -91,6 +91,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         pip install -r finance/requirements_tests.txt
+        # run docker-compose
+        cd finance/tests
+        docker-compose up -d
 
     - name: Run tests with pytest
       run: pytest
