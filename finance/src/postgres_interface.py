@@ -3,7 +3,7 @@ from logging import getLogger
 
 import sqlalchemy
 from dotenv import load_dotenv
-from sqlalchemy import MetaData, Table, create_engine, select, text
+from sqlalchemy import MetaData, Table, select
 from sqlalchemy.dialects.postgresql import insert
 
 
@@ -45,6 +45,31 @@ class PostgresInterface:
 
         return engine_dict
 
+    def _create_table_object(
+        self, table_name: str, engine: sqlalchemy.engine.Engine, schema: str = "stocks"
+    ):
+        """
+        Method to create a table object
+
+        Parameters
+        ----------
+        table_name : str
+            name of the table to create the object for
+        engine : sqlalchemy.engine.Engine
+            engine to connect to the database
+        schema : str
+            schema of the table
+            default: stocks
+
+        Returns
+        -------
+        sqlalchemy.Table
+            table object
+        """
+        metadata = MetaData()
+        table = Table(table_name, metadata, autoload_with=engine, schema=schema)
+        return table
+
     def migrate_local_to_neon(self):
         """
         Method to migrate the local database to the neon database
@@ -72,18 +97,14 @@ class PostgresInterface:
             self.logger.warning(f"Inserting data from {table} into neon database")
             with engine_local.connect() as conn_local:
                 with engine_neon.connect() as conn_neon:
-                    table_local = Table(
-                        table, metadata, autoload_with=engine_local, schema="stocks"
-                    )
+                    table_local = self._create_table_object(table, engine_local)
                     query = select(table_local)
                     data = [tuple(row) for row in conn_local.execute(query).fetchall()]
 
                     # cast data into batches of 1000 rows
                     data = [data[i : i + 1000] for i in range(0, len(data), 1000)]
 
-                    table_neon = Table(
-                        table, metadata, autoload_with=engine_neon, schema="stocks"
-                    )
+                    table_neon = self._create_table_object(table, engine_neon)
                     inserted_batches = 0
                     for batch in data:
                         # statement to insert data into neon database
