@@ -1,2 +1,3 @@
 pytest
 SQLAlchemy==2.0.19
+psycopg2-binary==2.9.6
