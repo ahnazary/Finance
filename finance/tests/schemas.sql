@@ -1,4 +1,4 @@
--- This file contains the SQL code to create the database schema and tables
+-- This file contains the SQL code to create the database schema and tables to be used in the tests.
 
 CREATE SCHEMA IF NOT EXISTS stocks;
 
