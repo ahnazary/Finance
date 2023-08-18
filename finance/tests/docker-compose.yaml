@@ -2,10 +2,10 @@ version: '3'
 
 services:
   postgres:
-    image: postgres:15
+    image: postgres:13
     environment:
-      POSTGRES_DB: postgres     
-      POSTGRES_USER: postgres         
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5438:5432" 

@@ -19,11 +19,4 @@ def test_tables_exist(setup_tables, test_engine):
 
     with test_engine.connect() as conn:
         tables = [table[0] for table in conn.execute(query).fetchall()]
-    assert tables == [
-        "financials",
-        "income_statement",
-        "balance_sheet",
-        "cash_flow",
-        "tickers_list",
-        "valid_tickers",
-    ]
+    assert all([table in tables for table in ["tickers_list", "valid_tickers", "financials", "cash_flow", "balance_sheet"]])

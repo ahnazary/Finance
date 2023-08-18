@@ -1,5 +1,3 @@
--- This file contains the SQL code to create the database schema and tables to be used in the tests.
-
 CREATE SCHEMA IF NOT EXISTS stocks;
 
 CREATE TABLE IF NOT EXISTS stocks.tickers_list(
@@ -8,7 +6,7 @@ CREATE TABLE IF NOT EXISTS stocks.tickers_list(
     exchange varchar(10),
     category_name varchar(100),
     country varchar(100)
-)
+);
 
 CREATE TABLE IF NOT EXISTS stocks.valid_tickers(
     ticker varchar(10) NOT NULL PRIMARY KEY,
@@ -19,7 +17,7 @@ CREATE TABLE IF NOT EXISTS stocks.valid_tickers(
     free_cash_flow bigint,
     total_assets bigint,
     validity boolean NOT NULL
-)
+);
 
 CREATE TABLE stocks.financials (
 	ticker varchar(100) NOT NULL,

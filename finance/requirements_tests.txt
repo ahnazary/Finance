@@ -1,6 +1,2 @@
-pytest
-pandas==2.0.3
-python-dotenv==1.0.0
+pytest=7
 SQLAlchemy==2.0.19
-yfinance==0.2.24
-psycopg2-binary==2.8.6
