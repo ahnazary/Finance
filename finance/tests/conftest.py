@@ -1,6 +1,7 @@
 from pytest import fixture
 from sqlalchemy import create_engine
 
+
 @fixture
 def setup_tables(test_engine):
     """
@@ -11,11 +12,12 @@ def setup_tables(test_engine):
         query = f.read()
     with test_engine.connect() as conn:
         conn.execute(query)
-    
+
+
 @fixture
 def test_engine():
     """
     Test to check if the engine is created correctly
     """
-    engine = create_engine("postgresql://postgres:postgres@localhost:5432/postgres")
+    engine = create_engine("postgresql://postgres:postgres@localhost:5438/postgres")
     return engine

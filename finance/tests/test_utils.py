@@ -1,6 +1,7 @@
 import pytest
 from sqlalchemy import MetaData, Table, select
 
+
 def test_tables_exist(setup_tables, test_engine):
     """
     Test to check if the tables are created correctly
