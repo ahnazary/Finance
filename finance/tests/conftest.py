@@ -25,5 +25,5 @@ def test_engine():
 
     # drop tables
     with engine.connect() as conn:
-        conn.execute("DROP SCHEMA IF EXISTS stocks CASCADE")
+        conn.execute(text("DROP SCHEMA IF EXISTS stocks CASCADE"))
         conn.commit()

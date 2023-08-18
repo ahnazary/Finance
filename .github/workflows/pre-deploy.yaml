@@ -75,6 +75,5 @@ jobs:
       run: |
         cd finance/tests
         docker-compose up -d
-
-    - name: Run tests with pytest
-      run: pytest
+        cd ../..
+        pytest
