@@ -4,4 +4,3 @@ python-dotenv==1.0.0
 SQLAlchemy==2.0.19
 yfinance==0.2.24
 psycopg2-binary==2.8.6
-```
