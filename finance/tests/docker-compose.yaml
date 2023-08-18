@@ -2,13 +2,13 @@ version: '3'
 
 services:
   postgres:
-    image: postgres:13 
+    image: postgres:15
     environment:
       POSTGRES_DB: stocks     
       POSTGRES_USER: postgres         
-      POSTGRES_PASSWORD: password 
+      POSTGRES_PASSWORD: postgres 
     ports:
-      - "5432:5432" 
+      - "5438:5432" 
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
