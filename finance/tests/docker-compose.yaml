@@ -4,9 +4,9 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: stocks     
+      POSTGRES_DB: postgres     
       POSTGRES_USER: postgres         
-      POSTGRES_PASSWORD: postgres 
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5438:5432" 
     volumes:
