@@ -56,6 +56,16 @@ jobs:
     
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5438:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
     - name: Checkout repository
@@ -71,9 +81,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r finance/requirements_tests.txt
 
-    - name: Spin up postgres with docker-compose
+    - name: run pytest
       run: |
-        cd finance/tests
-        docker-compose up -d
-        cd ../..
         pytest
