@@ -45,7 +45,7 @@ class PostgresInterface:
 
         return engine_dict
 
-    def _create_table_object(
+    def create_table_object(
         self, table_name: str, engine: sqlalchemy.engine.Engine, schema: str = "stocks"
     ):
         """
@@ -97,14 +97,14 @@ class PostgresInterface:
             self.logger.warning(f"Inserting data from {table} into neon database")
             with engine_local.connect() as conn_local:
                 with engine_neon.connect() as conn_neon:
-                    table_local = self._create_table_object(table, engine_local)
+                    table_local = self.create_table_object(table, engine_local)
                     query = select(table_local)
                     data = [tuple(row) for row in conn_local.execute(query).fetchall()]
 
                     # cast data into batches of 1000 rows
                     data = [data[i : i + 1000] for i in range(0, len(data), 1000)]
 
-                    table_neon = self._create_table_object(table, engine_neon)
+                    table_neon = self.create_table_object(table, engine_neon)
                     inserted_batches = 0
                     for batch in data:
                         # statement to insert data into neon database
