@@ -77,7 +77,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
 <span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">select</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span><span class="p">,</span> <span class="n">update</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.sql</span> <span class="kn">import</span> <span class="n">null</span>
 <span class="kn">from</span> <span class="nn">src.columns</span> <span class="kn">import</span> <span class="n">BALANCE_SHEET_COLUMNS</span><span class="p">,</span> <span class="n">CASH_FLOW_COLUMNS</span><span class="p">,</span> <span class="n">FINANCIALS_COLUMNS</span>
 <span class="kn">from</span> <span class="nn">src.postgres_interface</span> <span class="kn">import</span> <span class="n">PostgresInterface</span>
@@ -273,6 +273,21 @@
         <span class="k">return</span> <span class="n">valid_tickers</span></div>
 
 <div class="viewcode-block" id="Ticker.update_cash_flow"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_cash_flow">[docs]</a>    <span class="k">def</span> <span class="nf">update_cash_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">Engine</span><span class="p">,</span> <span class="n">tickers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to update the cash flow table in postgres based on the tickers provided</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        engine: sqlalchemy.engine.Engine</span>
+<span class="sd">            The engine to connect to the database</span>
+<span class="sd">        tickers: List[str]</span>
+<span class="sd">            The list of tickers to update</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">tickers</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating cash flow for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -284,6 +299,7 @@
                 <span class="n">cash_flow_df</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span>
                 <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;report_date&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data extracted for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ticker </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has no cash flow&quot;</span><span class="p">)</span>
                 <span class="k">continue</span>
@@ -293,15 +309,24 @@
                 <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CASH_FLOW_COLUMNS</span><span class="p">:</span>
                     <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
+            <span class="c1"># convert pd.dataframe to list of tuples</span>
+            <span class="n">cash_flow_list</span> <span class="o">=</span> <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
+
             <span class="c1"># insert the data into the database</span>
-            <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cash_flow&quot;</span><span class="p">,</span>
-                <span class="n">con</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span>
-                <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
-                <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span><span class="p">,</span>
-                <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">method</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine_local</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_table_object</span><span class="p">(</span>
+                    <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;cash_flow&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span>
+                <span class="p">)</span>
+                <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">insert</span><span class="p">(),</span> <span class="n">cash_flow_list</span><span class="p">)</span><span class="o">.</span><span class="n">on_conflict_do_nothing</span><span class="p">()</span>
+
+                <span class="c1"># update insert_date in cash_flow table to current date</span>
+                <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="n">update</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span> <span class="o">==</span> <span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">insert_date</span><span class="o">=</span><span class="n">func</span><span class="o">.</span><span class="n">current_date</span><span class="p">())</span>
+                <span class="p">)</span>
+                <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inserted </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cash_flow_df</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Ticker.insert_financials"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.insert_financials">[docs]</a>    <span class="k">def</span> <span class="nf">insert_financials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
