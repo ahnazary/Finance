@@ -18,6 +18,11 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: '3.11'
+    
+    - name: Check if environment variables are set
+      run: |
+        echo $PROVIDER
+        echo $NEON_POSTGRES_PORT
         
     - name: Install dependencies
       run: |
