@@ -25,4 +25,4 @@ jobs:
         pip install -r finance/requirements.txt
 
     - name: Run schedule_entry.py
-      run: python schedule_entry.py
+      run: python finance/schedule_entry.py
