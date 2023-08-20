@@ -19,17 +19,17 @@ class Ticker:
         chunksize: int = 20,
         frequency: Literal["annual", "quarterly"] = "annual",
         schema: str = "stocks",
+        provider: Literal["LOCAL", "NEON"] = "LOCAL",
     ):
         self.logger = getLogger(__name__)
         self.countries = countries
         self.chunksize = chunksize
         self.frequency = frequency
         self.schema = schema
+        self.provider = provider
 
         self.postgres_interface = PostgresInterface()
-        engines = self.postgres_interface.create_engine()
-        self.engine_local = engines["local"]
-        self.engine_neon = engines["neon"]
+        self.engine = self.postgres_interface.create_engine(provider=provider)
 
     def update_tickers_list_table(self):
         """

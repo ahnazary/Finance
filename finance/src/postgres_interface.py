@@ -1,5 +1,6 @@
 import os
 from logging import getLogger
+from typing import Literal
 
 import sqlalchemy
 from dotenv import load_dotenv
@@ -12,7 +13,9 @@ class PostgresInterface:
         load_dotenv()
         self.logger = getLogger(__name__)
 
-    def create_engine(self) -> dict:
+    def create_engine(
+        self, provider: Literal["LOCAL", "NEON"] = "LOCAL"
+    ) -> sqlalchemy.engine.Engine:
         """
         function that creates engines to connect to postgres databases
 
@@ -21,29 +24,16 @@ class PostgresInterface:
         dict
             dictionary with the engines to connect to the databases
         """
-        local_user = os.environ.get("POSTGRES_USER")
-        local_password = os.environ.get("POSTGRES_PASSWORD")
-        local_host = os.environ.get("POSTGRES_HOST")
-        local_port = os.environ.get("POSTGRES_PORT")
+        local_user = os.environ.get(f"{provider}_POSTGRES_USER")
+        local_password = os.environ.get(f"{provider}_POSTGRES_PASSWORD")
+        local_host = os.environ.get(f"{provider}_POSTGRES_HOST")
+        local_port = os.environ.get(f"{provider}_POSTGRES_PORT")
 
-        engine_local = sqlalchemy.create_engine(
+        engine = sqlalchemy.create_engine(
             f"postgresql://{local_user}:{local_password}@{local_host}:{local_port}/"
         )
 
-        neon_user = os.environ.get("NEON_POSTGRES_USER")
-        neon_password = os.environ.get("NEON_POSTGRES_PASSWORD")
-        neon_host = os.environ.get("NEON_POSTGRES_HOST")
-        neon_port = os.environ.get("NEON_POSTGRES_PORT")
-        neon_db = os.environ.get("NEON_POSTGRES_DB")
-
-        # use sslmode=require to connect to the database
-        engine_neon = sqlalchemy.create_engine(
-            f"postgresql://{neon_user}:{neon_password}@{neon_host}:{neon_port}/{neon_db}?sslmode=require"
-        )
-
-        engine_dict = {"local": engine_local, "neon": engine_neon}
-
-        return engine_dict
+        return engine
 
     def create_table_object(
         self, table_name: str, engine: sqlalchemy.engine.Engine, schema: str = "stocks"

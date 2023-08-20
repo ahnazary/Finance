@@ -8,15 +8,14 @@ from src.postgres_interface import PostgresInterface
 
 
 class ScheduleJobs:
-    def __init__(self, batch_size: int = 500):
+    def __init__(self, provider: str, batch_size: int = 500):
         self.logger = getLogger(__name__)
         self.postgres_interface = PostgresInterface()
         self.batch_size = batch_size
+        self.provider = provider
 
         # create engines to connect to the databases
-        engines = self.postgres_interface.create_engine()
-        self.engine_local = engines["local"]
-        self.engine_neon = engines["neon"]
+        self.engine = self.postgres_interface.create_engine(provider=provider)
 
     def get_tickers_batch(self, table_name: str, engine: sqlalchemy.engine.Engine):
         table = self.postgres_interface.create_table_object(table_name, engine)
@@ -38,5 +37,5 @@ class ScheduleJobs:
     def update_table_batch(self, table_name: str, engine: sqlalchemy.engine.Engine):
         tickers = self.get_tickers_batch(table_name=table_name, engine=engine)
 
-        ticker_interface = Ticker()
+        ticker_interface = Ticker(provider=self.provider)
         ticker_interface.update_cash_flow(engine=engine, tickers=tickers)
