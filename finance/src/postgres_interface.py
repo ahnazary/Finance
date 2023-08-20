@@ -24,13 +24,16 @@ class PostgresInterface:
         dict
             dictionary with the engines to connect to the databases
         """
-        local_user = os.environ.get(f"{provider}_POSTGRES_USER")
-        local_password = os.environ.get(f"{provider}_POSTGRES_PASSWORD")
-        local_host = os.environ.get(f"{provider}_POSTGRES_HOST")
-        local_port = os.environ.get(f"{provider}_POSTGRES_PORT")
+        user = os.environ.get(f"{provider}_POSTGRES_USER")
+        password = os.environ.get(f"{provider}_POSTGRES_PASSWORD")
+        host = os.environ.get(f"{provider}_POSTGRES_HOST")
+        port = os.environ.get(f"{provider}_POSTGRES_PORT")
+        db = os.environ.get(f"{provider}_POSTGRES_DB")
+
+        ssl_mode = "" if provider == "LOCAL" else "?sslmode=require"
 
         engine = sqlalchemy.create_engine(
-            f"postgresql://{local_user}:{local_password}@{local_host}:{local_port}/"
+            f"postgresql://{user}:{password}@{host}:{port}/{db}{ssl_mode}"
         )
 
         return engine
