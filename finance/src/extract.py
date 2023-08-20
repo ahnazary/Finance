@@ -9,6 +9,7 @@ from sqlalchemy import MetaData, Table, select
 from sqlalchemy.sql import null
 from src.columns import BALANCE_SHEET_COLUMNS, CASH_FLOW_COLUMNS, FINANCIALS_COLUMNS
 from src.postgres_interface import PostgresInterface
+import sqlalchemy
 
 
 class Ticker:
@@ -174,7 +175,7 @@ class Ticker:
                     {"ticker": ticker_symbol, "validity": False}
                 )
 
-    def load_valid_tickers(self, sink_table: str):
+    def load_valid_tickers(self, sink_table: str) -> List[str]:
         """
         Method to load the valid tickers from the database
         """
@@ -200,10 +201,8 @@ class Ticker:
 
         return valid_tickers
 
-    def update_cash_flow(self):
-        valid_tickers = self.load_valid_tickers(sink_table="cash_flow")
-
-        for ticker in valid_tickers:
+    def update_cash_flow(self, engine: sqlalchemy.engine.Engine, tickers: List[str]):
+        for ticker in tickers:
             self.logger.warning(f"Updating cash flow for {ticker}")
 
             ticker = yf.Ticker(ticker)
@@ -226,7 +225,7 @@ class Ticker:
             # insert the data into the database
             cash_flow_df.to_sql(
                 name="cash_flow",
-                con=self.engine_local,
+                con=engine,
                 if_exists="append",
                 schema="stocks",
                 index=False,

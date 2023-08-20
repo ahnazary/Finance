@@ -1,4 +1,6 @@
 from src.schedule_jobs import ScheduleJobs
 
 schedule_jobs = ScheduleJobs()
-schedule_jobs.get_tickers_batch("cash_flow", schedule_jobs.engine_local)
+schedule_jobs.update_table_batch(
+    table_name="cash_flow", engine=schedule_jobs.engine_local
+)
