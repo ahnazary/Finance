@@ -1,9 +1,10 @@
 from logging import getLogger
-from src.postgres_interface import PostgresInterface
+
 import sqlalchemy
-from sqlalchemy import func, select, asc
-from src.extract import Ticker
+from sqlalchemy import asc, func, select
 from src.constants import CURRENCIES
+from src.extract import Ticker
+from src.postgres_interface import PostgresInterface
 
 
 class ScheduleJobs:
@@ -34,10 +35,8 @@ class ScheduleJobs:
 
         return [result[0] for result in result]
 
-    def update_table_batch(
-        self, table_name: str, engine: sqlalchemy.engine.Engine
-    ):
+    def update_table_batch(self, table_name: str, engine: sqlalchemy.engine.Engine):
         tickers = self.get_tickers_batch(table_name=table_name, engine=engine)
-        
+
         ticker_interface = Ticker()
         ticker_interface.update_cash_flow(engine=engine, tickers=tickers)

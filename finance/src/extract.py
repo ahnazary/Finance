@@ -4,12 +4,12 @@ from logging import getLogger
 from typing import List, Literal, Union
 
 import pandas as pd
+import sqlalchemy
 import yfinance as yf
 from sqlalchemy import MetaData, Table, select
 from sqlalchemy.sql import null
 from src.columns import BALANCE_SHEET_COLUMNS, CASH_FLOW_COLUMNS, FINANCIALS_COLUMNS
 from src.postgres_interface import PostgresInterface
-import sqlalchemy
 
 
 class Ticker:
