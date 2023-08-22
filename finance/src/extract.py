@@ -7,6 +7,7 @@ import pandas as pd
 import sqlalchemy
 import yfinance as yf
 from sqlalchemy import MetaData, Table, func, select, update
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import null
 from src.columns import BALANCE_SHEET_COLUMNS, CASH_FLOW_COLUMNS, FINANCIALS_COLUMNS
 from src.postgres_interface import PostgresInterface
@@ -52,7 +53,7 @@ class Ticker:
         # insert the data into the database
         valids_df.to_sql(
             name="tickers_list",
-            con=self.engine_local,
+            con=self.engine,
             if_exists="replace",
             schema="stocks",
             index=False,
@@ -76,12 +77,12 @@ class Ticker:
         # query all the tickers from the tickers_list table that are not in valid_tickers table
 
         tickers_list = Table(
-            "tickers_list", MetaData(), autoload_with=self.engine_local, schema="stocks"
+            "tickers_list", MetaData(), autoload_with=self.engine, schema="stocks"
         )
         valid_tickers = Table(
             "valid_tickers",
             MetaData(),
-            autoload_with=self.engine_local,
+            autoload_with=self.engine,
             schema="stocks",
         )
 
@@ -91,7 +92,7 @@ class Ticker:
             .where(valid_tickers.c.ticker == null())
         )
 
-        with self.engine_local.connect() as conn:
+        with self.engine.connect() as conn:
             tickers = [result[0] for result in conn.execute(query).fetchall()]
 
         valids_df = pd.DataFrame(
@@ -114,7 +115,7 @@ class Ticker:
                 # insert the data into the database
                 valids_df.to_sql(
                     name="valid_tickers",
-                    con=self.engine_local,
+                    con=self.engine,
                     if_exists="append",
                     schema="stocks",
                     index=False,
@@ -123,13 +124,15 @@ class Ticker:
                 # empty the valids_df
                 valids_df = valids_df.iloc[0:0]
 
-                self.logger.warning(f"Inserted {self.chunksize} rows for valid tickers")
+                self.logger.warning(
+                    f"Inserted {self.chunksize} rows for valid tickers to valid_tickers table"
+                )
 
             if len(invalids_df) > self.chunksize:
                 # insert the data into the database
                 invalids_df.to_sql(
                     name="valid_tickers",
-                    con=self.engine_local,
+                    con=self.engine,
                     if_exists="append",
                     schema="stocks",
                     index=False,
@@ -183,11 +186,11 @@ class Ticker:
         valid_tickers = Table(
             "valid_tickers",
             MetaData(),
-            autoload_with=self.engine_local,
+            autoload_with=self.engine,
             schema=self.schema,
         )
         balance_sheet = Table(
-            sink_table, MetaData(), autoload_with=self.engine_local, schema=self.schema
+            sink_table, MetaData(), autoload_with=self.engine, schema=self.schema
         )
         query = (
             select(valid_tickers.c.ticker)
@@ -196,7 +199,7 @@ class Ticker:
             .where(valid_tickers.c.validity == True)
         )
 
-        with self.engine_local.connect() as conn:
+        with self.engine.connect() as conn:
             valid_tickers = [result[0] for result in conn.execute(query).fetchall()]
 
         return valid_tickers
@@ -242,11 +245,14 @@ class Ticker:
             cash_flow_list = cash_flow_df.to_dict("records")
 
             # insert the data into the database
-            with self.engine_local.connect() as conn:
+            with self.engine.connect() as conn:
                 table = self.postgres_interface.create_table_object(
                     table_name="cash_flow", engine=engine, schema=self.schema
                 )
-                conn.execute(table.insert(), cash_flow_list).on_conflict_do_nothing()
+                # insert the data into the database on conflict do nothing
+                conn.execute(
+                    insert(table).values(cash_flow_list).on_conflict_do_nothing()
+                )
 
                 # update insert_date in cash_flow table to current date
                 conn.execute(
@@ -255,7 +261,9 @@ class Ticker:
                     .values(insert_date=func.current_date())
                 )
                 conn.commit()
-            self.logger.warning(f"Inserted {len(cash_flow_df)} rows for {ticker}")
+            self.logger.warning(
+                f"Inserted {len(cash_flow_df)} rows for {ticker} to cash_flow table"
+            )
 
     def insert_financials(self):
         """
@@ -287,7 +295,7 @@ class Ticker:
             # insert the data into the database
             financials_df.to_sql(
                 name="financials",
-                con=self.engine_local,
+                con=self.engine,
                 if_exists="append",
                 schema="stocks",
                 index=False,
@@ -321,7 +329,7 @@ class Ticker:
             # insert the data into the database
             balance_sheet_df.to_sql(
                 name="balance_sheet",
-                con=self.engine_local,
+                con=self.engine,
                 if_exists="append",
                 schema="stocks",
                 index=False,
