@@ -18,11 +18,6 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: '3.11'
-    
-    - name: Check if environment variables are set
-      run: |
-        echo $PROVIDER
-        echo $NEON_POSTGRES_PORT
         
     - name: Install dependencies
       run: |
@@ -30,4 +25,19 @@ jobs:
         pip install -r finance/requirements.txt
 
     - name: Run schedule_entry.py
-      run: python finance/schedule_entry.py
+      run: |
+        # set secrets as environment variables
+        export PROVIDER=${{ secrets.PROVIDER }}
+        export NEON_POSTGRES_DB=${{ secrets.NEON_POSTGRES_DB }}
+        export NEON_POSTGRES_USER=${{ secrets.NEON_POSTGRES_USER }}
+        export NEON_POSTGRES_PASSWORD=${{ secrets.NEON_POSTGRES_PASSWORD }}
+        export NEON_POSTGRES_HOST=${{ secrets.NEON_POSTGRES_HOST }}
+        export NEON_POSTGRES_PORT=${{ secrets.NEON_POSTGRES_PORT }}
+        echo $PROVIDER
+        echo $NEON_POSTGRES_DB
+        echo $NEON_POSTGRES_USER
+        echo $NEON_POSTGRES_PASSWORD
+        echo $NEON_POSTGRES_HOST
+        echo $NEON_POSTGRES_PORT
+        echo "Running schedule_entry.py"
+        python finance/schedule_entry.py
