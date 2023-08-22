@@ -33,11 +33,5 @@ jobs:
         export NEON_POSTGRES_PASSWORD=${{ secrets.NEON_POSTGRES_PASSWORD }}
         export NEON_POSTGRES_HOST=${{ secrets.NEON_POSTGRES_HOST }}
         export NEON_POSTGRES_PORT=${{ secrets.NEON_POSTGRES_PORT }}
-        echo $PROVIDER
-        echo $NEON_POSTGRES_DB
-        echo $NEON_POSTGRES_USER
-        echo $NEON_POSTGRES_PASSWORD
-        echo $NEON_POSTGRES_HOST
-        echo $NEON_POSTGRES_PORT
         echo "Running schedule_entry.py"
         python finance/schedule_entry.py
