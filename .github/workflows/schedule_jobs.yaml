@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - master
+  schedule:
+    # every day at 3 and 6 am
+    - cron: '0 3,6 * * *'
+
 
 jobs:
   run-script:
