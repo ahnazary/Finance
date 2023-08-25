@@ -5,8 +5,8 @@
 
 # Finance
 
+For more detailes about the project, please refer to the [documentation](https://ahnazary.github.io/Finance/).
+
 ## Description
 
-A Python program to scrap stocks data from Yahoo Finance and store them in a database. Raw data are then processed and used to create materrialized views. 
-
-Documentation: available on [this page](https://ahnazary.github.io/Finance/).
+This project is meant to scrape stocks financial data from yahoo finance for a wide range of companies (mostly US and EU) and store them in a cload based database. Since the databse is private, the database cannot be accessed by the public, but scheduled tasks extracts all the data in the database, converts them into parquet and csv files and stores them in this same repository.
