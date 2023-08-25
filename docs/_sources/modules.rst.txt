@@ -4,5 +4,6 @@ finance
 .. toctree::
    :maxdepth: 4
 
-   readme
+   .. include:: ../README.md
+   :parser: myst_parser.sphinx_
    finance
