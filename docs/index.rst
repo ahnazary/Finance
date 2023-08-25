@@ -12,7 +12,7 @@ Welcome to Finance's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   .. include:: ../README.md
+.. include:: ../README.md
    modules
 
 Indices and tables
