@@ -8,7 +8,7 @@ load_dotenv()
 
 provider = os.environ.get("PROVIDER")
 
-schedule_jobs = ScheduleJobs(provider=provider, batch_size=4)
+schedule_jobs = ScheduleJobs(provider=provider, batch_size=100)
 
 # getting a list[str] of old tickers with batch_size
 tickers_list = schedule_jobs.get_tickers_batch(
