@@ -314,6 +314,7 @@
             <span class="n">cash_flow_df</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">cashflow</span><span class="o">.</span><span class="n">T</span>
             <span class="n">cash_flow_df</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span>
             <span class="n">cash_flow_df</span><span class="p">[</span><span class="s2">&quot;currency_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;currency&quot;</span><span class="p">]</span>
+            <span class="n">cash_flow_df</span><span class="p">[</span><span class="s2">&quot;insert_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">current_date</span><span class="p">()</span>
             <span class="n">cash_flow_df</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span>
             <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;report_date&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -326,27 +327,40 @@
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CASH_FLOW_COLUMNS</span><span class="p">:</span>
                 <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># if a column does not exist in the df, add it with null values</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">CASH_FLOW_COLUMNS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">cash_flow_df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># convert pd.dataframe to list of tuples</span>
         <span class="n">cash_flow_list</span> <span class="o">=</span> <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
 
-        <span class="c1"># insert the data into the database</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_table_object</span><span class="p">(</span>
-                <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;cash_flow&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span>
-            <span class="p">)</span>
-            <span class="c1"># insert the data into the database on conflict do nothing</span>
-            <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">insert</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">cash_flow_list</span><span class="p">)</span><span class="o">.</span><span class="n">on_conflict_do_nothing</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data transformed for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> cash flow&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cash_flow_list</span></div>
 
-            <span class="c1"># update insert_date in cash_flow table to current date</span>
+<div class="viewcode-block" id="Ticker.flush_records"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.flush_records">[docs]</a>    <span class="k">def</span> <span class="nf">flush_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to flush records from a table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_table_object</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="c1"># insert the data into the database on conflict update</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                <span class="n">update</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span> <span class="o">==</span> <span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">insert_date</span><span class="o">=</span><span class="n">func</span><span class="o">.</span><span class="n">current_date</span><span class="p">())</span>
+                <span class="n">insert</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">on_conflict_do_update</span><span class="p">(</span>
+                    <span class="n">index_elements</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">,</span> <span class="s2">&quot;report_date&quot;</span><span class="p">,</span> <span class="s2">&quot;frequency&quot;</span><span class="p">],</span>
+                    <span class="n">set_</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;insert_date&quot;</span><span class="p">:</span> <span class="n">func</span><span class="o">.</span><span class="n">current_date</span><span class="p">(),</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
             <span class="p">)</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Inserted </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cash_flow_df</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> to cash_flow table&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Data flushed with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">)</span><span class="si">}</span><span class="s2"> records inserted into </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Ticker.insert_financials"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.insert_financials">[docs]</a>    <span class="k">def</span> <span class="nf">insert_financials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
