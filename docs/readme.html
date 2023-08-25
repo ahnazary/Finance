@@ -18,7 +18,9 @@
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="finance package" href="finance.html" />
+    <link rel="prev" title="finance" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -41,8 +43,18 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">finance</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">finance</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Readme File</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#finance">Finance</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="finance.html">finance package</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -59,6 +71,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">finance</a></li>
       <li class="breadcrumb-item active">Readme File</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/readme.rst.txt" rel="nofollow"> View page source</a>
@@ -71,12 +84,25 @@
              
   <section id="readme-file">
 <h1>Readme File<a class="headerlink" href="#readme-file" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
+<a class="reference external" href="https://pycqa.github.io/isort/"><img alt="Imports: isort" src="https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&amp;labelColor=ef8336" /></a></p>
+<section id="finance">
+<h2>Finance<a class="headerlink" href="#finance" title="Permalink to this heading"></a></h2>
+<p>For more detailes about the project, please refer to the <a class="reference external" href="https://ahnazary.github.io/Finance/">documentation</a>.</p>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Permalink to this heading"></a></h3>
+<p>This project is meant to scrape stocks financial data from yahoo finance for a wide range of companies (mostly US and EU) and store them in a cload based database. Since the databse is private, the database cannot be accessed by the public, but scheduled tasks extracts all the data in the database, converts them into parquet and csv files and stores them in this same repository.</p>
+</section>
+</section>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="finance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="finance.html" class="btn btn-neutral float-right" title="finance package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
