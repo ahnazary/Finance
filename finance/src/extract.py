@@ -243,6 +243,7 @@ class Ticker:
             cash_flow_df = ticker.cashflow.T
             cash_flow_df["ticker"] = ticker.ticker
             cash_flow_df["currency_code"] = ticker.info["currency"]
+            cash_flow_df["insert_date"] = func.current_date()
             cash_flow_df["frequency"] = self.frequency
             cash_flow_df.reset_index(inplace=True)
             cash_flow_df.rename(columns={"index": "report_date"}, inplace=True)
@@ -255,27 +256,40 @@ class Ticker:
         for column in cash_flow_df.columns:
             if column not in CASH_FLOW_COLUMNS:
                 cash_flow_df.drop(columns=column, inplace=True)
+        # if a column does not exist in the df, add it with null values
+        for column in CASH_FLOW_COLUMNS:
+            if column not in cash_flow_df.columns:
+                cash_flow_df[column] = None
 
         # convert pd.dataframe to list of tuples
         cash_flow_list = cash_flow_df.to_dict("records")
 
-        # insert the data into the database
-        with self.engine.connect() as conn:
-            table = self.postgres_interface.create_table_object(
-                table_name="cash_flow", engine=engine, schema=self.schema
-            )
-            # insert the data into the database on conflict do nothing
-            conn.execute(insert(table).values(cash_flow_list).on_conflict_do_nothing())
+        self.logger.warning(f"Data transformed for {ticker} cash flow")
+        return cash_flow_list
 
-            # update insert_date in cash_flow table to current date
+    def flush_records(self, table_name: str, records: list):
+        """
+        Method to flush records from a table
+        """
+        table = self.postgres_interface.create_table_object(
+            table_name=table_name, engine=self.engine, schema=self.schema
+        )
+        with self.engine.connect() as conn:
+            # insert the data into the database on conflict update
             conn.execute(
-                update(table)
-                .where(table.c.ticker == ticker.ticker)
-                .values(insert_date=func.current_date())
+                insert(table)
+                .values(records)
+                .on_conflict_do_update(
+                    index_elements=["ticker", "report_date", "frequency"],
+                    set_={
+                        "insert_date": func.current_date(),
+                    },
+                )
             )
             conn.commit()
+
         self.logger.warning(
-            f"Inserted {len(cash_flow_df)} rows for {ticker} to cash_flow table"
+            f"Data flushed with {len(records)} records inserted into {table_name}"
         )
 
     def insert_financials(self):
