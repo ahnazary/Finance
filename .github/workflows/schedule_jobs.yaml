@@ -1,9 +1,7 @@
 name: Run schedule jobs to update tables    
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
   schedule:
     # every day at 3 and 6 am
     - cron: '0 3,6 * * *'
