@@ -3,10 +3,15 @@
 name: pre-deploy (linters and tests)
 
 on:
+  # run only when finance/ folder is changed
   push:
+    paths:
+      - 'finance/**'
     branches: [ master ]
   pull_request:
     branches: [ master ]
+    paths:
+      - 'finance/**'
   
 jobs:
   pylint:
