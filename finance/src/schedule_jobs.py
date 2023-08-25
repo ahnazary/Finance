@@ -1,6 +1,7 @@
 from logging import getLogger
 
 import sqlalchemy
+import yfinance as yf
 from sqlalchemy import asc, func, select
 from src.constants import CURRENCIES
 from src.extract import Ticker
@@ -32,7 +33,9 @@ class ScheduleJobs:
         # create engines to connect to the databases
         self.engine = self.postgres_interface.create_engine(provider=provider)
 
-    def get_tickers_batch(self, table_name: str, engine: sqlalchemy.engine.Engine):
+    def get_tickers_batch(
+        self, table_name: str, engine: sqlalchemy.engine.Engine
+    ) -> list:
         """
         Method to get a batch of oldest tickers from a table that have not #
         been updated for a while
@@ -61,11 +64,22 @@ class ScheduleJobs:
 
         return [result[0] for result in result]
 
-    def update_table_batch(self, table_name: str, engine: sqlalchemy.engine.Engine):
+    def get_tickers_batch_yf_object(self, tickers_list: list) -> list[yf.Ticker]:
         """
-        Method to update a table
-        """
-        tickers = self.get_tickers_batch(table_name=table_name, engine=engine)
+        Method to get a batch of yfinance tickers from a list of tickers
 
-        ticker_interface = Ticker(provider=self.provider)
-        ticker_interface.update_cash_flow(engine=engine, tickers=tickers)
+        Parameters
+        ----------
+        tickers : list
+            list of tickers to get the yfinance tickers from
+        """
+        return [yf.Ticker(ticker) for ticker in tickers_list]
+
+    # def update_table_batch(self, table_name: str, engine: sqlalchemy.engine.Engine):
+    #     """
+    #     Method to update a table
+    #     """
+    #     tickers = self.get_tickers_batch(table_name=table_name, engine=engine)
+
+    #     ticker_interface = Ticker(provider=self.provider)
+    #     ticker_interface.update_cash_flow(engine=engine, tickers=tickers)

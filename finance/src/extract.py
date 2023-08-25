@@ -32,6 +32,24 @@ class Ticker:
         self.postgres_interface = PostgresInterface()
         self.engine = self.postgres_interface.create_engine(provider=provider)
 
+    def _create_yf_ticker(self, ticker_symbol: str) -> yf.Ticker:
+        """
+        Method to create a yfinance.Ticker object
+
+        Parameters
+        ----------
+        ticker_symbol : str
+            ticker symbol of the stock
+
+        Returns
+        -------
+        yf.Ticker
+            yfinance.Ticker object
+        """
+
+        ticker = yf.Ticker(ticker_symbol)
+        return ticker
+
     def update_tickers_list_table(self):
         """
         Method to update the tickers_list table in postgres
@@ -204,7 +222,7 @@ class Ticker:
 
         return valid_tickers
 
-    def update_cash_flow(self, engine: sqlalchemy.engine.Engine, tickers: List[str]):
+    def update_cash_flow(self, engine: sqlalchemy.engine.Engine, ticker: yf.Ticker):
         """
         Method to update the cash flow table in postgres based on the tickers provided
 
@@ -220,50 +238,45 @@ class Ticker:
         None
         """
 
-        for ticker in tickers:
-            self.logger.warning(f"Updating cash flow for {ticker}")
+        self.logger.warning(f"Updating cash flow for {ticker}")
+        try:
+            cash_flow_df = ticker.cashflow.T
+            cash_flow_df["ticker"] = ticker.ticker
+            cash_flow_df["currency_code"] = ticker.info["currency"]
+            cash_flow_df["frequency"] = self.frequency
+            cash_flow_df.reset_index(inplace=True)
+            cash_flow_df.rename(columns={"index": "report_date"}, inplace=True)
+            self.logger.warning(f"Data extracted for {ticker}")
+        except:
+            self.logger.warning(f"Ticker {ticker} has no cash flow")
+            return
 
-            ticker = yf.Ticker(ticker)
-            try:
-                cash_flow_df = ticker.cashflow.T
-                cash_flow_df["ticker"] = ticker.ticker
-                cash_flow_df["currency_code"] = ticker.info["currency"]
-                cash_flow_df["frequency"] = self.frequency
-                cash_flow_df.reset_index(inplace=True)
-                cash_flow_df.rename(columns={"index": "report_date"}, inplace=True)
-                self.logger.warning(f"Data extracted for {ticker}")
-            except:
-                self.logger.warning(f"Ticker {ticker} has no cash flow")
-                continue
+        # if a column does not exist in the stocks.cash_flow table, drop it from the df
+        for column in cash_flow_df.columns:
+            if column not in CASH_FLOW_COLUMNS:
+                cash_flow_df.drop(columns=column, inplace=True)
 
-            # if a column does not exist in the stocks.cash_flow table, drop it from the df
-            for column in cash_flow_df.columns:
-                if column not in CASH_FLOW_COLUMNS:
-                    cash_flow_df.drop(columns=column, inplace=True)
+        # convert pd.dataframe to list of tuples
+        cash_flow_list = cash_flow_df.to_dict("records")
 
-            # convert pd.dataframe to list of tuples
-            cash_flow_list = cash_flow_df.to_dict("records")
-
-            # insert the data into the database
-            with self.engine.connect() as conn:
-                table = self.postgres_interface.create_table_object(
-                    table_name="cash_flow", engine=engine, schema=self.schema
-                )
-                # insert the data into the database on conflict do nothing
-                conn.execute(
-                    insert(table).values(cash_flow_list).on_conflict_do_nothing()
-                )
-
-                # update insert_date in cash_flow table to current date
-                conn.execute(
-                    update(table)
-                    .where(table.c.ticker == ticker.ticker)
-                    .values(insert_date=func.current_date())
-                )
-                conn.commit()
-            self.logger.warning(
-                f"Inserted {len(cash_flow_df)} rows for {ticker} to cash_flow table"
+        # insert the data into the database
+        with self.engine.connect() as conn:
+            table = self.postgres_interface.create_table_object(
+                table_name="cash_flow", engine=engine, schema=self.schema
             )
+            # insert the data into the database on conflict do nothing
+            conn.execute(insert(table).values(cash_flow_list).on_conflict_do_nothing())
+
+            # update insert_date in cash_flow table to current date
+            conn.execute(
+                update(table)
+                .where(table.c.ticker == ticker.ticker)
+                .values(insert_date=func.current_date())
+            )
+            conn.commit()
+        self.logger.warning(
+            f"Inserted {len(cash_flow_df)} rows for {ticker} to cash_flow table"
+        )
 
     def insert_financials(self):
         """
