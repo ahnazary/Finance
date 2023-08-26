@@ -3,8 +3,8 @@ name: Run schedule jobs to update tables
 on:
   workflow_dispatch:
   schedule:
-    # every day at 3 and 6 am
-    - cron: '0 3,6 * * *'
+    # every 6 hours
+    - cron: '0 */6 * * *'
 
 
 jobs:
