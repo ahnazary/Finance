@@ -34,7 +34,10 @@ class ScheduleJobs:
         self.engine = self.postgres_interface.create_engine(provider=provider)
 
     def get_tickers_batch(
-        self, table_name: str, engine: sqlalchemy.engine.Engine
+        self,
+        table_name: str,
+        engine: sqlalchemy.engine.Engine,
+        frequency: str = "annual",
     ) -> list:
         """
         Method to get a batch of oldest tickers from a table that have not #
@@ -55,8 +58,53 @@ class ScheduleJobs:
                 func.max(table.c.insert_date).label("latest_insert_date"),
             )
             .where(table.c.currency_code.in_(CURRENCIES))
+            .where(table.c.frequency == frequency)
             .group_by(table.c.ticker)
             .order_by(asc("latest_insert_date"))
+        )
+
+        with engine.connect() as conn:
+            result = conn.execute(query).fetchmany(self.batch_size)
+
+        return [result[0] for result in result]
+
+    def get_tickers_batch_backfill(
+        self,
+        table_name: str,
+        engine: sqlalchemy.engine.Engine,
+        frequency: str = "annual",
+    ) -> list:
+        """
+        TODO: make this docs better
+
+        Method to get a batch of tickers from valid_tickers table that have not
+        been been inserted into other main tables (financials, balance_sheet,
+        cash_flow, etc.)
+
+
+        Parameters
+        ----------
+        table_name : str
+            name of the table to get the tickers from
+        engine : sqlalchemy.engine.Engine
+            engine to connect to the database, defines if it is local or neon
+        frequency : str
+            frequency of the data (either annual or quarterly)
+
+        Returns
+        -------
+        list
+            list of tickers
+        """
+
+        valid_tickers_table = self.postgres_interface.create_table_object(
+            "valid_tickers", engine
+        )
+        table = self.postgres_interface.create_table_object(table_name, engine)
+        query = select(valid_tickers_table.c.ticker).where(
+            valid_tickers_table.c.ticker.notin_(
+                select(table.c.ticker).where(table.c.frequency == frequency)
+            )
         )
 
         with engine.connect() as conn:
@@ -74,12 +122,3 @@ class ScheduleJobs:
             list of tickers to get the yfinance tickers from
         """
         return [yf.Ticker(ticker) for ticker in tickers_list]
-
-    # def update_table_batch(self, table_name: str, engine: sqlalchemy.engine.Engine):
-    #     """
-    #     Method to update a table
-    #     """
-    #     tickers = self.get_tickers_batch(table_name=table_name, engine=engine)
-
-    #     ticker_interface = Ticker(provider=self.provider)
-    #     ticker_interface.update_cash_flow(engine=engine, tickers=tickers)

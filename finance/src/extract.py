@@ -222,7 +222,7 @@ class Ticker:
 
         return valid_tickers
 
-    def update_cash_flow(self, engine: sqlalchemy.engine.Engine, ticker: yf.Ticker):
+    def update_cash_flow(self, ticker: yf.Ticker):
         """
         Method to update the cash flow table in postgres based on the tickers provided
 
@@ -240,7 +240,11 @@ class Ticker:
 
         self.logger.warning(f"Updating cash flow for {ticker}")
         try:
-            cash_flow_df = ticker.cashflow.T
+            cash_flow_df = (
+                ticker.cashflow.T
+                if self.frequency == "annual"
+                else ticker.quarterly_cashflow.T
+            )
             cash_flow_df["ticker"] = ticker.ticker
             cash_flow_df["currency_code"] = ticker.info["currency"]
             cash_flow_df["insert_date"] = func.current_date()
@@ -256,7 +260,7 @@ class Ticker:
         for column in cash_flow_df.columns:
             if column not in CASH_FLOW_COLUMNS:
                 cash_flow_df.drop(columns=column, inplace=True)
-        # if a column does not exist in the df, add it with null values
+        # if a column does not exist in the df, It will be added with null values
         for column in CASH_FLOW_COLUMNS:
             if column not in cash_flow_df.columns:
                 cash_flow_df[column] = None

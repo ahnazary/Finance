@@ -1,4 +1,7 @@
 import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from dotenv import load_dotenv
 from src.extract import Ticker
@@ -8,17 +11,17 @@ load_dotenv()
 
 provider = os.environ.get("PROVIDER")
 
-schedule_jobs = ScheduleJobs(provider=provider, batch_size=300)
+schedule_jobs = ScheduleJobs(provider=provider, batch_size=4)
 
 # getting a list[str] of old tickers with batch_size
-tickers_list = schedule_jobs.get_tickers_batch(
+tickers_list = schedule_jobs.get_tickers_batch_backfill(
     table_name="cash_flow", engine=schedule_jobs.engine, frequency="quarterly"
 )
 
 # getting a list[yf.Ticker] of old tickers with batch_size
 tickers_yf_batch = schedule_jobs.get_tickers_batch_yf_object(tickers_list=tickers_list)
 
-ticker_interface = Ticker(provider=provider)
+ticker_interface = Ticker(provider=provider, frequency="quarterly")
 
 records = []
 for ticker_yf_obj in tickers_yf_batch:
