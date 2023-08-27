@@ -1,4 +1,4 @@
-name: Run schedule jobs to update tables    
+name: Update cashflow table with annual data
 
 on:
   workflow_dispatch:
