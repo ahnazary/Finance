@@ -12,7 +12,7 @@ schedule_jobs = ScheduleJobs(provider=provider, batch_size=300)
 
 # getting a list[str] of old tickers with batch_size
 tickers_list = schedule_jobs.get_tickers_batch(
-    table_name="cash_flow", engine=schedule_jobs.engine, frequency="quarterly"
+    table_name="cash_flow", engine=schedule_jobs.engine
 )
 
 # getting a list[yf.Ticker] of old tickers with batch_size
@@ -22,7 +22,9 @@ ticker_interface = Ticker(provider=provider)
 
 records = []
 for ticker_yf_obj in tickers_yf_batch:
-    record = ticker_interface.update_cash_flow(ticker=ticker_yf_obj)
+    record = ticker_interface.update_cash_flow(
+        ticker=ticker_yf_obj
+    )
     if not record:
         continue
     records.append(record)
