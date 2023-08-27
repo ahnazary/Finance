@@ -1,4 +1,4 @@
-name: Run schedule jobs to update tables    
+name: Fill cash flow table with quarterly data  
 
 on:
   workflow_dispatch:
