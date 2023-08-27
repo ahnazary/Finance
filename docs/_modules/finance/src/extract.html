@@ -290,7 +290,7 @@
 
         <span class="k">return</span> <span class="n">valid_tickers</span></div>
 
-<div class="viewcode-block" id="Ticker.update_cash_flow"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_cash_flow">[docs]</a>    <span class="k">def</span> <span class="nf">update_cash_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">Engine</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">):</span>
+<div class="viewcode-block" id="Ticker.update_cash_flow"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_cash_flow">[docs]</a>    <span class="k">def</span> <span class="nf">update_cash_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to update the cash flow table in postgres based on the tickers provided</span>
 
@@ -308,7 +308,11 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating cash flow for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">cash_flow_df</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">cashflow</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">cash_flow_df</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ticker</span><span class="o">.</span><span class="n">cashflow</span><span class="o">.</span><span class="n">T</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span> <span class="o">==</span> <span class="s2">&quot;annual&quot;</span>
+                <span class="k">else</span> <span class="n">ticker</span><span class="o">.</span><span class="n">quarterly_cashflow</span><span class="o">.</span><span class="n">T</span>
+            <span class="p">)</span>
             <span class="n">cash_flow_df</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span>
             <span class="n">cash_flow_df</span><span class="p">[</span><span class="s2">&quot;currency_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;currency&quot;</span><span class="p">]</span>
             <span class="n">cash_flow_df</span><span class="p">[</span><span class="s2">&quot;insert_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">current_date</span><span class="p">()</span>
@@ -324,7 +328,7 @@
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CASH_FLOW_COLUMNS</span><span class="p">:</span>
                 <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="c1"># if a column does not exist in the df, add it with null values</span>
+        <span class="c1"># if a column does not exist in the df, It will be added with null values</span>
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">CASH_FLOW_COLUMNS</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cash_flow_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
                 <span class="n">cash_flow_df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
