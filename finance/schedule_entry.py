@@ -22,9 +22,7 @@ ticker_interface = Ticker(provider=provider)
 
 records = []
 for ticker_yf_obj in tickers_yf_batch:
-    record = ticker_interface.update_cash_flow(
-        ticker=ticker_yf_obj
-    )
+    record = ticker_interface.update_cash_flow(ticker=ticker_yf_obj)
     if not record:
         continue
     records.append(record)
