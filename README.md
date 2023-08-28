@@ -10,3 +10,9 @@ For more detailes about the project, please refer to the [documentation](https:/
 ## Description
 
 This project is meant to scrape stocks financial data from yahoo finance for a wide range of companies (mostly US and EU) and store them in a cload based database. Since the databse is private, the database cannot be accessed by the public, but scheduled tasks extracts all the data in the database, converts them into parquet and csv files and stores them in this same repository.
+
+## What problem does it solve?
+
+
+- Yahoo finance only provides last 4 quarters or yearly financial data for a company. This project solves this problem by scraping the data from yahoo finance every quarter, storing all old records in a database as well as the new ones. This way, the database contains all the financial data for a company since the scraping started.
+- Yahoo finance does not provide a way to download all the financial data for a wide range of companies at once. This project solves this problem by scraping the data from yahoo finance and storing them in a postgres database. Access to data is quick through SQL queries.
