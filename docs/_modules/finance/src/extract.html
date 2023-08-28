@@ -72,7 +72,6 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">sqlalchemy</span>
 <span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span><span class="p">,</span> <span class="n">update</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.dialects.postgresql</span> <span class="kn">import</span> <span class="n">insert</span>
@@ -364,42 +363,54 @@
             <span class="sa">f</span><span class="s2">&quot;Data flushed with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">)</span><span class="si">}</span><span class="s2"> records inserted into </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ticker.insert_financials"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.insert_financials">[docs]</a>    <span class="k">def</span> <span class="nf">insert_financials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Ticker.update_financials"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_financials">[docs]</a>    <span class="k">def</span> <span class="nf">update_financials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Method to populate the stocks.financials table</span>
+<span class="sd">        Method to update the financials table in postgres based on the tickers provided</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        engine: sqlalchemy.engine.Engine</span>
+<span class="sd">            The engine to connect to the database</span>
+<span class="sd">        tickers: List[str]</span>
+<span class="sd">            The list of tickers to update</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">valid_tickers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_valid_tickers</span><span class="p">(</span><span class="n">sink_table</span><span class="o">=</span><span class="s2">&quot;financials&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating financials for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">financials_df</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ticker</span><span class="o">.</span><span class="n">financials</span><span class="o">.</span><span class="n">T</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span> <span class="o">==</span> <span class="s2">&quot;annual&quot;</span>
+                <span class="k">else</span> <span class="n">ticker</span><span class="o">.</span><span class="n">quarterly_cashflow</span><span class="o">.</span><span class="n">T</span>
+            <span class="p">)</span>
+            <span class="n">financials_df</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span>
+            <span class="n">financials_df</span><span class="p">[</span><span class="s2">&quot;currency_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;currency&quot;</span><span class="p">]</span>
+            <span class="n">financials_df</span><span class="p">[</span><span class="s2">&quot;insert_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">current_date</span><span class="p">()</span>
+            <span class="n">financials_df</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span>
+            <span class="n">financials_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">financials_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;report_date&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data extracted for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ticker </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has no financials&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
 
-        <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">valid_tickers</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating financials for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># if a column does not exist in the stocks.cash_flow table, drop it from the df</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">financials_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CASH_FLOW_COLUMNS</span><span class="p">:</span>
+                <span class="n">financials_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># if a column does not exist in the df, It will be added with null values</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">CASH_FLOW_COLUMNS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">financials_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">financials_df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="n">ticker</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">ticker</span><span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">financials_df</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">financials</span><span class="o">.</span><span class="n">T</span>
-                <span class="n">financials_df</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span>
-                <span class="n">financials_df</span><span class="p">[</span><span class="s2">&quot;currency_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;currency&quot;</span><span class="p">]</span>
-                <span class="n">financials_df</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span>
-                <span class="n">financials_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="n">financials_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;report_date&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ticker </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has no financials&quot;</span><span class="p">)</span>
-                <span class="k">continue</span>
+        <span class="c1"># convert pd.dataframe to list of tuples</span>
+        <span class="n">cash_flow_list</span> <span class="o">=</span> <span class="n">financials_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
 
-            <span class="c1"># if a column does not exist in the stocks.financials table, drop it from the df</span>
-            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">financials_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">FINANCIALS_COLUMNS</span><span class="p">:</span>
-                    <span class="n">financials_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-            <span class="c1"># insert the data into the database</span>
-            <span class="n">financials_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;financials&quot;</span><span class="p">,</span>
-                <span class="n">con</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span>
-                <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
-                <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span><span class="p">,</span>
-                <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">method</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data transformed for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> cash flow&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cash_flow_list</span></div>
 
 <div class="viewcode-block" id="Ticker.update_balance_sheet"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_balance_sheet">[docs]</a>    <span class="k">def</span> <span class="nf">update_balance_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">valid_tickers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_valid_tickers</span><span class="p">(</span><span class="n">sink_table</span><span class="o">=</span><span class="s2">&quot;balance_sheet&quot;</span><span class="p">)</span>

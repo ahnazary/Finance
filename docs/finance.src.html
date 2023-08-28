@@ -48,10 +48,10 @@
 <li><a class="reference internal" href="#module-finance.src.extract">finance.src.extract module</a><ul>
 <li><a class="reference internal" href="#finance.src.extract.Ticker"><code class="docutils literal notranslate"><span class="pre">Ticker</span></code></a><ul>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.flush_records"><code class="docutils literal notranslate"><span class="pre">Ticker.flush_records()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.insert_financials"><code class="docutils literal notranslate"><span class="pre">Ticker.insert_financials()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.load_valid_tickers"><code class="docutils literal notranslate"><span class="pre">Ticker.load_valid_tickers()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_balance_sheet"><code class="docutils literal notranslate"><span class="pre">Ticker.update_balance_sheet()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_cash_flow"><code class="docutils literal notranslate"><span class="pre">Ticker.update_cash_flow()</span></code></a></li>
+<li><a class="reference internal" href="#finance.src.extract.Ticker.update_financials"><code class="docutils literal notranslate"><span class="pre">Ticker.update_financials()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_tickers_list_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_tickers_list_table()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_valid_tickers_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_valid_tickers_table()</span></code></a></li>
 </ul>
@@ -124,12 +124,6 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.insert_financials">
-<span class="sig-name descname"><span class="pre">insert_financials</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.insert_financials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.insert_financials" title="Permalink to this definition"></a></dt>
-<dd><p>Method to populate the stocks.financials table</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="finance.src.extract.Ticker.load_valid_tickers">
 <span class="sig-name descname"><span class="pre">load_valid_tickers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sink_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.load_valid_tickers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.load_valid_tickers" title="Permalink to this definition"></a></dt>
 <dd><p>Method to load the valid tickers from the database</p>
@@ -144,6 +138,23 @@
 <dt class="sig sig-object py" id="finance.src.extract.Ticker.update_cash_flow">
 <span class="sig-name descname"><span class="pre">update_cash_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ticker</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_cash_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_cash_flow" title="Permalink to this definition"></a></dt>
 <dd><p>Method to update the cash flow table in postgres based on the tickers provided</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>engine</strong> (<em>sqlalchemy.engine.Engine</em>) – The engine to connect to the database</p></li>
+<li><p><strong>tickers</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – The list of tickers to update</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="finance.src.extract.Ticker.update_financials">
+<span class="sig-name descname"><span class="pre">update_financials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ticker</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_financials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_financials" title="Permalink to this definition"></a></dt>
+<dd><p>Method to update the financials table in postgres based on the tickers provided</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
