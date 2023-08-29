@@ -237,5 +237,5 @@ CREATE TABLE stocks.income_stmt (
     cost_of_revenue DECIMAL,
     total_revenue DECIMAL,
     operating_revenue DECIMAL,
-    CONSTRAINT income_sttm_pkey PRIMARY KEY (ticker, report_date)
+    CONSTRAINT income_stmt_pkey PRIMARY KEY (ticker, report_date)
 );
