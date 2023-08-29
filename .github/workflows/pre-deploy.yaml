@@ -89,3 +89,21 @@ jobs:
     - name: run pytest
       run: |
         pytest
+
+  sqlfluff:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11
+
+    - name: Install sqlfluff
+      run: pip install sqlfluff
+
+    - name: Lint SQL Files
+      run: sqlfluff lint $(git ls-files '*.sql') --dialect postgres
