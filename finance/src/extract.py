@@ -316,7 +316,7 @@ class Ticker:
             financials_df = (
                 ticker.financials.T
                 if self.frequency == "annual"
-                else ticker.quarterly_cashflow.T
+                else ticker.quarterly_financials.T
             )
             financials_df["ticker"] = ticker.ticker
             financials_df["currency_code"] = ticker.info["currency"]
