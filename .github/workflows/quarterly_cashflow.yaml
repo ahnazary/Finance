@@ -2,10 +2,6 @@ name: Fill cash flow table with quarterly data
 
 on:
   workflow_dispatch:
-  schedule:
-    # every 6 hours
-    - cron: '0 */6 * * *'
-
 
 jobs:
   run-script:
