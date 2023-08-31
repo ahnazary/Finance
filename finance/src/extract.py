@@ -8,7 +8,7 @@ import yfinance as yf
 from sqlalchemy import MetaData, Table, func, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import null
-from src.columns import BALANCE_SHEET_COLUMNS, CASH_FLOW_COLUMNS, FINANCIALS_COLUMNS
+from src.columns import BALANCE_SHEET_COLUMNS, CASH_FLOW_COLUMNS, INCOME_STMT_COLUMNS
 from src.postgres_interface import PostgresInterface
 
 
@@ -295,54 +295,57 @@ class Ticker:
             f"Data flushed with {len(records)} records inserted into {table_name}"
         )
 
-    def update_financials(self, ticker: yf.Ticker):
+    def update_income_stmt(self, ticker: yf.Ticker):
         """
-        Method to update the financials table in postgres based on the tickers provided
+        Method to update the income_stmt table in postgres based on the tickers provided
 
         Parameters
         ----------
-        engine: sqlalchemy.engine.Engine
-            The engine to connect to the database
-        tickers: List[str]
-            The list of tickers to update
+        ticker: yf.Ticker
+            The ticker or stock to update
 
         Returns
         -------
         None
         """
 
-        self.logger.warning(f"Updating financials for {ticker}")
+        self.logger.warning(f"Updating income stmt for {ticker}")
         try:
-            financials_df = (
-                ticker.financials.T
+            income_stmt_df = (
+                ticker.income_stmt.T
                 if self.frequency == "annual"
-                else ticker.quarterly_financials.T
+                else ticker.quarterly_income_stmt.T
             )
-            financials_df["ticker"] = ticker.ticker
-            financials_df["currency_code"] = ticker.info["currency"]
-            financials_df["insert_date"] = func.current_date()
-            financials_df["frequency"] = self.frequency
-            financials_df.reset_index(inplace=True)
-            financials_df.rename(columns={"index": "report_date"}, inplace=True)
+            income_stmt_df["ticker"] = ticker.ticker
+            income_stmt_df["currency_code"] = ticker.info["currency"]
+            income_stmt_df["insert_date"] = func.current_date()
+            income_stmt_df["frequency"] = self.frequency
+            income_stmt_df.reset_index(inplace=True)
+            income_stmt_df.rename(columns={"index": "report_date"}, inplace=True)
             self.logger.warning(f"Data extracted for {ticker}")
         except:
-            self.logger.warning(f"Ticker {ticker} has no financials")
+            self.logger.warning(f"Ticker {ticker} has no income stmt")
             return
 
+        # make column names all lower case and replace spaces with underscores
+        income_stmt_df.columns = [
+            i.replace(" ", "_").lower() for i in list(income_stmt_df.columns)
+        ]
+
         # if a column does not exist in the stocks.cash_flow table, drop it from the df
-        for column in financials_df.columns:
-            if column not in CASH_FLOW_COLUMNS:
-                financials_df.drop(columns=column, inplace=True)
+        for column in [i.replace(" ", "_")for i in list(income_stmt_df.columns)]:
+            if column not in INCOME_STMT_COLUMNS:
+                income_stmt_df.drop(columns=column, inplace=True)
         # if a column does not exist in the df, It will be added with null values
-        for column in CASH_FLOW_COLUMNS:
-            if column not in financials_df.columns:
-                financials_df[column] = None
+        for column in INCOME_STMT_COLUMNS:
+            if column not in income_stmt_df.columns:
+                income_stmt_df[column] = None
 
         # convert pd.dataframe to list of tuples
-        cash_flow_list = financials_df.to_dict("records")
+        income_stmt_list = income_stmt_df.to_dict("records")
 
-        self.logger.warning(f"Data transformed for {ticker} cash flow")
-        return cash_flow_list
+        self.logger.warning(f"Data transformed for {ticker} income stmt")
+        return income_stmt_list
 
     def update_balance_sheet(self):
         valid_tickers = self.load_valid_tickers(sink_table="balance_sheet")

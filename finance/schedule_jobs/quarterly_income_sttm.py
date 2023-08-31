@@ -15,7 +15,7 @@ schedule_jobs = ScheduleJobs(provider=provider, batch_size=4)
 
 # getting a list[str] of old tickers with batch_size
 tickers_list = schedule_jobs.get_tickers_batch_backfill(
-    table_name="financials", engine=schedule_jobs.engine, frequency="quarterly"
+    table_name="income_stmt", engine=schedule_jobs.engine, frequency="quarterly"
 )
 
 # getting a list[yf.Ticker] of old tickers with batch_size
@@ -25,7 +25,7 @@ ticker_interface = Ticker(provider=provider, frequency="quarterly")
 
 records = []
 for ticker_yf_obj in tickers_yf_batch:
-    record = ticker_interface.update_financials(ticker=ticker_yf_obj)
+    record = ticker_interface.update_income_stmt(ticker=ticker_yf_obj)
     if not record:
         continue
     records.append(record)
@@ -34,4 +34,4 @@ for ticker_yf_obj in tickers_yf_batch:
 # convert list[list[dict]] to list[dict]
 flattened_records = [d for sublist in records for d in sublist if sublist]
 
-ticker_interface.flush_records(table_name="financials", records=flattened_records)
+ticker_interface.flush_records(table_name="income_stmt", records=flattened_records)
