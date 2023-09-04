@@ -239,5 +239,16 @@ CREATE TABLE stocks.income_stmt (
     operating_revenue FLOAT NULL,
     diluted_average_shares FLOAT NULL,
     basic_average_shares FLOAT NULL,
-    CONSTRAINT income_stmt_pkey PRIMARY KEY (ticker, report_date)
+    total_unusual_items FLOAT NULL,
+    total_unusual_items_excluding_goodwill FLOAT NULL,
+    diluted_eps FLOAT NULL,
+    basic_eps FLOAT NULL,
+    minority_interests FLOAT NULL,
+    special_income_charges FLOAT NULL,
+    gain_on_sale_of_ppe FLOAT NULL,
+    restructuring_and_merger_and_acquisition FLOAT NULL,
+    earnings_from_equity_interest FLOAT NULL,
+    gain_on_sale_of_security FLOAT NULL,
+    other_operating_expenses FLOAT NULL,
+    CONSTRAINT income_stmt_pkey PRIMARY KEY (ticker, report_date, frequency)
 );
