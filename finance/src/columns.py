@@ -210,5 +210,5 @@ INCOME_STMT_COLUMNS = [
     "gross_profit",
     "cost_of_revenue",
     "total_revenue",
-    "operating_revenue"
+    "operating_revenue",
 ]

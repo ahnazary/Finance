@@ -332,9 +332,13 @@ class Ticker:
             i.replace(" ", "_").lower() for i in list(income_stmt_df.columns)
         ]
 
-        # if a column does not exist in the stocks.cash_flow table, drop it from the df
-        for column in [i.replace(" ", "_")for i in list(income_stmt_df.columns)]:
+        missed_columns = []
+
+        # if a column does not exist in the stocks.income_stmt table, drop it from the df
+        for column in [i.replace(" ", "_") for i in list(income_stmt_df.columns)]:
             if column not in INCOME_STMT_COLUMNS:
+                self.logger.warning(f"Column {column} not in income stmt columns")
+                missed_columns.append(column)
                 income_stmt_df.drop(columns=column, inplace=True)
         # if a column does not exist in the df, It will be added with null values
         for column in INCOME_STMT_COLUMNS:
