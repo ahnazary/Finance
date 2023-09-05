@@ -1,0 +1,35 @@
+name: quarterly income_stmt
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    environment: prod
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r finance/requirements.txt
+
+    - name: Run finance/schedule_jobs/quarterly_income_sttm.py
+      run: |
+        # set secrets as environment variables  
+        export PROVIDER=${{ secrets.PROVIDER }}
+        export NEON_POSTGRES_DB=${{ secrets.NEON_POSTGRES_DB }}
+        export NEON_POSTGRES_USER=${{ secrets.NEON_POSTGRES_USER }}
+        export NEON_POSTGRES_PASSWORD=${{ secrets.NEON_POSTGRES_PASSWORD }}
+        export NEON_POSTGRES_HOST=${{ secrets.NEON_POSTGRES_HOST }}
+        export NEON_POSTGRES_PORT=${{ secrets.NEON_POSTGRES_PORT }}
+        echo "running quarterly_income_sttm.py"
+        python finance/schedule_jobs/quarterly_income_sttm.py
