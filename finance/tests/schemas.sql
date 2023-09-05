@@ -250,5 +250,16 @@ CREATE TABLE stocks.income_stmt (
     earnings_from_equity_interest FLOAT NULL,
     gain_on_sale_of_security FLOAT NULL,
     other_operating_expenses FLOAT NULL,
+    restructuring_and_mergern_acquisition  FLOAT NULL,
+    average_dilution_earnings  FLOAT NULL,
+    preferred_stock_dividends  FLOAT NULL,
+    net_income_discontinuous_operations  FLOAT NULL,
+    impairment_of_capital_assets  FLOAT NULL,
+    depreciation_amortization_depletion_income_statement  FLOAT NULL,
+    depreciation_and_amortization_in_income_statement  FLOAT NULL,
+    otherunder_preferred_stock_dividend  FLOAT NULL,
+    selling_and_marketing_expense  FLOAT NULL,
+    general_and_administrative_expense  FLOAT NULL,
     CONSTRAINT income_stmt_pkey PRIMARY KEY (ticker, report_date, frequency)
 );
+
