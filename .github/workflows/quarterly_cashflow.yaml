@@ -1,4 +1,4 @@
-name: Fill cash flow table with quarterly data  
+name: quarterly cashflow
 
 on:
   workflow_dispatch:
