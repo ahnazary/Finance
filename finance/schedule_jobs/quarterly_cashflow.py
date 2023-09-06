@@ -2,16 +2,19 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from dotenv import load_dotenv
 from src.extract import Ticker
 from src.schedule_jobs import ScheduleJobs
 
+import config
+
 load_dotenv()
 
 provider = os.environ.get("PROVIDER")
 
-schedule_jobs = ScheduleJobs(provider=provider, batch_size=300)
+schedule_jobs = ScheduleJobs(provider=provider, batch_size=config.BATCH_SIZE)
 
 # getting a list[str] of old tickers with batch_size
 tickers_list = schedule_jobs.get_tickers_batch_backfill(
