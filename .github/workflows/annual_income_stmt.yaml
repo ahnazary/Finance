@@ -1,4 +1,4 @@
-name: quarterly income_stmt
+name: annual income_stmt
 
 on:
   workflow_dispatch:
