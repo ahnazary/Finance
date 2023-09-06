@@ -295,9 +295,9 @@ class Ticker:
             f"Data flushed with {len(records)} records inserted into {table_name}"
         )
 
-    def update_income_stmt(self, ticker: yf.Ticker):
+    def update_table(self, ticker: yf.Ticker, table_name: str, table_columns: list):
         """
-        Method to update the income_stmt table in postgres based on the tickers provided
+        Method to update a table in postgres based on the tickers provided
 
         Parameters
         ----------
@@ -309,47 +309,45 @@ class Ticker:
         None
         """
 
-        self.logger.warning(f"Updating income stmt for {ticker}")
+        self.logger.warning(f"Updating {table_name} for {ticker}")
         try:
-            income_stmt_df = (
+            df = (
                 ticker.income_stmt.T
                 if self.frequency == "annual"
                 else ticker.quarterly_income_stmt.T
             )
-            income_stmt_df["ticker"] = ticker.ticker
-            income_stmt_df["currency_code"] = ticker.info["currency"]
-            income_stmt_df["insert_date"] = func.current_date()
-            income_stmt_df["frequency"] = self.frequency
-            income_stmt_df.reset_index(inplace=True)
-            income_stmt_df.rename(columns={"index": "report_date"}, inplace=True)
+            df["ticker"] = ticker.ticker
+            df["currency_code"] = ticker.info["currency"]
+            df["insert_date"] = func.current_date()
+            df["frequency"] = self.frequency
+            df.reset_index(inplace=True)
+            df.rename(columns={"index": "report_date"}, inplace=True)
             self.logger.warning(f"Data extracted for {ticker}")
         except:
-            self.logger.warning(f"Ticker {ticker} has no income stmt")
+            self.logger.warning(f"Ticker {ticker} has no {table_name} data")
             return
 
         # make column names all lower case and replace spaces with underscores
-        income_stmt_df.columns = [
-            i.replace(" ", "_").lower() for i in list(income_stmt_df.columns)
-        ]
+        df.columns = [i.replace(" ", "_").lower() for i in list(df.columns)]
 
         missed_columns = []
 
-        # if a column does not exist in the stocks.income_stmt table, drop it from the df
-        for column in [i.replace(" ", "_") for i in list(income_stmt_df.columns)]:
-            if column not in INCOME_STMT_COLUMNS:
-                self.logger.warning(f"Column {column} not in income stmt columns")
+        # if a column does not exist in the stocks.table_name table, drop it from the df
+        for column in [i.replace(" ", "_") for i in list(df.columns)]:
+            if column not in table_columns:
+                self.logger.warning(f"Column {column} not in {table_name} columns")
                 missed_columns.append(column)
-                income_stmt_df.drop(columns=column, inplace=True)
+                df.drop(columns=column, inplace=True)
         # if a column does not exist in the df, It will be added with null values
-        for column in INCOME_STMT_COLUMNS:
-            if column not in income_stmt_df.columns:
-                income_stmt_df[column] = None
+        for column in table_columns:
+            if column not in df.columns:
+                df[column] = None
 
         # convert pd.dataframe to list of tuples
-        income_stmt_list = income_stmt_df.to_dict("records")
+        result = df.to_dict("records")
 
-        self.logger.warning(f"Data transformed for {ticker} income stmt")
-        return income_stmt_list
+        self.logger.warning(f"Data transformed for {ticker} {table_name}")
+        return result
 
     def update_balance_sheet(self):
         valid_tickers = self.load_valid_tickers(sink_table="balance_sheet")

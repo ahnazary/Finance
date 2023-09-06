@@ -5,6 +5,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from dotenv import load_dotenv
+from src import columns
 from src.extract import Ticker
 from src.schedule_jobs import ScheduleJobs
 
@@ -28,7 +29,11 @@ ticker_interface = Ticker(provider=provider, frequency="annual")
 
 records = []
 for ticker_yf_obj in tickers_yf_batch:
-    record = ticker_interface.update_income_stmt(ticker=ticker_yf_obj)
+    record = ticker_interface.update_table(
+        ticker=ticker_yf_obj,
+        table_name="income_stmt",
+        table_columns=columns.INCOME_STMT_COLUMNS,
+    )
     if not record:
         continue
     records.append(record)
