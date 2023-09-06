@@ -260,6 +260,13 @@ CREATE TABLE stocks.income_stmt (
     otherunder_preferred_stock_dividend  FLOAT NULL,
     selling_and_marketing_expense  FLOAT NULL,
     general_and_administrative_expense  FLOAT NULL,
+    other_special_charges FLOAT NULL,
+    write_off FLOAT NULL,
+    total_other_finance_cost FLOAT NULL,
+    amortization FLOAT NULL,
+    amortization_of_intangibles_income_statement FLOAT NULL,
+    other_gand_a FLOAT NULL,
+    salaries_and_wages FLOAT NULL,
+    excise_taxes FLOAT NULL,
     CONSTRAINT income_stmt_pkey PRIMARY KEY (ticker, report_date, frequency)
 );
-

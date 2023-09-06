@@ -234,4 +234,12 @@ INCOME_STMT_COLUMNS = [
     "otherunder_preferred_stock_dividend",
     "selling_and_marketing_expense",
     "general_and_administrative_expense",
+    "other_special_charges",
+    "write_off",
+    "total_other_finance_cost",
+    "amortization",
+    "amortization_of_intangibles_income_statement",
+    "other_gand_a",
+    "salaries_and_wages",
+    "excise_taxes",
 ]
