@@ -48,7 +48,7 @@
 <li><a class="reference internal" href="#module-finance.src.extract">finance.src.extract module</a><ul>
 <li><a class="reference internal" href="#finance.src.extract.Ticker"><code class="docutils literal notranslate"><span class="pre">Ticker</span></code></a><ul>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.flush_records"><code class="docutils literal notranslate"><span class="pre">Ticker.flush_records()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.get_tickers_property"><code class="docutils literal notranslate"><span class="pre">Ticker.get_tickers_property()</span></code></a></li>
+<li><a class="reference internal" href="#finance.src.extract.Ticker.get_data_df"><code class="docutils literal notranslate"><span class="pre">Ticker.get_data_df()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.load_valid_tickers"><code class="docutils literal notranslate"><span class="pre">Ticker.load_valid_tickers()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_balance_sheet"><code class="docutils literal notranslate"><span class="pre">Ticker.update_balance_sheet()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_cash_flow"><code class="docutils literal notranslate"><span class="pre">Ticker.update_cash_flow()</span></code></a></li>
@@ -125,9 +125,24 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.get_tickers_property">
-<span class="sig-name descname"><span class="pre">get_tickers_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.get_tickers_property"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.get_tickers_property" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="finance.src.extract.Ticker.get_data_df">
+<span class="sig-name descname"><span class="pre">get_data_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ticker</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.get_data_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.get_data_df" title="Permalink to this definition"></a></dt>
 <dd><p>Method that returns a df based on the name of the table and frequency</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> (<em>str</em>) – The name of the table that is going to be filled</p></li>
+<li><p><strong>frequency</strong> (<em>str</em>) – The frequency of the data to be extracted
+Either annual or quarterly</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dataframe with the data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
