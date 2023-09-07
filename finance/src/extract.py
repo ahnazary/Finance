@@ -295,11 +295,35 @@ class Ticker:
             f"Data flushed with {len(records)} records inserted into {table_name}"
         )
 
-    def get_tickers_property(self, table_name: str, frequency: str):
+    def get_data_df(self, table_name: str, frequency: str, ticker: yf.Ticker):
         """
         Method that returns a df based on the name of the table and frequency
+
+        Parameters
+        ----------
+        table_name: str
+            The name of the table that is going to be filled
+        frequency: str
+            The frequency of the data to be extracted
+            Either annual or quarterly
+
+        Returns
+        -------
+        pd.DataFrame
+            The dataframe with the data
         """
-        
+        property_dict = {
+            ("income_stmt", "annual"): "income_stmt",
+            ("income_stmt", "quarterly"): "quarterly_income_stmt",
+            ("balance_sheet", "annual"): "balance_sheet",
+            ("balance_sheet", "quarterly"): "quarterly_balance_sheet",
+            ("cash_flow", "annual"): "cash_flow",
+            ("cash_flow", "quarterly"): "quarterly_cash_flow",
+        }
+
+        property = property_dict[(table_name, frequency)]
+        df = getattr(ticker, property).T
+        return df
 
     def update_table(self, ticker: yf.Ticker, table_name: str, table_columns: list):
         """
@@ -317,10 +341,8 @@ class Ticker:
 
         self.logger.warning(f"Updating {table_name} for {ticker}")
         try:
-            df = (
-                ticker.income_stmt.T
-                if self.frequency == "annual"
-                else ticker.quarterly_income_stmt.T
+            df = self.get_data_df(
+                table_name=table_name, frequency=self.frequency, ticker=ticker
             )
             df["ticker"] = ticker.ticker
             df["currency_code"] = ticker.info["currency"]
