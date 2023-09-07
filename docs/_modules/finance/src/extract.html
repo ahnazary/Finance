@@ -363,6 +363,12 @@
             <span class="sa">f</span><span class="s2">&quot;Data flushed with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">)</span><span class="si">}</span><span class="s2"> records inserted into </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
+<div class="viewcode-block" id="Ticker.get_tickers_property"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.get_tickers_property">[docs]</a>    <span class="k">def</span> <span class="nf">get_tickers_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frequency</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method that returns a df based on the name of the table and frequency</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+        
+
 <div class="viewcode-block" id="Ticker.update_table"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_table">[docs]</a>    <span class="k">def</span> <span class="nf">update_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to update a table in postgres based on the tickers provided</span>
