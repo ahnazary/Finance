@@ -295,6 +295,12 @@ class Ticker:
             f"Data flushed with {len(records)} records inserted into {table_name}"
         )
 
+    def get_tickers_property(self, table_name: str, frequency: str):
+        """
+        Method that returns a df based on the name of the table and frequency
+        """
+        
+
     def update_table(self, ticker: yf.Ticker, table_name: str, table_columns: list):
         """
         Method to update a table in postgres based on the tickers provided
