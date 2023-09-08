@@ -32,7 +32,7 @@ for ticker_yf_obj in tickers_yf_batch:
     record = ticker_interface.update_table(
         ticker=ticker_yf_obj,
         table_name="balance_sheet",
-        table_columns=columns.INCOME_STMT_COLUMNS,
+        table_columns=columns.BALANCE_SHEET_COLUMNS,
     )
     if not record:
         continue

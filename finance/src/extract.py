@@ -357,7 +357,7 @@ class Ticker:
 
         # make column names all lower case and replace spaces with underscores
         df.columns = [i.replace(" ", "_").lower() for i in list(df.columns)]
-
+        
         missed_columns = []
 
         # if a column does not exist in the stocks.table_name table, drop it from the df
