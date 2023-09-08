@@ -376,37 +376,3 @@ class Ticker:
 
         self.logger.warning(f"Data transformed for {ticker} {table_name}")
         return result
-
-    def update_balance_sheet(self):
-        valid_tickers = self.load_valid_tickers(sink_table="balance_sheet")
-
-        for ticker in valid_tickers:
-            self.logger.warning(f"Updating balance sheet for {ticker}")
-
-            ticker = yf.Ticker(ticker)
-            try:
-                balance_sheet_df = ticker.balance_sheet.T
-                balance_sheet_df["ticker"] = ticker.ticker
-                balance_sheet_df["currency_code"] = ticker.info["currency"]
-                balance_sheet_df["frequency"] = self.frequency
-                balance_sheet_df.reset_index(inplace=True)
-                balance_sheet_df.rename(columns={"index": "report_date"}, inplace=True)
-            except:
-                self.logger.warning(f"Ticker {ticker} has no balance sheet")
-                continue
-
-            # if a column does not exist in the stocks.balance_sheet table, drop it from the df
-            for column in balance_sheet_df.columns:
-                if column not in BALANCE_SHEET_COLUMNS:
-                    balance_sheet_df.drop(column, axis=1, inplace=True)
-
-            # TODO: df.to_sql does not support on conflict do nothing. replace with a stored procedure
-            # insert the data into the database
-            balance_sheet_df.to_sql(
-                name="balance_sheet",
-                con=self.engine,
-                if_exists="append",
-                schema="stocks",
-                index=False,
-                method="multi",
-            )
