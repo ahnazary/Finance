@@ -443,41 +443,7 @@
         <span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data transformed for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span></div>
-
-<div class="viewcode-block" id="Ticker.update_balance_sheet"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_balance_sheet">[docs]</a>    <span class="k">def</span> <span class="nf">update_balance_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">valid_tickers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_valid_tickers</span><span class="p">(</span><span class="n">sink_table</span><span class="o">=</span><span class="s2">&quot;balance_sheet&quot;</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">valid_tickers</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating balance sheet for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="n">ticker</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">ticker</span><span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">balance_sheet_df</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">balance_sheet</span><span class="o">.</span><span class="n">T</span>
-                <span class="n">balance_sheet_df</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span>
-                <span class="n">balance_sheet_df</span><span class="p">[</span><span class="s2">&quot;currency_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;currency&quot;</span><span class="p">]</span>
-                <span class="n">balance_sheet_df</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span>
-                <span class="n">balance_sheet_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="n">balance_sheet_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;report_date&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ticker </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has no balance sheet&quot;</span><span class="p">)</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># if a column does not exist in the stocks.balance_sheet table, drop it from the df</span>
-            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">balance_sheet_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">BALANCE_SHEET_COLUMNS</span><span class="p">:</span>
-                    <span class="n">balance_sheet_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-            <span class="c1"># TODO: df.to_sql does not support on conflict do nothing. replace with a stored procedure</span>
-            <span class="c1"># insert the data into the database</span>
-            <span class="n">balance_sheet_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;balance_sheet&quot;</span><span class="p">,</span>
-                <span class="n">con</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span>
-                <span class="n">if_exists</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
-                <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;stocks&quot;</span><span class="p">,</span>
-                <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">method</span><span class="o">=</span><span class="s2">&quot;multi&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">result</span></div></div>
 </pre></div>
 
            </div>
