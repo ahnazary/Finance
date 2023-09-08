@@ -109,10 +109,10 @@ CASH_FLOW_COLUMNS = [
 
 BALANCE_SHEET_COLUMNS = [
     "ticker",
-    "insert_date" ,
-    "report_date" ,
-    "currency_code" ,
-    "frequency" ,
+    "insert_date",
+    "report_date",
+    "currency_code",
+    "frequency",
     "ordinary_shares_number",
     "share_issued",
     "net_debt",
