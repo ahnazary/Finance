@@ -376,3 +376,14 @@ class Ticker:
 
         self.logger.warning(f"Data transformed for {ticker} {table_name}")
         return result
+
+    def get_columns_names(self, table_name: str):
+        """
+        Method that returns the columns names of a table
+        """
+
+        table = self.postgres_interface.create_table_object(
+            table_name=table_name, engine=self.engine
+        )
+        columns = [column.name for column in table.columns]
+        return columns
