@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>finance package &mdash; Finance  documentation</title>
+  <title>finance package &mdash; finance  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Finance
+            finance
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -46,6 +46,7 @@
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#finance-main-module">finance.main module</a></li>
+<li><a class="reference internal" href="#finance-schedule-entry-module">finance.schedule_entry module</a></li>
 <li><a class="reference internal" href="#module-finance">Module contents</a></li>
 </ul>
 </li>
@@ -57,7 +58,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Finance</a>
+          <a href="index.html">finance</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -83,7 +84,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="finance.src.html">finance.src package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="finance.src.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="finance.src.html#finance-src-columns-module">finance.src.columns module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finance.src.html#module-finance.src.constants">finance.src.constants module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="finance.src.html#module-finance.src.extract">finance.src.extract module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="finance.src.html#finance.src.extract.Ticker"><code class="docutils literal notranslate"><span class="pre">Ticker</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.extract.Ticker.flush_records"><code class="docutils literal notranslate"><span class="pre">Ticker.flush_records()</span></code></a></li>
@@ -98,13 +99,22 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="finance.src.html#finance-src-extract-data-module">finance.src.extract_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finance.src.html#finance-src-file-generator-module">finance.src.file_generator module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="finance.src.html#module-finance.src.postgres_interface">finance.src.postgres_interface module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="finance.src.html#finance.src.postgres_interface.PostgresInterface"><code class="docutils literal notranslate"><span class="pre">PostgresInterface</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.postgres_interface.PostgresInterface.create_engine"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.create_engine()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.postgres_interface.PostgresInterface.create_table_object"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.create_table_object()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.postgres_interface.PostgresInterface.insert_batch"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.insert_batch()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.postgres_interface.PostgresInterface.migrate_local_to_neon"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.migrate_local_to_neon()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="finance.src.html#module-finance.src.schedule_jobs">finance.src.schedule_jobs module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="finance.src.html#finance.src.schedule_jobs.ScheduleJobs"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_backfill"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch_backfill()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_yf_object"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch_yf_object()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -118,6 +128,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="finance.tests.html">finance.tests package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="finance.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="finance.tests.html#finance-tests-conftest-module">finance.tests.conftest module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="finance.tests.html#finance-tests-test-utils-module">finance.tests.test_utils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="finance.tests.html#module-finance.tests">Module contents</a></li>
 </ul>
@@ -130,6 +141,9 @@
 </section>
 <section id="finance-main-module">
 <h2>finance.main module<a class="headerlink" href="#finance-main-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="finance-schedule-entry-module">
+<h2>finance.schedule_entry module<a class="headerlink" href="#finance-schedule-entry-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-finance">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-finance" title="Permalink to this heading"></a></h2>

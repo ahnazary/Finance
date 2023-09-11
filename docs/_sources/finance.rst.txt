@@ -21,6 +21,14 @@ finance.main module
    :undoc-members:
    :show-inheritance:
 
+finance.schedule\_entry module
+------------------------------
+
+.. automodule:: finance.schedule_entry
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

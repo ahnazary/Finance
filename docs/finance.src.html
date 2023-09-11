@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>finance.src package &mdash; Finance  documentation</title>
+  <title>finance.src package &mdash; finance  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -30,7 +30,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Finance
+            finance
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -44,7 +44,7 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">finance.src package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#finance-src-columns-module">finance.src.columns module</a></li>
+<li><a class="reference internal" href="#module-finance.src.constants">finance.src.constants module</a></li>
 <li><a class="reference internal" href="#module-finance.src.extract">finance.src.extract module</a><ul>
 <li><a class="reference internal" href="#finance.src.extract.Ticker"><code class="docutils literal notranslate"><span class="pre">Ticker</span></code></a><ul>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.flush_records"><code class="docutils literal notranslate"><span class="pre">Ticker.flush_records()</span></code></a></li>
@@ -59,13 +59,22 @@
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#finance-src-extract-data-module">finance.src.extract_data module</a></li>
+<li><a class="reference internal" href="#finance-src-file-generator-module">finance.src.file_generator module</a></li>
 <li><a class="reference internal" href="#module-finance.src.postgres_interface">finance.src.postgres_interface module</a><ul>
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface"><code class="docutils literal notranslate"><span class="pre">PostgresInterface</span></code></a><ul>
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.create_engine"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.create_engine()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.create_table_object"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.create_table_object()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.insert_batch"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.insert_batch()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.migrate_local_to_neon"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.migrate_local_to_neon()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-finance.src.schedule_jobs">finance.src.schedule_jobs module</a><ul>
+<li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs</span></code></a><ul>
+<li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch()</span></code></a></li>
+<li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_backfill"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch_backfill()</span></code></a></li>
+<li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_yf_object"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch_yf_object()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -85,7 +94,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Finance</a>
+          <a href="index.html">finance</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -108,8 +117,8 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
-<section id="finance-src-columns-module">
-<h2>finance.src.columns module<a class="headerlink" href="#finance-src-columns-module" title="Permalink to this heading"></a></h2>
+<section id="module-finance.src.constants">
+<span id="finance-src-constants-module"></span><h2>finance.src.constants module<a class="headerlink" href="#module-finance.src.constants" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-finance.src.extract">
 <span id="finance-src-extract-module"></span><h2>finance.src.extract module<a class="headerlink" href="#module-finance.src.extract" title="Permalink to this heading"></a></h2>
@@ -215,8 +224,8 @@ Gets all the tickers from the tickers_list table and checks if they are valid</p
 </dd></dl>
 
 </section>
-<section id="finance-src-extract-data-module">
-<h2>finance.src.extract_data module<a class="headerlink" href="#finance-src-extract-data-module" title="Permalink to this heading"></a></h2>
+<section id="finance-src-file-generator-module">
+<h2>finance.src.file_generator module<a class="headerlink" href="#finance-src-file-generator-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-finance.src.postgres_interface">
 <span id="finance-src-postgres-interface-module"></span><h2>finance.src.postgres_interface module<a class="headerlink" href="#module-finance.src.postgres_interface" title="Permalink to this heading"></a></h2>
@@ -278,6 +287,66 @@ default: stocks</p></li>
 <dt class="sig sig-object py" id="finance.src.postgres_interface.PostgresInterface.migrate_local_to_neon">
 <span class="sig-name descname"><span class="pre">migrate_local_to_neon</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface.migrate_local_to_neon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface.migrate_local_to_neon" title="Permalink to this definition"></a></dt>
 <dd><p>Method to migrate the local database to the neon database</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-finance.src.schedule_jobs">
+<span id="finance-src-schedule-jobs-module"></span><h2>finance.src.schedule_jobs module<a class="headerlink" href="#module-finance.src.schedule_jobs" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">finance.src.schedule_jobs.</span></span><span class="sig-name descname"><span class="pre">ScheduleJobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">500</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that schedules jobs in the CI/CD pipeline use to update the database</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch">
+<span class="sig-name descname"><span class="pre">get_tickers_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'annual'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.get_tickers_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch" title="Permalink to this definition"></a></dt>
+<dd><p>Method to get a batch of oldest tickers from a table that have not #
+been updated for a while</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> (<em>str</em>) – name of the table to get the tickers from</p></li>
+<li><p><strong>engine</strong> (<em>sqlalchemy.engine.Engine</em>) – engine to connect to the database, defines if it is local or neon</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_backfill">
+<span class="sig-name descname"><span class="pre">get_tickers_batch_backfill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'annual'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.get_tickers_batch_backfill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_backfill" title="Permalink to this definition"></a></dt>
+<dd><p>TODO: make this docs better</p>
+<p>Method to get a batch of tickers from valid_tickers table that have not
+been been inserted into other main tables (financials, balance_sheet,
+cash_flow, etc.)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> (<em>str</em>) – name of the table to get the tickers from</p></li>
+<li><p><strong>engine</strong> (<em>sqlalchemy.engine.Engine</em>) – engine to connect to the database, defines if it is local or neon</p></li>
+<li><p><strong>frequency</strong> (<em>str</em>) – frequency of the data (either annual or quarterly)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of tickers</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_yf_object">
+<span class="sig-name descname"><span class="pre">get_tickers_batch_yf_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tickers_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">yfinance.ticker.Ticker</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.get_tickers_batch_yf_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_yf_object" title="Permalink to this definition"></a></dt>
+<dd><p>Method to get a batch of yfinance tickers from a list of tickers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tickers</strong> (<em>list</em>) – list of tickers to get the yfinance tickers from</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
