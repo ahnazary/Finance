@@ -303,7 +303,7 @@ class Ticker:
             self.logger.warning(f"Data extracted for {ticker}")
         except:
             self.logger.warning(f"Ticker {ticker} has no {table_name} data")
-            return
+            return None
 
         # make column names all lower case and replace spaces with underscores
         df.columns = [i.replace(" ", "_").lower() for i in list(df.columns)]
