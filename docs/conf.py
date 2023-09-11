@@ -9,11 +9,12 @@
 import os
 import sys
 
-sys.path.append(os.path.abspath(".."))
-sys.path.append(os.path.abspath("../finance"))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../finance")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
-project = "Finance"
+
+project = "finance"
 copyright = "2023, Amir Nazary"
 author = "Amir Nazary"
 
