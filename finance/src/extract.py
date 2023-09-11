@@ -8,7 +8,6 @@ import yfinance as yf
 from sqlalchemy import MetaData, Table, func, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import null
-from src.columns import BALANCE_SHEET_COLUMNS, CASH_FLOW_COLUMNS, INCOME_STMT_COLUMNS
 from src.postgres_interface import PostgresInterface
 
 
