@@ -220,7 +220,31 @@ class Ticker:
 
         return valid_tickers
 
-    
+    def flush_records(self, table_name: str, records: list):
+        """
+        Method to flush records from a table
+        """
+        table = self.postgres_interface.create_table_object(
+            table_name=table_name, engine=self.engine, schema=self.schema
+        )
+        with self.engine.connect() as conn:
+            # insert the data into the database on conflict update
+            conn.execute(
+                insert(table)
+                .values(records)
+                .on_conflict_do_update(
+                    index_elements=["ticker", "report_date", "frequency"],
+                    set_={
+                        "insert_date": func.current_date(),
+                    },
+                )
+            )
+            conn.commit()
+
+        self.logger.warning(
+            f"Data flushed with {len(records)} records inserted into {table_name}"
+        )
+
     def get_data_df(self, table_name: str, frequency: str, ticker: yf.Ticker):
         """
         Method that returns a df based on the name of the table and frequency
