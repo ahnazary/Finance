@@ -5,7 +5,7 @@ from typing import List, Literal, Union
 
 import pandas as pd
 import yfinance as yf
-from sqlalchemy import MetaData, Table, func, select, update
+from sqlalchemy import MetaData, Table, func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import null
 from src.postgres_interface import PostgresInterface
@@ -220,80 +220,7 @@ class Ticker:
 
         return valid_tickers
 
-    def update_cash_flow(self, ticker: yf.Ticker):
-        """
-        Method to update the cash flow table in postgres based on the tickers provided
-
-        Parameters
-        ----------
-        engine: sqlalchemy.engine.Engine
-            The engine to connect to the database
-        tickers: List[str]
-            The list of tickers to update
-
-        Returns
-        -------
-        None
-        """
-
-        self.logger.warning(f"Updating cash flow for {ticker}")
-        try:
-            cash_flow_df = (
-                ticker.cashflow.T
-                if self.frequency == "annual"
-                else ticker.quarterly_cashflow.T
-            )
-            cash_flow_df["ticker"] = ticker.ticker
-            cash_flow_df["currency_code"] = ticker.info["currency"]
-            cash_flow_df["insert_date"] = func.current_date()
-            cash_flow_df["frequency"] = self.frequency
-            cash_flow_df.reset_index(inplace=True)
-            cash_flow_df.rename(columns={"index": "report_date"}, inplace=True)
-            self.logger.warning(f"Data extracted for {ticker}")
-        except:
-            self.logger.warning(f"Ticker {ticker} has no cash flow")
-            return
-
-        # if a column does not exist in the stocks.cash_flow table, drop it from the df
-        for column in cash_flow_df.columns:
-            if column not in CASH_FLOW_COLUMNS:
-                cash_flow_df.drop(columns=column, inplace=True)
-        # if a column does not exist in the df, It will be added with null values
-        for column in CASH_FLOW_COLUMNS:
-            if column not in cash_flow_df.columns:
-                cash_flow_df[column] = None
-
-        # convert pd.dataframe to list of tuples
-        cash_flow_list = cash_flow_df.to_dict("records")
-
-        self.logger.warning(f"Data transformed for {ticker} cash flow")
-        return cash_flow_list
-
-    def flush_records(self, table_name: str, records: list):
-        """
-        Method to flush records from a table
-        """
-        table = self.postgres_interface.create_table_object(
-            table_name=table_name, engine=self.engine, schema=self.schema
-        )
-        with self.engine.connect() as conn:
-            # insert the data into the database on conflict update
-            conn.execute(
-                insert(table)
-                .values(records)
-                .on_conflict_do_update(
-                    index_elements=["ticker", "report_date", "frequency"],
-                    set_={
-                        "insert_date": func.current_date(),
-                    },
-                )
-            )
-            conn.commit()
-
-        self.logger.warning(
-            f"Data flushed with {len(records)} records inserted into {table_name}"
-        )
-
+    
     def get_data_df(self, table_name: str, frequency: str, ticker: yf.Ticker):
         """
         Method that returns a df based on the name of the table and frequency
