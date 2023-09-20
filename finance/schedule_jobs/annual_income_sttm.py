@@ -14,18 +14,19 @@ load_dotenv()
 
 provider = os.environ.get("PROVIDER")
 table_name = "income_stmt"
+frequency = "annual"
 
 schedule_jobs = ScheduleJobs(provider=provider, batch_size=config.BATCH_SIZE)
 
 # getting a list[str] of old tickers with batch_size
 tickers_list = schedule_jobs.get_tickers_batch_backfill(
-    table_name=table_name, engine=schedule_jobs.engine, frequency="annual"
+    table_name=table_name, engine=schedule_jobs.engine, frequency=frequency
 )
 
 # getting a list[yf.Ticker] of old tickers with batch_size
 tickers_yf_batch = schedule_jobs.get_tickers_batch_yf_object(tickers_list=tickers_list)
 
-ticker_interface = Ticker(provider=provider, frequency="annual")
+ticker_interface = Ticker(provider=provider, frequency=frequency)
 
 table_columns = ticker_interface.get_columns_names(table_name=table_name)
 
