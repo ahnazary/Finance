@@ -1,11 +1,17 @@
+import os
+import sys
 from logging import getLogger
+
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+)
 
 import sqlalchemy
 import yfinance as yf
 from sqlalchemy import asc, func, select
-from src.constants import CURRENCIES
-from src.extract import Ticker
 from src.postgres_interface import PostgresInterface
+
+from config import CURRENCIES
 
 
 class ScheduleJobs:
