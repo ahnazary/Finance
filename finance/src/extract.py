@@ -224,6 +224,8 @@ class Ticker:
         """
         Method to flush records from a table
         """
+        if not records:
+            return
         table = self.postgres_interface.create_table_object(
             table_name=table_name, engine=self.engine, schema=self.schema
         )
