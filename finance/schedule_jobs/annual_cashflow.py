@@ -13,7 +13,7 @@ import config
 load_dotenv()
 
 provider = os.environ.get("PROVIDER")
-table_name = "cash_flow"
+table_name = "cashflow"
 frequency = "quarterly"
 
 schedule_jobs = ScheduleJobs(provider=provider, batch_size=config.BATCH_SIZE)
