@@ -291,5 +291,18 @@ CREATE TABLE stocks.financials (
     cost_of_revenue float NULL,
     total_revenue float NULL,
     operating_revenue float NULL,
+    total_unusual_items float NULL,
+    total_unusual_items_excluding_goodwill float NULL,
+    average_dilution_earnings float NULL,
+    preferred_stock_dividends float NULL,
+    minority_interests float NULL,
+    net_income_discontinuous_operations float NULL,
+    special_income_charges float NULL,
+    gain_on_sale_of_ppe float NULL,
+    write_off float NULL,
+    impairment_of_capital_assets float NULL,
+    earnings_from_equity_interest float NULL,
+    depreciation_amortization_depletion_income_statement float NULL,
+    depreciation_and_amortization_in_income_statement float NULL,
     CONSTRAINT financials_pkey PRIMARY KEY (ticker, report_date, frequency)
 );
