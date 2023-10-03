@@ -26,7 +26,7 @@ def test_tables_exist(setup_tables, test_engine):
                 "tickers_list",
                 "valid_tickers",
                 "financials",
-                "cash_flow",
+                "cashflow",
                 "balance_sheet",
             ]
         ]
