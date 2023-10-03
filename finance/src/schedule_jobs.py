@@ -85,7 +85,7 @@ class ScheduleJobs:
 
         Method to get a batch of tickers from valid_tickers table that have not
         been been inserted into other main tables (financials, balance_sheet,
-        cash_flow, etc.)
+        cashflow, etc.)
 
 
         Parameters

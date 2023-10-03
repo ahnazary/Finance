@@ -269,8 +269,8 @@ class Ticker:
             ("income_stmt", "quarterly"): "quarterly_income_stmt",
             ("balance_sheet", "annual"): "balance_sheet",
             ("balance_sheet", "quarterly"): "quarterly_balance_sheet",
-            ("cash_flow", "annual"): "cash_flow",
-            ("cash_flow", "quarterly"): "quarterly_cash_flow",
+            ("cashflow", "annual"): "cashflow",
+            ("cashflow", "quarterly"): "quarterly_cashflow",
         }
 
         property = property_dict[(table_name, frequency)]
