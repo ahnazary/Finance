@@ -76,10 +76,9 @@
 
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
 <span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">CURRENCIES</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">asc</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span>
 <span class="kn">from</span> <span class="nn">src.postgres_interface</span> <span class="kn">import</span> <span class="n">PostgresInterface</span>
-
-<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">CURRENCIES</span>
 
 
 <div class="viewcode-block" id="ScheduleJobs"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs">[docs]</a><span class="k">class</span> <span class="nc">ScheduleJobs</span><span class="p">:</span>
