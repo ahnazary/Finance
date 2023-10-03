@@ -8,9 +8,10 @@ sys.path.insert(
 
 import sqlalchemy
 import yfinance as yf
-from config import CURRENCIES
 from sqlalchemy import asc, func, select
 from src.postgres_interface import PostgresInterface
+
+from config import CURRENCIES
 
 
 class ScheduleJobs:
