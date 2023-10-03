@@ -24,7 +24,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r finance/requirements.txt
 
-    - name: Run finance/schedule_jobs/quarterly_cashflow.py
+    - name: Run finance/schedule_jobs/quarterly_financials.py
       run: |
         # set secrets as environment variables
         export PROVIDER=${{ secrets.PROVIDER }}
@@ -33,5 +33,5 @@ jobs:
         export NEON_POSTGRES_PASSWORD=${{ secrets.NEON_POSTGRES_PASSWORD }}
         export NEON_POSTGRES_HOST=${{ secrets.NEON_POSTGRES_HOST }}
         export NEON_POSTGRES_PORT=${{ secrets.NEON_POSTGRES_PORT }}
-        echo "Running quarterly_cashflow.py"
+        echo "Running quarterly_financials.py"
         python finance/schedule_jobs/annual_financials.py
