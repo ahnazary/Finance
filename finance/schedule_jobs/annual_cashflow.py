@@ -14,7 +14,7 @@ load_dotenv()
 
 provider = os.environ.get("PROVIDER")
 table_name = "cashflow"
-frequency = "quarterly"
+frequency = "annual"
 
 schedule_jobs = ScheduleJobs(provider=provider, batch_size=config.BATCH_SIZE)
 
