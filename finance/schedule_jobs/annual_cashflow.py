@@ -19,7 +19,7 @@ provider = os.environ.get("PROVIDER")
 table_name = "cashflow"
 frequency = "annual"
 
-schedule_jobs = ScheduleJobs(provider=provider, batch_size=1)
+schedule_jobs = ScheduleJobs(provider=provider, batch_size=50)
 
 # getting a list[str] of old tickers with batch_size
 tickers_list = schedule_jobs.get_tickers_batch_backfill(
