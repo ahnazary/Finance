@@ -42,13 +42,14 @@ for ticker_yf_obj in tickers_yf_batch:
         table_name=table_name,
         table_columns=table_columns,
     )
-    records.append(record)
-    logger.info(
-        f"record: {record} has been added to records, records length: {len(records)}"
-    )
+    if record is not None:
+        records.append(record)
+        logger.warning(
+            f"record: {record} has been added to records, records length: {len(records)}"
+        )
 
 
 # convert list[list[dict]] to list[dict]
-flattened_records = [d for sublist in records for d in sublist if sublist]
+flattened_records = [item for sublist in records for item in sublist]
 
 ticker_interface.flush_records(table_name=table_name, records=flattened_records)
