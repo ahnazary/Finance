@@ -16,11 +16,11 @@ logger = getLogger(__name__)
 
 load_dotenv()
 
-provider = "NEON"
+provider = os.getenv("PROVIDER")
 table_name = "cashflow"
 frequency = "annual"
 
-schedule_jobs = ScheduleJobs(provider=provider, batch_size=50)
+schedule_jobs = ScheduleJobs(provider=provider, batch_size=config.BATCH_SIZE)
 
 # getting a list[str] of old tickers with batch_size
 tickers_list = schedule_jobs.get_tickers_batch_backfill(
