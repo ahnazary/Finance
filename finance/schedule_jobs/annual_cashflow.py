@@ -7,8 +7,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 from dotenv import load_dotenv
 from src.extract import Ticker
 from src.schedule_jobs import ScheduleJobs
+from logging import getLogger
 
 import config
+
+logger = getLogger(__name__)
 
 load_dotenv()
 
@@ -16,7 +19,7 @@ provider = os.environ.get("PROVIDER")
 table_name = "cashflow"
 frequency = "annual"
 
-schedule_jobs = ScheduleJobs(provider=provider, batch_size=config.BATCH_SIZE)
+schedule_jobs = ScheduleJobs(provider=provider, batch_size=1)
 
 # getting a list[str] of old tickers with batch_size
 tickers_list = schedule_jobs.get_tickers_batch_backfill(
@@ -39,6 +42,7 @@ for ticker_yf_obj in tickers_yf_batch:
         table_columns=table_columns,
     )
     records.append(record)
+    logger.info(f"record: {record} has been added to records, records length: {len(records)}")
 
 
 # convert list[list[dict]] to list[dict]
