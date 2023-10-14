@@ -38,8 +38,6 @@ for ticker_yf_obj in tickers_yf_batch:
         table_name=table_name,
         table_columns=table_columns,
     )
-    if not record:
-        continue
     records.append(record)
 
 
