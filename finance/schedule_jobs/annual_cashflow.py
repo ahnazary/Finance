@@ -4,10 +4,11 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
+from logging import getLogger
+
 from dotenv import load_dotenv
 from src.extract import Ticker
 from src.schedule_jobs import ScheduleJobs
-from logging import getLogger
 
 import config
 
@@ -15,7 +16,7 @@ logger = getLogger(__name__)
 
 load_dotenv()
 
-provider = os.environ.get("PROVIDER")
+provider = "NEON"
 table_name = "cashflow"
 frequency = "annual"
 
@@ -42,7 +43,9 @@ for ticker_yf_obj in tickers_yf_batch:
         table_columns=table_columns,
     )
     records.append(record)
-    logger.info(f"record: {record} has been added to records, records length: {len(records)}")
+    logger.info(
+        f"record: {record} has been added to records, records length: {len(records)}"
+    )
 
 
 # convert list[list[dict]] to list[dict]

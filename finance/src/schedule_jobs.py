@@ -107,11 +107,26 @@ class ScheduleJobs:
             "valid_tickers", engine
         )
         table = self.postgres_interface.create_table_object(table_name, engine)
-        query = select(valid_tickers_table.c.ticker).where(
-            valid_tickers_table.c.ticker.notin_(
-                select(table.c.ticker).where(table.c.frequency == frequency)
-            )
+        # get only tickers where validity column is True
+        query = (
+            select(valid_tickers_table.c.ticker)
+            .where(valid_tickers_table.c.ticker.notin_(select(table.c.ticker)))
+            .where(valid_tickers_table.c.currency_code.in_(CURRENCIES))
+            .where(valid_tickers_table.c.validity == True)
         )
+
+        if query is None:
+            # sort table by insert_date and get the oldest tickers by batch_size
+            query = (
+                select(
+                    table.c.ticker,
+                    func.max(table.c.insert_date).label("latest_insert_date"),
+                )
+                .where(table.c.currency_code.in_(CURRENCIES))
+                .where(table.c.frequency == frequency)
+                .group_by(table.c.ticker)
+                .order_by(asc("latest_insert_date"))
+            )
 
         with engine.connect() as conn:
             result = conn.execute(query).fetchmany(self.batch_size)
