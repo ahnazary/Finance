@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 from dotenv import load_dotenv
 from src.extract import Ticker
 from src.schedule_jobs import ScheduleJobs
+from src.utils import custom_logger
 
 import config
 
@@ -15,6 +16,7 @@ load_dotenv()
 provider = os.environ.get("PROVIDER")
 table_name = "financials"
 frequency = "quarterly"
+logger = custom_logger(logger_name=table_name, log_level=config.LOG_LEVEL)
 
 schedule_jobs = ScheduleJobs(provider=provider, batch_size=config.BATCH_SIZE)
 
@@ -38,9 +40,11 @@ for ticker_yf_obj in tickers_yf_batch:
         table_name=table_name,
         table_columns=table_columns,
     )
-    if not record:
-        continue
-    records.append(record)
+    if record is not None:
+        records.append(record)
+        logger.warning(
+            f"record: {record} has been added to records, records length: {len(records)}"
+        )
 
 
 # convert list[list[dict]] to list[dict]

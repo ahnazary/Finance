@@ -9,6 +9,7 @@ from logging import getLogger
 from dotenv import load_dotenv
 from src.extract import Ticker
 from src.schedule_jobs import ScheduleJobs
+from src.utils import custom_logger
 
 import config
 
@@ -19,6 +20,7 @@ load_dotenv()
 provider = os.getenv("PROVIDER")
 table_name = "cashflow"
 frequency = "annual"
+logger = custom_logger(logger_name=table_name, log_level=config.LOG_LEVEL)
 
 schedule_jobs = ScheduleJobs(provider=provider, batch_size=config.BATCH_SIZE)
 
