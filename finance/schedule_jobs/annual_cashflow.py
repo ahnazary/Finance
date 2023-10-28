@@ -12,8 +12,6 @@ from src.utils import custom_logger
 
 import config
 
-logger = custom_logger(logger_name="cashflow")
-
 load_dotenv()
 
 provider = os.getenv("PROVIDER")
