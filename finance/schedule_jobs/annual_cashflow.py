@@ -4,7 +4,6 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from logging import getLogger
 
 from dotenv import load_dotenv
 from src.extract import Ticker
@@ -13,7 +12,7 @@ from src.utils import custom_logger
 
 import config
 
-logger = getLogger(__name__)
+logger = custom_logger(logger_name="cashflow")
 
 load_dotenv()
 

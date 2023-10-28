@@ -1,6 +1,5 @@
 """ Module to extract data from the yahoo finance API and load it into the database """
 
-from utils import custom_logger
 from typing import List, Literal, Union
 
 import pandas as pd
@@ -9,6 +8,7 @@ from sqlalchemy import MetaData, Table, func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import null
 from src.postgres_interface import PostgresInterface
+from utils import custom_logger
 
 
 class Ticker:

@@ -1,17 +1,17 @@
 import os
-from logging import getLogger
 from typing import Literal
 
 import sqlalchemy
 from dotenv import load_dotenv
 from sqlalchemy import MetaData, Table, select
 from sqlalchemy.dialects.postgresql import insert
+from src.utils import custom_logger
 
 
 class PostgresInterface:
     def __init__(self):
         load_dotenv()
-        self.logger = getLogger(__name__)
+        self.logger = custom_logger(logger_name="postgres_interface")
 
     def create_engine(
         self, provider: Literal["LOCAL", "NEON"] = "LOCAL"
