@@ -8,7 +8,7 @@ from sqlalchemy import MetaData, Table, func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.sql import null
 from src.postgres_interface import PostgresInterface
-from utils import custom_logger
+from src.utils import custom_logger
 
 
 class Ticker:

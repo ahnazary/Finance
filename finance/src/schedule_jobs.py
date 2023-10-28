@@ -1,8 +1,6 @@
 import os
 import sys
 
-from utils import custom_logger
-
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 )
@@ -11,6 +9,7 @@ import sqlalchemy
 import yfinance as yf
 from sqlalchemy import asc, func, select
 from src.postgres_interface import PostgresInterface
+from src.utils import custom_logger
 
 from config import CURRENCIES
 
