@@ -1,6 +1,6 @@
 """ Module to extract data from the yahoo finance API and load it into the database """
 
-from logging import getLogger
+from utils import custom_logger
 from typing import List, Literal, Union
 
 import pandas as pd
@@ -20,7 +20,7 @@ class Ticker:
         schema: str = "stocks",
         provider: Literal["LOCAL", "NEON"] = "LOCAL",
     ):
-        self.logger = getLogger(__name__)
+        self.logger = custom_logger(logger_name="ticker")
         self.countries = countries
         self.chunksize = chunksize
         self.frequency = frequency
