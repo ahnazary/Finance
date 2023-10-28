@@ -1,6 +1,6 @@
 import os
 import sys
-from logging import getLogger
+from utils import custom_logger
 
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
@@ -31,7 +31,7 @@ class ScheduleJobs:
             default: 500
         """
 
-        self.logger = getLogger(__name__)
+        self.logger = custom_logger(logger_name="schedule_jobs")
         self.postgres_interface = PostgresInterface()
         self.batch_size = batch_size
         self.provider = provider
