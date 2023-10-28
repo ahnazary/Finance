@@ -5,7 +5,9 @@
 
 # Finance
 
-![Finance github project chart](docs/Finance github project chart.jpeg)
+<img src="docs/Finance github project chart.jpeg" alt="drawing" width="800" height="470" align="middle" style="middle"/>
+
+<br />
 
 For more detailes about the project, please refer to the [documentation](https://ahnazary.github.io/Finance/).
 
