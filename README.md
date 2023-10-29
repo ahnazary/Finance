@@ -17,7 +17,9 @@ This project is meant to scrape stocks financial data from yahoo finance for a w
 
 ## What problem does it solve?
 
-
-- Yahoo finance only provides last 4 quarters or years of financial data for a company. This project solves this problem by scraping the data from yahoo finance every quarter, storing all old records in a database as well as the new ones. therefore, the database contains all the financial data for a company since the scraping started, having more that last 4 quarters or years of data.
-- Yahoo finance does not provide a way to download all the financial data for a wide range of companies at once. This project solves this problem by scraping the data from yahoo finance and storing them in a postgres database. Access to data is quick through SQL queries.
-- Yahoo finance does not provide a way to filter companies based on their financial data. This project solves this by enabling SQL queries to filter companies based on their financial data.
+### Access to More Data:
+    Yahoo finance only provides last 4 quarters or years of financial data for a company. This project solves this problem by scraping the data from yahoo finance every quarter, storing all old records in a database as well as the new ones. therefore, the database contains all the financial data for a company since the scraping started, having more that last 4 quarters or years of data.
+### Easy Access to Data via SQL Queries:
+    Yahoo finance does not provide a way to download all the financial data for a wide range of companies at once. This project solves this problem by scraping the data from yahoo finance and storing them in a postgres database. Access to data is quick through SQL queries.
+### Ability to Filter Companies Based on Their Financial Data:
+    Yahoo finance does not provide a way to filter companies based on their financial data. This project solves this by enabling SQL queries to filter companies based on their financial data.
