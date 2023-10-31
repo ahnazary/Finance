@@ -29,13 +29,5 @@ def custom_logger(logger_name: str, log_level: int = logging.WARNING):
         logging.Logger: A custom logger.
     """
     logger = logging.getLogger(logger_name)
-    logger.setLevel(log_level)
-
-    formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
-
-    file_handler = logging.FileHandler(f"{logger_name}.log")
-    file_handler.setFormatter(formatter)
-
-    logger.addHandler(file_handler)
 
     return logger
