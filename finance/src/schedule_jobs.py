@@ -107,12 +107,15 @@ class ScheduleJobs:
             "valid_tickers", engine
         )
         table = self.postgres_interface.create_table_object(table_name, engine)
-        # get only tickers where validity column is True
+        # this is the column that will be used to check if the ticker is available
+        available_column = getattr(
+            valid_tickers_table.c, f"{table_name}_{frequency}_available"
+        )
         query = (
             select(valid_tickers_table.c.ticker)
             .where(valid_tickers_table.c.ticker.notin_(select(table.c.ticker)))
             .where(valid_tickers_table.c.currency_code.in_(CURRENCIES))
-            .where(valid_tickers_table.c.validity == True)
+            .where(available_column == True)
         )
 
         if query is None:
@@ -132,6 +135,27 @@ class ScheduleJobs:
             result = conn.execute(query).fetchmany(self.batch_size)
 
         return [result[0] for result in result]
+
+    def update_validy_in_valid_tickers_table(
+        self, ticker: list, validity: bool = False
+    ):
+        """
+        Method that gets a list of tickers and updates their validity in the
+        valid_tickers table
+        """
+
+        valid_tickers_table = self.postgres_interface.create_table_object(
+            "valid_tickers", self.engine
+        )
+
+        query = (
+            valid_tickers_table.update()
+            .where(valid_tickers_table.c.ticker.in_(ticker))
+            .values(validity=validity)
+        )
+
+        with self.engine.connect() as conn:
+            conn.execute(query)
 
     def get_tickers_batch_yf_object(self, tickers_list: list) -> list[yf.Ticker]:
         """

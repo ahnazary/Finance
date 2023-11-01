@@ -307,6 +307,12 @@ class Ticker:
             self.logger.warning(f"Data extracted for {ticker}")
         except:
             self.logger.warning(f"Ticker {ticker} has no {table_name} data")
+            self.update_validity_status(
+                ticker=ticker,
+                table_name=table_name,
+                validity=False,
+            )
+            self.logger.warning(f"Validity status updated for {ticker}")
             return None
 
         # make column names all lower case and replace spaces with underscores
@@ -341,3 +347,45 @@ class Ticker:
         )
         columns = [column.name for column in table.columns]
         return columns
+
+    def update_validity_status(
+        self, table_name: str, ticker: yf.Ticker, validity: bool = False
+    ):
+        """
+        Method That gets a ticker and updates the validity status of the ticker
+        for a specific criteria (e.g. balance_sheet_annual_availabile) in the
+        valid_tickers table, e.g. if the ticker has not balance sheet data for
+        the quarterly frequency, the balance_sheet_quarterly_available column
+        in the valid_tickers table will be updated to False
+
+        Parameters
+        ----------
+        table_name: str
+            The name of the table which the ticker was supposed to be updated
+        ticker: yf.Ticker
+            The ticker or stock to update
+        validity: bool
+            The validity status of the ticker for the specific criteria
+            default: False
+
+        Returns
+        -------
+        None
+        """
+
+        # get the table object
+        valid_tickers = Table(
+            "valid_tickers",
+            MetaData(),
+            autoload_with=self.engine,
+            schema=self.schema,
+        )
+
+        # update the validity status
+        with self.engine.connect() as conn:
+            conn.execute(
+                valid_tickers.update()
+                .where(valid_tickers.c.ticker == ticker.ticker)
+                .values({f"{table_name}_{self.frequency}_available": validity})
+            )
+            conn.commit()
