@@ -175,12 +175,15 @@
             <span class="s2">&quot;valid_tickers&quot;</span><span class="p">,</span> <span class="n">engine</span>
         <span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_table_object</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
-        <span class="c1"># get only tickers where validity column is True</span>
+        <span class="c1"># this is the column that will be used to check if the ticker is available</span>
+        <span class="n">available_column</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+            <span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">frequency</span><span class="si">}</span><span class="s2">_available&quot;</span>
+        <span class="p">)</span>
         <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">select</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
             <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">notin_</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)))</span>
             <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">currency_code</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">CURRENCIES</span><span class="p">))</span>
-            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">validity</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">available_column</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -200,6 +203,27 @@
             <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchmany</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ScheduleJobs.update_validy_in_valid_tickers_table"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs.update_validy_in_valid_tickers_table">[docs]</a>    <span class="k">def</span> <span class="nf">update_validy_in_valid_tickers_table</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">validity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method that gets a list of tickers and updates their validity in the</span>
+<span class="sd">        valid_tickers table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">valid_tickers_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_table_object</span><span class="p">(</span>
+            <span class="s2">&quot;valid_tickers&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span>
+        <span class="p">)</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">ticker</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">validity</span><span class="o">=</span><span class="n">validity</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ScheduleJobs.get_tickers_batch_yf_object"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_yf_object">[docs]</a>    <span class="k">def</span> <span class="nf">get_tickers_batch_yf_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tickers_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

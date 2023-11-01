@@ -54,6 +54,7 @@
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_table()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_tickers_list_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_tickers_list_table()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_valid_tickers_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_valid_tickers_table()</span></code></a></li>
+<li><a class="reference internal" href="#finance.src.extract.Ticker.update_validity_status"><code class="docutils literal notranslate"><span class="pre">Ticker.update_validity_status()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -74,6 +75,7 @@
 <li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_backfill"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch_backfill()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_yf_object"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch_yf_object()</span></code></a></li>
+<li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.update_validy_in_valid_tickers_table"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.update_validy_in_valid_tickers_table()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -204,6 +206,29 @@ Gets all the tickers from the tickers_list table and checks if they are valid</p
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="finance.src.extract.Ticker.update_validity_status">
+<span class="sig-name descname"><span class="pre">update_validity_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_validity_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_validity_status" title="Permalink to this definition"></a></dt>
+<dd><p>Method That gets a ticker and updates the validity status of the ticker
+for a specific criteria (e.g. balance_sheet_annual_availabile) in the
+valid_tickers table, e.g. if the ticker has not balance sheet data for
+the quarterly frequency, the balance_sheet_quarterly_available column
+in the valid_tickers table will be updated to False</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> (<em>str</em>) – The name of the table which the ticker was supposed to be updated</p></li>
+<li><p><strong>ticker</strong> (<em>yf.Ticker</em>) – The ticker or stock to update</p></li>
+<li><p><strong>validity</strong> (<em>bool</em>) – The validity status of the ticker for the specific criteria
+default: False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -330,6 +355,13 @@ cashflow, etc.)</p>
 <dd class="field-odd"><p><strong>tickers</strong> (<em>list</em>) – list of tickers to get the yfinance tickers from</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.update_validy_in_valid_tickers_table">
+<span class="sig-name descname"><span class="pre">update_validy_in_valid_tickers_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.update_validy_in_valid_tickers_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.update_validy_in_valid_tickers_table" title="Permalink to this definition"></a></dt>
+<dd><p>Method that gets a list of tickers and updates their validity in the
+valid_tickers table</p>
 </dd></dl>
 
 </dd></dl>
