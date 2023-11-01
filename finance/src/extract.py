@@ -312,7 +312,6 @@ class Ticker:
                 table_name=table_name,
                 validity=False,
             )
-            self.logger.warning(f"Validity status updated for {ticker}")
             return None
 
         # make column names all lower case and replace spaces with underscores
@@ -389,3 +388,6 @@ class Ticker:
                 .values({f"{table_name}_{self.frequency}_available": validity})
             )
             conn.commit()
+            self.logger.warning(
+                f"Updated validity status for {ticker} {table_name} to {validity}"
+            )
