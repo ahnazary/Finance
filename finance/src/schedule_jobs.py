@@ -1,3 +1,10 @@
+"""
+Module that schedules jobs in the CI/CD pipeline use to update the database
+
+This module contains Methods and classes that can be reused over all the
+different jobs in the CI/CD pipeline
+"""
+
 import os
 import sys
 
@@ -10,16 +17,24 @@ import yfinance as yf
 from sqlalchemy import asc, func, select
 from src.postgres_interface import PostgresInterface
 from src.utils import custom_logger
+from src.extract import Ticker
 
 from config import CURRENCIES
 
 
 class ScheduleJobs:
     """
-    Class that schedules jobs in the CI/CD pipeline use to update the database
+    Class that schedules jobs in the CI/CD pipeline use for updating the
+    database and extracting data from yfinance
     """
 
-    def __init__(self, provider: str, batch_size: int = 500):
+    def __init__(
+        self,
+        provider: str,
+        table_name: str,
+        frequency: str = "annual",
+        batch_size: int = 500,
+    ):
         """
         Parameters
         ----------
@@ -32,9 +47,12 @@ class ScheduleJobs:
         """
 
         self.logger = custom_logger(logger_name="schedule_jobs")
-        self.postgres_interface = PostgresInterface()
         self.batch_size = batch_size
         self.provider = provider
+        self.table_name = table_name
+        self.frequency = frequency
+
+        self.postgres_interface = PostgresInterface()
 
         # create engines to connect to the databases
         self.engine = self.postgres_interface.create_engine(provider=provider)
@@ -167,3 +185,64 @@ class ScheduleJobs:
             list of tickers to get the yfinance tickers from
         """
         return [yf.Ticker(ticker) for ticker in tickers_list]
+
+    def run_pipeline(self):
+        """
+        Main method that each of the jobs in the CI/CD pipeline will run
+        It includes steps like:
+            - getting a batch of tickers to update from valid_tickers table
+            - extracting data from yfinance for each ticker
+            - inserting the data into the database
+            - updating the validity of the tickers in valid_tickers table
+        """
+        self.logger.info(
+            f"""Running pipeline for {self.table_name} with {self.provider} 
+            provider and {self.frequency} frequency"""
+        )
+
+        # getting a list[str] of old tickers with batch_size
+        tickers_list = self.get_tickers_batch_backfill(
+            table_name=self.table_name, engine=self.engine, frequency=self.frequency
+        )
+        tickers_list = [x for x in tickers_list if x is not None]
+
+        # getting a list[yf.Ticker] of old tickers with batch_size
+        tickers_yf_batch = self.get_tickers_batch_yf_object(tickers_list=tickers_list)
+
+        ticker_interface = Ticker(provider=self.provider, frequency=self.frequency)
+
+        table_columns = ticker_interface.get_columns_names(table_name=self.table_name)
+
+        records = []
+        invalid_tickers = []
+        for ticker_yf_obj in tickers_yf_batch:
+            record = ticker_interface.update_table(
+                ticker=ticker_yf_obj,
+                table_name=self.table_name,
+                table_columns=table_columns,
+            )
+            if record is not None:
+                records.append(record)
+                self.logger.warning(
+                    f"record: {record} has been added to records, records length: {len(records)}"
+                )
+            else:
+                invalid_tickers.append(ticker_yf_obj.ticker)
+                self.logger.warning(
+                    f"ticker: {ticker_yf_obj.ticker} has been added to invalid_tickers, invalid_tickers length: {len(invalid_tickers)}"
+                )
+
+        # Update availability status in valid_tickers table
+        ticker_interface.update_validity_status(
+            table_name=self.table_name,
+            tickers=invalid_tickers,
+            availability=False,
+        )
+
+        # convert list[list[dict]] to list[dict]
+        flattened_records = [item for sublist in records for item in sublist]
+
+        # flush records to database all at once
+        ticker_interface.flush_records(
+            table_name=self.table_name, records=flattened_records
+        )
