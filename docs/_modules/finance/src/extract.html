@@ -374,7 +374,9 @@
             <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;report_date&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data extracted for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ticker </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has no </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> data, returning None&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Ticker </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has no </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> data, returning None&quot;</span>
+            <span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="c1"># make column names all lower case and replace spaces with underscores</span>
@@ -411,7 +413,7 @@
         <span class="k">return</span> <span class="n">columns</span></div>
 
 <div class="viewcode-block" id="Ticker.update_validity_status"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_validity_status">[docs]</a>    <span class="k">def</span> <span class="nf">update_validity_status</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tickers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">],</span> <span class="n">validity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tickers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">],</span> <span class="n">availability</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method That gets a list of tickers and updates the validity status of the tickers</span>
@@ -448,7 +450,7 @@
             <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">in_</span><span class="p">([</span><span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span> <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">tickers</span><span class="p">]))</span>
             <span class="o">.</span><span class="n">values</span><span class="p">(</span>
                 <span class="p">{</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="si">}</span><span class="s2">_available&quot;</span><span class="p">:</span> <span class="n">validity</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="si">}</span><span class="s2">_available&quot;</span><span class="p">:</span> <span class="n">availability</span><span class="p">,</span>
                 <span class="p">}</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -458,7 +460,7 @@
             <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Validity status updated to </span><span class="si">{</span><span class="n">validity</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tickers</span><span class="p">)</span><span class="si">}</span><span class="s2"> tickers&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Validity status updated to </span><span class="si">{</span><span class="n">availability</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tickers</span><span class="p">)</span><span class="si">}</span><span class="s2"> tickers&quot;</span>
         <span class="p">)</span></div></div>
 </pre></div>
 
