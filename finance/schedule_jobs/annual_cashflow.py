@@ -6,7 +6,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 
 from dotenv import load_dotenv
-from src.extract import Ticker
 from src.schedule_jobs import ScheduleJobs
 from src.utils import custom_logger
 
