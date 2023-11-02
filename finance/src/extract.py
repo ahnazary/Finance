@@ -306,12 +306,7 @@ class Ticker:
             df.rename(columns={"index": "report_date"}, inplace=True)
             self.logger.warning(f"Data extracted for {ticker}")
         except:
-            self.logger.warning(f"Ticker {ticker} has no {table_name} data")
-            self.update_validity_status(
-                ticker=ticker,
-                table_name=table_name,
-                validity=False,
-            )
+            self.logger.warning(f"Ticker {ticker} has no {table_name} data, returning None")
             return None
 
         # make column names all lower case and replace spaces with underscores
