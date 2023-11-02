@@ -345,7 +345,7 @@ class Ticker:
         return columns
 
     def update_validity_status(
-        self, table_name: str, tickers: list[yf.Ticker], availability: bool = False
+        self, table_name: str, tickers: list[str], availability: bool = False
     ):
         """
         Method That gets a list of tickers and updates the validity status of the tickers
@@ -358,7 +358,7 @@ class Ticker:
         ----------
         table_name: str
             The name of the table which the ticker was supposed to be updated
-        ticker: list[yf.Ticker]
+        ticker: list[str]
             The tickers that was supposed to be updated
         validity: bool
             The validity status of the ticker for the specific criteria
@@ -379,7 +379,7 @@ class Ticker:
         # update the validity status of all the tickers at once
         query = (
             valid_tickers.update()
-            .where(valid_tickers.c.ticker.in_([ticker.ticker for ticker in tickers]))
+            .where(valid_tickers.c.ticker.in_(tickers))
             .values(
                 {
                     f"{table_name}_{self.frequency}_available": availability,
