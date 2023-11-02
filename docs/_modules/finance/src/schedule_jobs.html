@@ -66,7 +66,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for finance.src.schedule_jobs</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module that schedules jobs in the CI/CD pipeline use to update the database</span>
+
+<span class="sd">This module contains Methods and classes that can be reused over all the</span>
+<span class="sd">different jobs in the CI/CD pipeline</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span>
@@ -78,16 +85,24 @@
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">asc</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span>
 <span class="kn">from</span> <span class="nn">src.postgres_interface</span> <span class="kn">import</span> <span class="n">PostgresInterface</span>
 <span class="kn">from</span> <span class="nn">src.utils</span> <span class="kn">import</span> <span class="n">custom_logger</span>
+<span class="kn">from</span> <span class="nn">src.extract</span> <span class="kn">import</span> <span class="n">Ticker</span>
 
 <span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">CURRENCIES</span>
 
 
 <div class="viewcode-block" id="ScheduleJobs"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs">[docs]</a><span class="k">class</span> <span class="nc">ScheduleJobs</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class that schedules jobs in the CI/CD pipeline use to update the database</span>
+<span class="sd">    Class that schedules jobs in the CI/CD pipeline use for updating the</span>
+<span class="sd">    database and extracting data from yfinance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">provider</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">provider</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">frequency</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;annual&quot;</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -100,9 +115,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">custom_logger</span><span class="p">(</span><span class="n">logger_name</span><span class="o">=</span><span class="s2">&quot;schedule_jobs&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span> <span class="o">=</span> <span class="n">PostgresInterface</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">provider</span> <span class="o">=</span> <span class="n">provider</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span> <span class="o">=</span> <span class="n">table_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="n">frequency</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span> <span class="o">=</span> <span class="n">PostgresInterface</span><span class="p">()</span>
 
         <span class="c1"># create engines to connect to the databases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="n">provider</span><span class="p">)</span>
@@ -234,7 +252,68 @@
 <span class="sd">        tickers : list</span>
 <span class="sd">            list of tickers to get the yfinance tickers from</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">ticker</span><span class="p">)</span> <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">tickers_list</span><span class="p">]</span></div></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">ticker</span><span class="p">)</span> <span class="k">for</span> <span class="n">ticker</span> <span class="ow">in</span> <span class="n">tickers_list</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ScheduleJobs.run_pipeline"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs.run_pipeline">[docs]</a>    <span class="k">def</span> <span class="nf">run_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Main method that each of the jobs in the CI/CD pipeline will run</span>
+<span class="sd">        It includes steps like:</span>
+<span class="sd">            - getting a batch of tickers to update from valid_tickers table</span>
+<span class="sd">            - extracting data from yfinance for each ticker</span>
+<span class="sd">            - inserting the data into the database</span>
+<span class="sd">            - updating the validity of the tickers in valid_tickers table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Running pipeline for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="si">}</span><span class="s2"> </span>
+<span class="s2">            provider and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="si">}</span><span class="s2"> frequency&quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># getting a list[str] of old tickers with batch_size</span>
+        <span class="n">tickers_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tickers_batch_backfill</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frequency</span>
+        <span class="p">)</span>
+        <span class="n">tickers_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tickers_list</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="c1"># getting a list[yf.Ticker] of old tickers with batch_size</span>
+        <span class="n">tickers_yf_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tickers_batch_yf_object</span><span class="p">(</span><span class="n">tickers_list</span><span class="o">=</span><span class="n">tickers_list</span><span class="p">)</span>
+
+        <span class="n">ticker_interface</span> <span class="o">=</span> <span class="n">Ticker</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="p">)</span>
+
+        <span class="n">table_columns</span> <span class="o">=</span> <span class="n">ticker_interface</span><span class="o">.</span><span class="n">get_columns_names</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">)</span>
+
+        <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">invalid_tickers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ticker_yf_obj</span> <span class="ow">in</span> <span class="n">tickers_yf_batch</span><span class="p">:</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="n">ticker_interface</span><span class="o">.</span><span class="n">update_table</span><span class="p">(</span>
+                <span class="n">ticker</span><span class="o">=</span><span class="n">ticker_yf_obj</span><span class="p">,</span>
+                <span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span>
+                <span class="n">table_columns</span><span class="o">=</span><span class="n">table_columns</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">record</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;record: </span><span class="si">{</span><span class="n">record</span><span class="si">}</span><span class="s2"> has been added to records, records length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">invalid_tickers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ticker_yf_obj</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;ticker: </span><span class="si">{</span><span class="n">ticker_yf_obj</span><span class="o">.</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has been added to invalid_tickers, invalid_tickers length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">invalid_tickers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Update availability status in valid_tickers table</span>
+        <span class="n">ticker_interface</span><span class="o">.</span><span class="n">update_validity_status</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span>
+            <span class="n">tickers</span><span class="o">=</span><span class="n">invalid_tickers</span><span class="p">,</span>
+            <span class="n">availability</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># convert list[list[dict]] to list[dict]</span>
+        <span class="n">flattened_records</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">records</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+
+        <span class="c1"># flush records to database all at once</span>
+        <span class="n">ticker_interface</span><span class="o">.</span><span class="n">flush_records</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span> <span class="n">records</span><span class="o">=</span><span class="n">flattened_records</span>
+        <span class="p">)</span></div></div>
 </pre></div>
 
            </div>
