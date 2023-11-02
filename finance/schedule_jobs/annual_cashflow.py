@@ -35,6 +35,7 @@ ticker_interface = Ticker(provider=provider, frequency=frequency)
 table_columns = ticker_interface.get_columns_names(table_name=table_name)
 
 records = []
+invalid_tickers = []
 for ticker_yf_obj in tickers_yf_batch:
     record = ticker_interface.update_table(
         ticker=ticker_yf_obj,
@@ -46,7 +47,18 @@ for ticker_yf_obj in tickers_yf_batch:
         logger.warning(
             f"record: {record} has been added to records, records length: {len(records)}"
         )
+    else:
+        invalid_tickers.append(ticker_yf_obj.ticker)
+        logger.warning(
+            f"ticker: {ticker_yf_obj.ticker} has been added to invalid_tickers, invalid_tickers length: {len(invalid_tickers)}"
+        )
 
+# Update availability status in valid_tickers table
+ticker_interface.update_validity_status(
+    table_name=table_name,
+    tickers=invalid_tickers,
+    validity_status=False,
+)
 
 # convert list[list[dict]] to list[dict]
 flattened_records = [item for sublist in records for item in sublist]
