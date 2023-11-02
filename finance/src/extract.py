@@ -348,10 +348,10 @@ class Ticker:
         return columns
 
     def update_validity_status(
-        self, table_name: str, ticker: yf.Ticker, validity: bool = False
+        self, table_name: str, tickers: list[yf.Ticker], validity: bool = False
     ):
         """
-        Method That gets a ticker and updates the validity status of the ticker
+        Method That gets a list of tickers and updates the validity status of the tickers
         for a specific criteria (e.g. balance_sheet_annual_availabile) in the
         valid_tickers table, e.g. if the ticker has not balance sheet data for
         the quarterly frequency, the balance_sheet_quarterly_available column
@@ -361,8 +361,8 @@ class Ticker:
         ----------
         table_name: str
             The name of the table which the ticker was supposed to be updated
-        ticker: yf.Ticker
-            The ticker or stock to update
+        ticker: list[yf.Ticker]
+            The tickers that was supposed to be updated
         validity: bool
             The validity status of the ticker for the specific criteria
             default: False
@@ -371,7 +371,6 @@ class Ticker:
         -------
         None
         """
-
         # get the table object
         valid_tickers = Table(
             "valid_tickers",
@@ -380,14 +379,21 @@ class Ticker:
             schema=self.schema,
         )
 
-        # update the validity status
+        # update the validity status of all the tickers at once
+        query = (
+            valid_tickers.update()
+            .where(valid_tickers.c.ticker.in_([ticker.ticker for ticker in tickers]))
+            .values(
+                {
+                    f"{table_name}_{self.frequency}_available": validity,
+                }
+            )
+        )
+
         with self.engine.connect() as conn:
-            conn.execute(
-                valid_tickers.update()
-                .where(valid_tickers.c.ticker == ticker.ticker)
-                .values({f"{table_name}_{self.frequency}_available": validity})
-            )
+            conn.execute(query)
             conn.commit()
-            self.logger.warning(
-                f"Updated validity status for {ticker} {table_name} to {validity}"
-            )
+
+        self.logger.warning(
+            f"Validity status updated to {validity} for {len(tickers)} tickers"
+        )
