@@ -57,7 +57,7 @@ for ticker_yf_obj in tickers_yf_batch:
 ticker_interface.update_validity_status(
     table_name=table_name,
     tickers=invalid_tickers,
-    validity_status=False,
+    availability=False,
 )
 
 # convert list[list[dict]] to list[dict]

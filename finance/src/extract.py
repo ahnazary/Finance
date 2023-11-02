@@ -306,7 +306,9 @@ class Ticker:
             df.rename(columns={"index": "report_date"}, inplace=True)
             self.logger.warning(f"Data extracted for {ticker}")
         except:
-            self.logger.warning(f"Ticker {ticker} has no {table_name} data, returning None")
+            self.logger.warning(
+                f"Ticker {ticker} has no {table_name} data, returning None"
+            )
             return None
 
         # make column names all lower case and replace spaces with underscores
@@ -343,7 +345,7 @@ class Ticker:
         return columns
 
     def update_validity_status(
-        self, table_name: str, tickers: list[yf.Ticker], validity: bool = False
+        self, table_name: str, tickers: list[yf.Ticker], availability: bool = False
     ):
         """
         Method That gets a list of tickers and updates the validity status of the tickers
@@ -380,7 +382,7 @@ class Ticker:
             .where(valid_tickers.c.ticker.in_([ticker.ticker for ticker in tickers]))
             .values(
                 {
-                    f"{table_name}_{self.frequency}_available": validity,
+                    f"{table_name}_{self.frequency}_available": availability,
                 }
             )
         )
@@ -390,5 +392,5 @@ class Ticker:
             conn.commit()
 
         self.logger.warning(
-            f"Validity status updated to {validity} for {len(tickers)} tickers"
+            f"Validity status updated to {availability} for {len(tickers)} tickers"
         )
