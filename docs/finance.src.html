@@ -208,8 +208,8 @@ Gets all the tickers from the tickers_list table and checks if they are valid</p
 
 <dl class="py method">
 <dt class="sig sig-object py" id="finance.src.extract.Ticker.update_validity_status">
-<span class="sig-name descname"><span class="pre">update_validity_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_validity_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_validity_status" title="Permalink to this definition"></a></dt>
-<dd><p>Method That gets a ticker and updates the validity status of the ticker
+<span class="sig-name descname"><span class="pre">update_validity_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tickers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">yfinance.ticker.Ticker</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_validity_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_validity_status" title="Permalink to this definition"></a></dt>
+<dd><p>Method That gets a list of tickers and updates the validity status of the tickers
 for a specific criteria (e.g. balance_sheet_annual_availabile) in the
 valid_tickers table, e.g. if the ticker has not balance sheet data for
 the quarterly frequency, the balance_sheet_quarterly_available column
@@ -218,7 +218,7 @@ in the valid_tickers table will be updated to False</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>table_name</strong> (<em>str</em>) – The name of the table which the ticker was supposed to be updated</p></li>
-<li><p><strong>ticker</strong> (<em>yf.Ticker</em>) – The ticker or stock to update</p></li>
+<li><p><strong>ticker</strong> (<em>list</em><em>[</em><em>yf.Ticker</em><em>]</em>) – The tickers that was supposed to be updated</p></li>
 <li><p><strong>validity</strong> (<em>bool</em>) – The validity status of the ticker for the specific criteria
 default: False</p></li>
 </ul>
