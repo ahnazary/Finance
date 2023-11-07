@@ -1,3 +1,10 @@
+"""
+Module to interact with postgres databases
+
+It contains generic methods to interact with postgres databases regardless of
+the data they contain
+"""
+
 import os
 from typing import Literal
 
@@ -9,6 +16,10 @@ from src.utils import custom_logger
 
 
 class PostgresInterface:
+    """
+    Class to interact with postgres databases
+    """
+
     def __init__(self):
         load_dotenv()
         self.logger = custom_logger(logger_name="postgres_interface")
