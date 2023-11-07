@@ -146,26 +146,12 @@ class ScheduleJobs:
             .where(table.c.frequency == frequency)
             .where(available_column == True)
             .group_by(table.c.ticker)
+            .order_by(asc("latest_insert_date"))
+            .limit(self.batch_size)
         )
 
         with engine.connect() as conn:
-            result = conn.execute(query).fetchmany(self.batch_size)
-
-        if len(result) == 0:
-            # sort table by insert_date and get the oldest tickers by batch_size
-            query = (
-                select(
-                    table.c.ticker,
-                    func.max(table.c.insert_date).label("latest_insert_date"),
-                )
-                .where(table.c.currency_code.in_(CURRENCIES))
-                .where(table.c.frequency == frequency)
-                .group_by(table.c.ticker)
-                .order_by(asc("latest_insert_date"))
-            )
-
-            with engine.connect() as conn:
-                result = conn.execute(query).fetchmany(self.batch_size)
+            result = conn.execute(query).fetchall()
 
         return [result[0] for result in result]
 
