@@ -49,6 +49,7 @@
 <li><a class="reference internal" href="#finance.src.extract.Ticker"><code class="docutils literal notranslate"><span class="pre">Ticker</span></code></a><ul>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.flush_records"><code class="docutils literal notranslate"><span class="pre">Ticker.flush_records()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.get_columns_names"><code class="docutils literal notranslate"><span class="pre">Ticker.get_columns_names()</span></code></a></li>
+<li><a class="reference internal" href="#finance.src.extract.Ticker.get_currency_code"><code class="docutils literal notranslate"><span class="pre">Ticker.get_currency_code()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.get_data_df"><code class="docutils literal notranslate"><span class="pre">Ticker.get_data_df()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.load_valid_tickers"><code class="docutils literal notranslate"><span class="pre">Ticker.load_valid_tickers()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_table()</span></code></a></li>
@@ -140,6 +141,24 @@
 <dt class="sig sig-object py" id="finance.src.extract.Ticker.get_columns_names">
 <span class="sig-name descname"><span class="pre">get_columns_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.get_columns_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.get_columns_names" title="Permalink to this definition"></a></dt>
 <dd><p>Method that returns the columns names of a table</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="finance.src.extract.Ticker.get_currency_code">
+<span class="sig-name descname"><span class="pre">get_currency_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.get_currency_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.get_currency_code" title="Permalink to this definition"></a></dt>
+<dd><p>Method that gets the currency code of a ticker from valid_tickers table
+in the database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ticker</strong> (<em>str</em>) – The ticker symbol</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The currency code of the ticker</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
