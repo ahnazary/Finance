@@ -14,12 +14,11 @@ sys.path.insert(
 
 import sqlalchemy
 import yfinance as yf
-from sqlalchemy import asc, func, select, distinct
+from config import CURRENCIES
+from sqlalchemy import asc, distinct, func, select
 from src.extract import Ticker
 from src.postgres_interface import PostgresInterface
 from src.utils import custom_logger
-
-from config import CURRENCIES
 
 
 class ScheduleJobs:
@@ -131,13 +130,17 @@ class ScheduleJobs:
             valid_tickers_table.c, f"{table_name}_{frequency}_available"
         )
         query = (
-            # join valid_tickers table with the table on ticker column and get only one row 
+            # join valid_tickers table with the table on ticker column and get only one row
             # from table with latest insert_date
             select(
                 distinct(table.c.ticker),
                 func.max(table.c.insert_date).label("latest_insert_date"),
             )
-            .select_from(table.join(valid_tickers_table, table.c.ticker == valid_tickers_table.c.ticker))
+            .select_from(
+                table.join(
+                    valid_tickers_table, table.c.ticker == valid_tickers_table.c.ticker
+                )
+            )
             .where(table.c.currency_code.in_(CURRENCIES))
             .where(table.c.frequency == frequency)
             .where(available_column == True)
