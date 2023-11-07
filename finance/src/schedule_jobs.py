@@ -14,7 +14,7 @@ sys.path.insert(
 
 import sqlalchemy
 import yfinance as yf
-from sqlalchemy import asc, func, select
+from sqlalchemy import asc, func, select, distinct
 from src.extract import Ticker
 from src.postgres_interface import PostgresInterface
 from src.utils import custom_logger
@@ -100,6 +100,7 @@ class ScheduleJobs:
     ) -> list:
         """
         TODO: make this docs better
+        TODO: make the query better
 
         Method to get a batch of tickers from valid_tickers table that have not
         been been inserted into other main tables (financials, balance_sheet,
@@ -130,13 +131,23 @@ class ScheduleJobs:
             valid_tickers_table.c, f"{table_name}_{frequency}_available"
         )
         query = (
-            select(valid_tickers_table.c.ticker)
-            .where(valid_tickers_table.c.ticker.notin_(select(table.c.ticker)))
-            .where(valid_tickers_table.c.currency_code.in_(CURRENCIES))
+            # join valid_tickers table with the table on ticker column and get only one row 
+            # from table with latest insert_date
+            select(
+                distinct(table.c.ticker),
+                func.max(table.c.insert_date).label("latest_insert_date"),
+            )
+            .select_from(table.join(valid_tickers_table, table.c.ticker == valid_tickers_table.c.ticker))
+            .where(table.c.currency_code.in_(CURRENCIES))
+            .where(table.c.frequency == frequency)
             .where(available_column == True)
+            .group_by(table.c.ticker)
         )
 
-        if query is None:
+        with engine.connect() as conn:
+            result = conn.execute(query).fetchmany(self.batch_size)
+
+        if len(result) == 0:
             # sort table by insert_date and get the oldest tickers by batch_size
             query = (
                 select(
@@ -149,8 +160,8 @@ class ScheduleJobs:
                 .order_by(asc("latest_insert_date"))
             )
 
-        with engine.connect() as conn:
-            result = conn.execute(query).fetchmany(self.batch_size)
+            with engine.connect() as conn:
+                result = conn.execute(query).fetchmany(self.batch_size)
 
         return [result[0] for result in result]
 
