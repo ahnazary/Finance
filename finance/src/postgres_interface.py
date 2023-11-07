@@ -74,9 +74,15 @@ class PostgresInterface:
         table = Table(table_name, metadata, autoload_with=engine, schema=schema)
         return table
 
-    def migrate_local_to_neon(self):
+    def migrate_local_to_cloud(self) -> None:
         """
         Method to migrate the local database to the neon database
+        Supposed to be used only once to migrate the data from the local
+        to a target neon database (for now NEON cloud database)
+
+        Returns
+        -------
+        None
         """
         engines = self.create_engine()
         engine_local = engines["local"]
@@ -118,7 +124,7 @@ class PostgresInterface:
 
     def insert_batch(
         self, table: sqlalchemy.Table, batch: list, conn: sqlalchemy.engine.Connection
-    ):
+    ) -> None:
         """
         Method to insert a batch of data into a table
 
@@ -128,6 +134,10 @@ class PostgresInterface:
             table to insert data into
         data : list
             list of tuples with the data to insert into the table
+
+        Returns
+        -------
+        None
         """
 
         # statement to insert data into neon database
