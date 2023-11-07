@@ -65,7 +65,7 @@
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.create_engine"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.create_engine()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.create_table_object"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.create_table_object()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.insert_batch"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.insert_batch()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.migrate_local_to_neon"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.migrate_local_to_neon()</span></code></a></li>
+<li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.migrate_local_to_cloud"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.migrate_local_to_cloud()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -238,10 +238,14 @@ default: False</p></li>
 </section>
 <section id="module-finance.src.postgres_interface">
 <span id="finance-src-postgres-interface-module"></span><h2>finance.src.postgres_interface module<a class="headerlink" href="#module-finance.src.postgres_interface" title="Permalink to this heading"></a></h2>
+<p>Module to interact with postgres databases</p>
+<p>It contains generic methods to interact with postgres databases regardless of
+the data they contain</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="finance.src.postgres_interface.PostgresInterface">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">finance.src.postgres_interface.</span></span><span class="sig-name descname"><span class="pre">PostgresInterface</span></span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to interact with postgres databases</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="finance.src.postgres_interface.PostgresInterface.create_engine">
 <span class="sig-name descname"><span class="pre">create_engine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'LOCAL'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'NEON'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'LOCAL'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Engine</span></span></span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface.create_engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface.create_engine" title="Permalink to this definition"></a></dt>
@@ -280,7 +284,7 @@ default: stocks</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="finance.src.postgres_interface.PostgresInterface.insert_batch">
-<span class="sig-name descname"><span class="pre">insert_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Connection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface.insert_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface.insert_batch" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">insert_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Connection</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface.insert_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface.insert_batch" title="Permalink to this definition"></a></dt>
 <dd><p>Method to insert a batch of data into a table</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -289,13 +293,23 @@ default: stocks</p></li>
 <li><p><strong>data</strong> (<em>list</em>) – list of tuples with the data to insert into the table</p></li>
 </ul>
 </dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="finance.src.postgres_interface.PostgresInterface.migrate_local_to_neon">
-<span class="sig-name descname"><span class="pre">migrate_local_to_neon</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface.migrate_local_to_neon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface.migrate_local_to_neon" title="Permalink to this definition"></a></dt>
-<dd><p>Method to migrate the local database to the neon database</p>
+<dt class="sig sig-object py" id="finance.src.postgres_interface.PostgresInterface.migrate_local_to_cloud">
+<span class="sig-name descname"><span class="pre">migrate_local_to_cloud</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface.migrate_local_to_cloud"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface.migrate_local_to_cloud" title="Permalink to this definition"></a></dt>
+<dd><p>Method to migrate the local database to the neon database
+Supposed to be used only once to migrate the data from the local
+to a target neon database (for now NEON cloud database)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

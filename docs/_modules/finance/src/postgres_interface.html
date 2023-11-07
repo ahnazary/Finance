@@ -66,7 +66,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for finance.src.postgres_interface</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module to interact with postgres databases</span>
+
+<span class="sd">It contains generic methods to interact with postgres databases regardless of</span>
+<span class="sd">the data they contain</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span>
 
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
@@ -77,6 +84,10 @@
 
 
 <div class="viewcode-block" id="PostgresInterface"><a class="viewcode-back" href="../../../finance.src.html#finance.src.postgres_interface.PostgresInterface">[docs]</a><span class="k">class</span> <span class="nc">PostgresInterface</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to interact with postgres databases</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">load_dotenv</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">custom_logger</span><span class="p">(</span><span class="n">logger_name</span><span class="o">=</span><span class="s2">&quot;postgres_interface&quot;</span><span class="p">)</span>
@@ -131,9 +142,15 @@
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">autoload_with</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">table</span></div>
 
-<div class="viewcode-block" id="PostgresInterface.migrate_local_to_neon"><a class="viewcode-back" href="../../../finance.src.html#finance.src.postgres_interface.PostgresInterface.migrate_local_to_neon">[docs]</a>    <span class="k">def</span> <span class="nf">migrate_local_to_neon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PostgresInterface.migrate_local_to_cloud"><a class="viewcode-back" href="../../../finance.src.html#finance.src.postgres_interface.PostgresInterface.migrate_local_to_cloud">[docs]</a>    <span class="k">def</span> <span class="nf">migrate_local_to_cloud</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to migrate the local database to the neon database</span>
+<span class="sd">        Supposed to be used only once to migrate the data from the local</span>
+<span class="sd">        to a target neon database (for now NEON cloud database)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">engines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
         <span class="n">engine_local</span> <span class="o">=</span> <span class="n">engines</span><span class="p">[</span><span class="s2">&quot;local&quot;</span><span class="p">]</span>
@@ -175,7 +192,7 @@
 
 <div class="viewcode-block" id="PostgresInterface.insert_batch"><a class="viewcode-back" href="../../../finance.src.html#finance.src.postgres_interface.PostgresInterface.insert_batch">[docs]</a>    <span class="k">def</span> <span class="nf">insert_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">conn</span><span class="p">:</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">Connection</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to insert a batch of data into a table</span>
 
@@ -185,6 +202,10 @@
 <span class="sd">            table to insert data into</span>
 <span class="sd">        data : list</span>
 <span class="sd">            list of tuples with the data to insert into the table</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># statement to insert data into neon database</span>
