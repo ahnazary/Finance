@@ -82,12 +82,11 @@
 
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
 <span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">asc</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">CURRENCIES</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">asc</span><span class="p">,</span> <span class="n">distinct</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span>
 <span class="kn">from</span> <span class="nn">src.extract</span> <span class="kn">import</span> <span class="n">Ticker</span>
 <span class="kn">from</span> <span class="nn">src.postgres_interface</span> <span class="kn">import</span> <span class="n">PostgresInterface</span>
 <span class="kn">from</span> <span class="nn">src.utils</span> <span class="kn">import</span> <span class="n">custom_logger</span>
-
-<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">CURRENCIES</span>
 
 
 <div class="viewcode-block" id="ScheduleJobs"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs">[docs]</a><span class="k">class</span> <span class="nc">ScheduleJobs</span><span class="p">:</span>
@@ -168,6 +167,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        TODO: make this docs better</span>
+<span class="sd">        TODO: make the query better</span>
 
 <span class="sd">        Method to get a batch of tickers from valid_tickers table that have not</span>
 <span class="sd">        been been inserted into other main tables (financials, balance_sheet,</span>
@@ -198,13 +198,27 @@
             <span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">frequency</span><span class="si">}</span><span class="s2">_available&quot;</span>
         <span class="p">)</span>
         <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">select</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">notin_</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)))</span>
-            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">currency_code</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">CURRENCIES</span><span class="p">))</span>
+            <span class="c1"># join valid_tickers table with the table on ticker column and get only one row</span>
+            <span class="c1"># from table with latest insert_date</span>
+            <span class="n">select</span><span class="p">(</span>
+                <span class="n">distinct</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">),</span>
+                <span class="n">func</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">insert_date</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;latest_insert_date&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">select_from</span><span class="p">(</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">valid_tickers_table</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span> <span class="o">==</span> <span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">currency_code</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">CURRENCIES</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">frequency</span> <span class="o">==</span> <span class="n">frequency</span><span class="p">)</span>
             <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">available_column</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchmany</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># sort table by insert_date and get the oldest tickers by batch_size</span>
             <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">select</span><span class="p">(</span>
@@ -217,8 +231,8 @@
                 <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">asc</span><span class="p">(</span><span class="s2">&quot;latest_insert_date&quot;</span><span class="p">))</span>
             <span class="p">)</span>
 
-        <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchmany</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchmany</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span></div>
 
