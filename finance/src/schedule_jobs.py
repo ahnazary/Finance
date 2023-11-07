@@ -14,11 +14,12 @@ sys.path.insert(
 
 import sqlalchemy
 import yfinance as yf
-from config import CURRENCIES
 from sqlalchemy import asc, distinct, func, select
 from src.extract import Ticker
 from src.postgres_interface import PostgresInterface
 from src.utils import custom_logger
+
+from config import CURRENCIES
 
 
 class ScheduleJobs:

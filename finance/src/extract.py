@@ -299,7 +299,7 @@ class Ticker:
                 table_name=table_name, frequency=self.frequency, ticker=ticker
             )
             df["ticker"] = ticker.ticker
-            df["currency_code"] = ticker.info["currency"]
+            df["currency_code"] = self.get_currency_code(ticker=ticker.ticker)
             df["insert_date"] = func.current_date()
             df["frequency"] = self.frequency
             df.reset_index(inplace=True)
@@ -394,3 +394,32 @@ class Ticker:
         self.logger.warning(
             f"Validity status updated to {availability} for {len(tickers)} tickers"
         )
+
+    def get_currency_code(self, ticker: str) -> str:
+        """
+        Method that gets the currency code of a ticker from valid_tickers table
+        in the database
+
+        Parameters
+        ----------
+        ticker: str
+            The ticker symbol
+
+        Returns
+        -------
+        str
+            The currency code of the ticker
+        """
+        table = Table(
+            "valid_tickers",
+            MetaData(),
+            autoload_with=self.engine,
+            schema=self.schema,
+        )
+
+        query = select(table.c.currency_code).where(table.c.ticker == ticker)
+
+        with self.engine.connect() as conn:
+            currency_code = conn.execute(query).fetchone()[0]
+
+        return currency_code
