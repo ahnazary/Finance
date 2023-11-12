@@ -312,6 +312,11 @@ class Ticker:
             df.reset_index(inplace=True)
             df.rename(columns={"index": "report_date"}, inplace=True)
             self.logger.warning(f"Data extracted for {ticker}")
+
+            # if df is empty, return None
+            if df.empty:
+                self.logger.warning(f"Data is empty for {ticker}, returning None")
+                return None
         except:
             self.logger.warning(
                 f"Ticker {ticker} has no {table_name} data, returning None"
