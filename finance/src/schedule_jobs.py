@@ -136,8 +136,9 @@ class ScheduleJobs:
         query = (
             select(valid_tickers_table.c.ticker)
             .where(valid_tickers_table.c.ticker.notin_(select(table.c.ticker)))
-            .where(valid_tickers_table.c.currency_code.in_(CURRENCIES))
-            # .where(available_column == True)
+            #.where(valid_tickers_table.c.currency_code.in_(CURRENCIES))
+            .where(available_column == True)
+            .limit(self.batch_size)
         )
 
         with engine.connect() as conn:
@@ -161,7 +162,7 @@ class ScheduleJobs:
                 .where(available_column == True)
                 .group_by(valid_tickers_table.c.ticker, table.c.insert_date)
                 .order_by(asc(table.c.insert_date))
-                # .limit(self.batch_size)
+                .limit(self.batch_size)
             )
 
             with engine.connect() as conn:
