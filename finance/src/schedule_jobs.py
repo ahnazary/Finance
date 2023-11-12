@@ -136,7 +136,7 @@ class ScheduleJobs:
         query = (
             select(valid_tickers_table.c.ticker)
             .where(valid_tickers_table.c.ticker.notin_(select(table.c.ticker)))
-            #.where(valid_tickers_table.c.currency_code.in_(CURRENCIES))
+            # .where(valid_tickers_table.c.currency_code.in_(CURRENCIES))
             .where(available_column == True)
             .limit(self.batch_size)
         )
