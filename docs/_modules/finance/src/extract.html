@@ -367,7 +367,14 @@
                 <span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="p">,</span> <span class="n">ticker</span><span class="o">=</span><span class="n">ticker</span>
             <span class="p">)</span>
             <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span>
-            <span class="n">df</span><span class="p">[</span><span class="s2">&quot;currency_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_currency_code</span><span class="p">(</span><span class="n">ticker</span><span class="o">=</span><span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
+
+            <span class="c1"># TODO: Since yfinance does not return and Ticker.info[&quot;currency&quot;] for the tickers,</span>
+            <span class="c1"># the currency_code column will be set to &quot;Unavailable&quot; for now if the currency is</span>
+            <span class="c1"># not available in the database</span>
+            <span class="c1"># Visit this issue for more details: https://github.com/ranaroussi/yfinance/issues/1729</span>
+            <span class="n">currency_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_currency_code</span><span class="p">(</span><span class="n">ticker</span><span class="o">=</span><span class="n">ticker</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s2">&quot;currency_code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">currency_code</span> <span class="k">if</span> <span class="n">currency_code</span> <span class="k">else</span> <span class="s2">&quot;Unavailable&quot;</span>
+
             <span class="n">df</span><span class="p">[</span><span class="s2">&quot;insert_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">current_date</span><span class="p">()</span>
             <span class="n">df</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span>
             <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
