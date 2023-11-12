@@ -299,7 +299,14 @@ class Ticker:
                 table_name=table_name, frequency=self.frequency, ticker=ticker
             )
             df["ticker"] = ticker.ticker
-            df["currency_code"] = self.get_currency_code(ticker=ticker.ticker)
+
+            # TODO: Since yfinance does not return and Ticker.info["currency"] for the tickers,
+            # the currency_code column will be set to "Unavailable" for now if the currency is
+            # not available in the database
+            # Visit this issue for more details: https://github.com/ranaroussi/yfinance/issues/1729
+            currency_code = self.get_currency_code(ticker=ticker.ticker)
+            df["currency_code"] = currency_code if currency_code else "Unavailable"
+
             df["insert_date"] = func.current_date()
             df["frequency"] = self.frequency
             df.reset_index(inplace=True)

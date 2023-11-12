@@ -130,28 +130,42 @@ class ScheduleJobs:
         available_column = getattr(
             valid_tickers_table.c, f"{table_name}_{frequency}_available"
         )
+
+        # get first batch size tickers that are in valid_tickers table and not
+        # in table
         query = (
-            # join valid_tickers table with the table on ticker column and get only one row
-            # from table with latest insert_date
-            select(
-                distinct(table.c.ticker),
-                func.max(table.c.insert_date).label("latest_insert_date"),
-            )
-            .select_from(
-                table.join(
-                    valid_tickers_table, table.c.ticker == valid_tickers_table.c.ticker
-                )
-            )
-            .where(table.c.currency_code.in_(CURRENCIES))
-            .where(table.c.frequency == frequency)
-            .where(available_column == True)
-            .group_by(table.c.ticker)
-            .order_by(asc("latest_insert_date"))
-            .limit(self.batch_size)
+            select(valid_tickers_table.c.ticker)
+            .where(valid_tickers_table.c.ticker.notin_(select(table.c.ticker)))
+            .where(valid_tickers_table.c.currency_code.in_(CURRENCIES))
+            # .where(available_column == True)
         )
 
         with engine.connect() as conn:
             result = conn.execute(query).fetchall()
+
+        if len(result) == 0:
+            query = (
+                # join valid_tickers table with the table on ticker column and get only one row
+                # from table with latest insert_date
+                select(
+                    valid_tickers_table.c.ticker,
+                )
+                .select_from(
+                    table.join(
+                        valid_tickers_table,
+                        table.c.ticker == valid_tickers_table.c.ticker,
+                        isouter=True,
+                    )
+                )
+                .where(table.c.currency_code.in_(CURRENCIES))
+                .where(available_column == True)
+                .group_by(valid_tickers_table.c.ticker, table.c.insert_date)
+                .order_by(asc(table.c.insert_date))
+                # .limit(self.batch_size)
+            )
+
+            with engine.connect() as conn:
+                result = conn.execute(query).fetchall()
 
         return [result[0] for result in result]
 
