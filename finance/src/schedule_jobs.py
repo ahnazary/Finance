@@ -263,7 +263,7 @@ class ScheduleJobs:
             self.logger.info(
                 f"Inserting records from {i} to {i+FLUSH_SIZE} into {self.table_name} table"
             )
-            self.postgres_interface.flush_records(
+            ticker_interface.flush_records(
                 table_name=self.table_name,
                 records=flattened_records[i : i + FLUSH_SIZE],
             )
