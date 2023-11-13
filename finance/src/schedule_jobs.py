@@ -19,7 +19,7 @@ from src.extract import Ticker
 from src.postgres_interface import PostgresInterface
 from src.utils import custom_logger
 
-from config import CURRENCIES
+from config import CURRENCIES, FLUSH_SIZE
 
 
 class ScheduleJobs:
@@ -258,7 +258,13 @@ class ScheduleJobs:
         # convert list[list[dict]] to list[dict]
         flattened_records = [item for sublist in records for item in sublist]
 
-        # flush records to database all at once
-        ticker_interface.flush_records(
-            table_name=self.table_name, records=flattened_records
-        )
+        # flush records 50 at a time
+        for i in range(0, len(flattened_records), FLUSH_SIZE):
+            self.logger.info(
+                f"Inserting records from {i} to {i+FLUSH_SIZE} into {self.table_name} table"
+            )
+            self.postgres_interface.insert_records(
+                engine=self.engine,
+                table_name=self.table_name,
+                records=flattened_records[i : i + FLUSH_SIZE],
+            )
