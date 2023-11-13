@@ -87,7 +87,7 @@
 <span class="kn">from</span> <span class="nn">src.postgres_interface</span> <span class="kn">import</span> <span class="n">PostgresInterface</span>
 <span class="kn">from</span> <span class="nn">src.utils</span> <span class="kn">import</span> <span class="n">custom_logger</span>
 
-<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">CURRENCIES</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">CURRENCIES</span><span class="p">,</span> <span class="n">FLUSH_SIZE</span>
 
 
 <div class="viewcode-block" id="ScheduleJobs"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs">[docs]</a><span class="k">class</span> <span class="nc">ScheduleJobs</span><span class="p">:</span>
@@ -326,10 +326,16 @@
         <span class="c1"># convert list[list[dict]] to list[dict]</span>
         <span class="n">flattened_records</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">records</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
 
-        <span class="c1"># flush records to database all at once</span>
-        <span class="n">ticker_interface</span><span class="o">.</span><span class="n">flush_records</span><span class="p">(</span>
-            <span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span> <span class="n">records</span><span class="o">=</span><span class="n">flattened_records</span>
-        <span class="p">)</span></div></div>
+        <span class="c1"># flush records 50 at a time</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">flattened_records</span><span class="p">),</span> <span class="n">FLUSH_SIZE</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Inserting records from </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="n">FLUSH_SIZE</span><span class="si">}</span><span class="s2"> into </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> table&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">insert_records</span><span class="p">(</span>
+                <span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span>
+                <span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span>
+                <span class="n">records</span><span class="o">=</span><span class="n">flattened_records</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">FLUSH_SIZE</span><span class="p">],</span>
+            <span class="p">)</span></div></div>
 </pre></div>
 
            </div>
