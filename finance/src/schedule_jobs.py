@@ -19,7 +19,7 @@ from src.extract import Ticker
 from src.postgres_interface import PostgresInterface
 from src.utils import custom_logger
 
-from config import CURRENCIES, FLUSH_SIZE
+from config import CURRENCIES
 
 
 class ScheduleJobs:
@@ -103,8 +103,8 @@ class ScheduleJobs:
         TODO: make the query better
 
         Method to get a batch of tickers from valid_tickers table that have not
-        been been inserted into other main tables (financials, balance_sheet,
-        cashflow, etc.)
+        been inserted into other main tables (financials, balance_sheet,
+        cashflow, etc.).
 
 
         Parameters
@@ -258,12 +258,8 @@ class ScheduleJobs:
         # convert list[list[dict]] to list[dict]
         flattened_records = [item for sublist in records for item in sublist]
 
-        # flush records 50 at a time
-        for i in range(0, len(flattened_records), FLUSH_SIZE):
-            self.logger.info(
-                f"Inserting records from {i} to {i+FLUSH_SIZE} into {self.table_name} table"
-            )
-            ticker_interface.flush_records(
-                table_name=self.table_name,
-                records=flattened_records[i : i + FLUSH_SIZE],
-            )
+        # flush records to the database
+        ticker_interface.flush_records(
+            table_name=self.table_name,
+            records=flattened_records,
+        )
