@@ -1,7 +1,7 @@
 # Description: Configuration file for the application
 
 # Number of tickers to be processed in a batch for jobs that fill the database
-BATCH_SIZE = 500
+BATCH_SIZE = 100
 
 FLUSH_SIZE = 50
 

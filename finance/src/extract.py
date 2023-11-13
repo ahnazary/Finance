@@ -222,7 +222,7 @@ class Ticker:
 
     def flush_records(self, table_name: str, records: list):
         """
-        Method to flush records from a table
+        Method to flush records to a table
         """
         if not records:
             return
