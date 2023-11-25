@@ -264,7 +264,13 @@
 
 <div class="viewcode-block" id="Ticker.load_valid_tickers"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.load_valid_tickers">[docs]</a>    <span class="k">def</span> <span class="nf">load_valid_tickers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sink_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Method to load the valid tickers from the database</span>
+<span class="sd">        Method to load the valid tickers from the database based</span>
+<span class="sd">        on the validity status of the tickers in the valid_tickers table</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sink_table : str</span>
+<span class="sd">            The name of the table to load the tickers from</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">valid_tickers</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>

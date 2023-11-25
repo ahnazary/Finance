@@ -185,7 +185,13 @@ Either annual or quarterly</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="finance.src.extract.Ticker.load_valid_tickers">
 <span class="sig-name descname"><span class="pre">load_valid_tickers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sink_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.load_valid_tickers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.load_valid_tickers" title="Permalink to this definition"></a></dt>
-<dd><p>Method to load the valid tickers from the database</p>
+<dd><p>Method to load the valid tickers from the database based
+on the validity status of the tickers in the valid_tickers table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sink_table</strong> (<em>str</em>) – The name of the table to load the tickers from</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
