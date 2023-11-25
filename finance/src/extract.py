@@ -196,7 +196,13 @@ class Ticker:
 
     def load_valid_tickers(self, sink_table: str) -> List[str]:
         """
-        Method to load the valid tickers from the database
+        Method to load the valid tickers from the database based
+        on the validity status of the tickers in the valid_tickers table
+
+        Parameters
+        ----------
+        sink_table : str
+            The name of the table to load the tickers from
         """
 
         valid_tickers = Table(
