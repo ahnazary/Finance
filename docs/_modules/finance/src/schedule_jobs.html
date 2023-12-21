@@ -300,6 +300,8 @@
         <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">invalid_tickers</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">ticker_yf_obj</span> <span class="ow">in</span> <span class="n">tickers_yf_batch</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ticker_yf_obj</span><span class="p">[</span><span class="s2">&quot;ticker&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="n">record</span> <span class="o">=</span> <span class="n">ticker_interface</span><span class="o">.</span><span class="n">update_table</span><span class="p">(</span>
                 <span class="n">ticker</span><span class="o">=</span><span class="n">ticker_yf_obj</span><span class="p">,</span>
                 <span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span>
