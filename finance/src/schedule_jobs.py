@@ -232,7 +232,7 @@ class ScheduleJobs:
         records = []
         invalid_tickers = []
         for ticker_yf_obj in tickers_yf_batch:
-            if ticker_yf_obj["ticker"] in records:
+            if ticker_yf_obj.ticker in records:
                 continue
             record = ticker_interface.update_table(
                 ticker=ticker_yf_obj,
