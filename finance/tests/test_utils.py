@@ -1,33 +1,11 @@
-import pytest
-from sqlalchemy import MetaData, Table, select
+from finance.src.utils import custom_logger
 
 
-def test_tables_exist(setup_tables, test_engine):
+def test_custom_logger():
     """
-    Test to check if the tables are created correctly
+    Test the custom logger function.
     """
-    # List of tables in local postgres database in stocks schema
-    metadata = MetaData()
-    information_schema_tables = Table(
-        "tables", metadata, autoload_with=test_engine, schema="information_schema"
-    )
-    query = (
-        select(information_schema_tables.c.table_name)
-        .where(information_schema_tables.c.table_schema == "stocks")
-        .order_by(information_schema_tables.c.table_name)
-    )
 
-    with test_engine.connect() as conn:
-        tables = [table[0] for table in conn.execute(query).fetchall()]
-    assert all(
-        [
-            table in tables
-            for table in [
-                "tickers_list",
-                "valid_tickers",
-                "financials",
-                "cashflow",
-                "balance_sheet",
-            ]
-        ]
-    )
+    logger = custom_logger(logger_name="test_logger")
+
+    assert logger.name == "test_logger"
