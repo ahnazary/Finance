@@ -168,6 +168,8 @@ class ScheduleJobs:
             with engine.connect() as conn:
                 result = conn.execute(query).fetchall()
 
+        # drop duplicates
+        result = list(set(result))
         return [result[0] for result in result]
 
     def update_validy_in_valid_tickers_table(
@@ -232,8 +234,6 @@ class ScheduleJobs:
         records = []
         invalid_tickers = []
         for ticker_yf_obj in tickers_yf_batch:
-            if ticker_yf_obj.ticker in records:
-                continue
             record = ticker_interface.update_table(
                 ticker=ticker_yf_obj,
                 table_name=self.table_name,
