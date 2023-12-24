@@ -47,12 +47,12 @@
 <li><a class="reference internal" href="#finance-src-constants-module">finance.src.constants module</a></li>
 <li><a class="reference internal" href="#module-finance.src.extract">finance.src.extract module</a><ul>
 <li><a class="reference internal" href="#finance.src.extract.Ticker"><code class="docutils literal notranslate"><span class="pre">Ticker</span></code></a><ul>
+<li><a class="reference internal" href="#finance.src.extract.Ticker.extract_tickers_data"><code class="docutils literal notranslate"><span class="pre">Ticker.extract_tickers_data()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.flush_records"><code class="docutils literal notranslate"><span class="pre">Ticker.flush_records()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.get_columns_names"><code class="docutils literal notranslate"><span class="pre">Ticker.get_columns_names()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.get_currency_code"><code class="docutils literal notranslate"><span class="pre">Ticker.get_currency_code()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.get_data_df"><code class="docutils literal notranslate"><span class="pre">Ticker.get_data_df()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.load_valid_tickers"><code class="docutils literal notranslate"><span class="pre">Ticker.load_valid_tickers()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.update_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_table()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_tickers_list_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_tickers_list_table()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_valid_tickers_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_valid_tickers_table()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.extract.Ticker.update_validity_status"><code class="docutils literal notranslate"><span class="pre">Ticker.update_validity_status()</span></code></a></li>
@@ -132,9 +132,36 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">finance.src.extract.</span></span><span class="sig-name descname"><span class="pre">Ticker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">countries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'annual'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'quarterly'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'annual'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'stocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'LOCAL'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'NEON'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'LOCAL'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
+<dt class="sig sig-object py" id="finance.src.extract.Ticker.extract_tickers_data">
+<span class="sig-name descname"><span class="pre">extract_tickers_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.extract_tickers_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.extract_tickers_data" title="Permalink to this definition"></a></dt>
+<dd><p>Method that gets the data from the yfinance API and transforms it into
+a list of tuples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ticker</strong> (<em>yf.Ticker</em>) – The ticker or stock to update</p></li>
+<li><p><strong>table_name</strong> (<em>str</em>) – The name of the table that the ticker data is extracted for</p></li>
+<li><p><strong>table_columns</strong> (<em>list</em>) – The columns of the table</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="finance.src.extract.Ticker.flush_records">
 <span class="sig-name descname"><span class="pre">flush_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">records</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.flush_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.flush_records" title="Permalink to this definition"></a></dt>
 <dd><p>Method to flush records to a table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> (<em>str</em>) – The name of the table to flush the records to</p></li>
+<li><p><strong>records</strong> (<em>list</em>) – The records to flush to the table</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -190,20 +217,6 @@ on the validity status of the tickers in the valid_tickers table</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>sink_table</strong> (<em>str</em>) – The name of the table to load the tickers from</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.update_table">
-<span class="sig-name descname"><span class="pre">update_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_table" title="Permalink to this definition"></a></dt>
-<dd><p>Method to update a table in postgres based on the tickers provided</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ticker</strong> (<em>yf.Ticker</em>) – The ticker or stock to update</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>

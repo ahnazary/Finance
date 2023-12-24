@@ -297,6 +297,13 @@
 <div class="viewcode-block" id="Ticker.flush_records"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.flush_records">[docs]</a>    <span class="k">def</span> <span class="nf">flush_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to flush records to a table</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table_name: str</span>
+<span class="sd">            The name of the table to flush the records to</span>
+<span class="sd">        records: list</span>
+<span class="sd">            The records to flush to the table</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">records</span><span class="p">:</span>
             <span class="k">return</span>
@@ -353,14 +360,21 @@
         <span class="n">df</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ticker</span><span class="p">,</span> <span class="nb">property</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="Ticker.update_table"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.update_table">[docs]</a>    <span class="k">def</span> <span class="nf">update_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<div class="viewcode-block" id="Ticker.extract_tickers_data"><a class="viewcode-back" href="../../../finance.src.html#finance.src.extract.Ticker.extract_tickers_data">[docs]</a>    <span class="k">def</span> <span class="nf">extract_tickers_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_columns</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Method to update a table in postgres based on the tickers provided</span>
+<span class="sd">        Method that gets the data from the yfinance API and transforms it into</span>
+<span class="sd">        a list of tuples</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        ticker: yf.Ticker</span>
 <span class="sd">            The ticker or stock to update</span>
+<span class="sd">        table_name: str</span>
+<span class="sd">            The name of the table that the ticker data is extracted for</span>
+<span class="sd">        table_columns: list</span>
+<span class="sd">            The columns of the table</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
