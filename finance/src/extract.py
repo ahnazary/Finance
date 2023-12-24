@@ -229,6 +229,13 @@ class Ticker:
     def flush_records(self, table_name: str, records: list):
         """
         Method to flush records to a table
+
+        Parameters
+        ----------
+        table_name: str
+            The name of the table to flush the records to
+        records: list
+            The records to flush to the table
         """
         if not records:
             return
@@ -285,14 +292,21 @@ class Ticker:
         df = getattr(ticker, property).T
         return df
 
-    def update_table(self, ticker: yf.Ticker, table_name: str, table_columns: list):
+    def extract_tickers_data(
+        self, ticker: yf.Ticker, table_name: str, table_columns: list
+    ) -> pd.DataFrame:
         """
-        Method to update a table in postgres based on the tickers provided
+        Method that gets the data from the yfinance API and transforms it into
+        a list of tuples
 
         Parameters
         ----------
         ticker: yf.Ticker
             The ticker or stock to update
+        table_name: str
+            The name of the table that the ticker data is extracted for
+        table_columns: list
+            The columns of the table
 
         Returns
         -------

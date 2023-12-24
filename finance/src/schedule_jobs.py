@@ -234,7 +234,7 @@ class ScheduleJobs:
         records = []
         invalid_tickers = []
         for ticker_yf_obj in tickers_yf_batch:
-            record = ticker_interface.update_table(
+            record = ticker_interface.extract_tickers_data(
                 ticker=ticker_yf_obj,
                 table_name=self.table_name,
                 table_columns=table_columns,
