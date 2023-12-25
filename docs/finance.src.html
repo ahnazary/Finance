@@ -45,21 +45,7 @@
 <li><a class="reference internal" href="#">finance.src package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#finance-src-constants-module">finance.src.constants module</a></li>
-<li><a class="reference internal" href="#module-finance.src.extract">finance.src.extract module</a><ul>
-<li><a class="reference internal" href="#finance.src.extract.Ticker"><code class="docutils literal notranslate"><span class="pre">Ticker</span></code></a><ul>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.extract_tickers_data"><code class="docutils literal notranslate"><span class="pre">Ticker.extract_tickers_data()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.flush_records"><code class="docutils literal notranslate"><span class="pre">Ticker.flush_records()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.get_columns_names"><code class="docutils literal notranslate"><span class="pre">Ticker.get_columns_names()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.get_currency_code"><code class="docutils literal notranslate"><span class="pre">Ticker.get_currency_code()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.get_data_df"><code class="docutils literal notranslate"><span class="pre">Ticker.get_data_df()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.load_valid_tickers"><code class="docutils literal notranslate"><span class="pre">Ticker.load_valid_tickers()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.update_tickers_list_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_tickers_list_table()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.update_valid_tickers_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_valid_tickers_table()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.extract.Ticker.update_validity_status"><code class="docutils literal notranslate"><span class="pre">Ticker.update_validity_status()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#finance-src-extract-module">finance.src.extract module</a></li>
 <li><a class="reference internal" href="#finance-src-file-generator-module">finance.src.file_generator module</a></li>
 <li><a class="reference internal" href="#module-finance.src.postgres_interface">finance.src.postgres_interface module</a><ul>
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface"><code class="docutils literal notranslate"><span class="pre">PostgresInterface</span></code></a><ul>
@@ -71,17 +57,7 @@
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-finance.src.schedule_jobs">finance.src.schedule_jobs module</a><ul>
-<li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs</span></code></a><ul>
-<li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_backfill"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch_backfill()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_yf_object"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.get_tickers_batch_yf_object()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.run_pipeline"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.run_pipeline()</span></code></a></li>
-<li><a class="reference internal" href="#finance.src.schedule_jobs.ScheduleJobs.update_validy_in_valid_tickers_table"><code class="docutils literal notranslate"><span class="pre">ScheduleJobs.update_validy_in_valid_tickers_table()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#finance-src-schedule-jobs-module">finance.src.schedule_jobs module</a></li>
 <li><a class="reference internal" href="#module-finance.src.utils">finance.src.utils module</a><ul>
 <li><a class="reference internal" href="#finance.src.utils.are_incremental"><code class="docutils literal notranslate"><span class="pre">are_incremental()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.utils.custom_logger"><code class="docutils literal notranslate"><span class="pre">custom_logger()</span></code></a></li>
@@ -124,152 +100,8 @@
 <section id="finance-src-constants-module">
 <h2>finance.src.constants module<a class="headerlink" href="#finance-src-constants-module" title="Permalink to this heading"></a></h2>
 </section>
-<section id="module-finance.src.extract">
-<span id="finance-src-extract-module"></span><h2>finance.src.extract module<a class="headerlink" href="#module-finance.src.extract" title="Permalink to this heading"></a></h2>
-<p>Module to extract data from the yahoo finance API and load it into the database</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">finance.src.extract.</span></span><span class="sig-name descname"><span class="pre">Ticker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">countries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'annual'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'quarterly'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'annual'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'stocks'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'LOCAL'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'NEON'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'LOCAL'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.extract_tickers_data">
-<span class="sig-name descname"><span class="pre">extract_tickers_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.extract_tickers_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.extract_tickers_data" title="Permalink to this definition"></a></dt>
-<dd><p>Method that gets the data from the yfinance API and transforms it into
-a list of tuples</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ticker</strong> (<em>yf.Ticker</em>) – The ticker or stock to update</p></li>
-<li><p><strong>table_name</strong> (<em>str</em>) – The name of the table that the ticker data is extracted for</p></li>
-<li><p><strong>table_columns</strong> (<em>list</em>) – The columns of the table</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.flush_records">
-<span class="sig-name descname"><span class="pre">flush_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">records</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.flush_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.flush_records" title="Permalink to this definition"></a></dt>
-<dd><p>Method to flush records to a table</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table_name</strong> (<em>str</em>) – The name of the table to flush the records to</p></li>
-<li><p><strong>records</strong> (<em>list</em>) – The records to flush to the table</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.get_columns_names">
-<span class="sig-name descname"><span class="pre">get_columns_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.get_columns_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.get_columns_names" title="Permalink to this definition"></a></dt>
-<dd><p>Method that returns the columns names of a table</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.get_currency_code">
-<span class="sig-name descname"><span class="pre">get_currency_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.get_currency_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.get_currency_code" title="Permalink to this definition"></a></dt>
-<dd><p>Method that gets the currency code of a ticker from valid_tickers table
-in the database</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ticker</strong> (<em>str</em>) – The ticker symbol</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The currency code of the ticker</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.get_data_df">
-<span class="sig-name descname"><span class="pre">get_data_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Ticker</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.get_data_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.get_data_df" title="Permalink to this definition"></a></dt>
-<dd><p>Method that returns a df based on the name of the table and frequency</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table_name</strong> (<em>str</em>) – The name of the table that is going to be filled</p></li>
-<li><p><strong>frequency</strong> (<em>str</em>) – The frequency of the data to be extracted
-Either annual or quarterly</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The dataframe with the data</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pd.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.load_valid_tickers">
-<span class="sig-name descname"><span class="pre">load_valid_tickers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sink_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.load_valid_tickers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.load_valid_tickers" title="Permalink to this definition"></a></dt>
-<dd><p>Method to load the valid tickers from the database based
-on the validity status of the tickers in the valid_tickers table</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>sink_table</strong> (<em>str</em>) – The name of the table to load the tickers from</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.update_tickers_list_table">
-<span class="sig-name descname"><span class="pre">update_tickers_list_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_tickers_list_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_tickers_list_table" title="Permalink to this definition"></a></dt>
-<dd><p>Method to update the tickers_list table in postgres
-Gets all the data in the data dir excel file and inserts it into the database</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.update_valid_tickers_table">
-<span class="sig-name descname"><span class="pre">update_valid_tickers_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_valid_tickers_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_valid_tickers_table" title="Permalink to this definition"></a></dt>
-<dd><p>Method to update the valid_tickers table in postgres
-Gets all the tickers from the tickers_list table and checks if they are valid</p>
-<dl class="simple">
-<dt>validity check:</dt><dd><ul class="simple">
-<li><p>ticker must have market cap</p></li>
-<li><p>ticker must have total revenue</p></li>
-<li><p>ticker must have free cash flow</p></li>
-<li><p>ticker must have total assets</p></li>
-<li><p>ticker must have currency code</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.extract.Ticker.update_validity_status">
-<span class="sig-name descname"><span class="pre">update_validity_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tickers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">availability</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/extract.html#Ticker.update_validity_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.extract.Ticker.update_validity_status" title="Permalink to this definition"></a></dt>
-<dd><p>Method That gets a list of tickers and updates the validity status of the tickers
-for a specific criteria (e.g. balance_sheet_annual_availabile) in the
-valid_tickers table, e.g. if the ticker has not balance sheet data for
-the quarterly frequency, the balance_sheet_quarterly_available column
-in the valid_tickers table will be updated to False</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table_name</strong> (<em>str</em>) – The name of the table which the ticker was supposed to be updated</p></li>
-<li><p><strong>ticker</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – The tickers that was supposed to be updated</p></li>
-<li><p><strong>validity</strong> (<em>bool</em>) – The validity status of the ticker for the specific criteria
-default: False</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<section id="finance-src-extract-module">
+<h2>finance.src.extract module<a class="headerlink" href="#finance-src-extract-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="finance-src-file-generator-module">
 <h2>finance.src.file_generator module<a class="headerlink" href="#finance-src-file-generator-module" title="Permalink to this heading"></a></h2>
@@ -353,92 +185,8 @@ to a target neon database (for now NEON cloud database)</p>
 </dd></dl>
 
 </section>
-<section id="module-finance.src.schedule_jobs">
-<span id="finance-src-schedule-jobs-module"></span><h2>finance.src.schedule_jobs module<a class="headerlink" href="#module-finance.src.schedule_jobs" title="Permalink to this heading"></a></h2>
-<p>Module that schedules jobs in the CI/CD pipeline use to update the database</p>
-<p>This module contains Methods and classes that can be reused over all the
-different jobs in the CI/CD pipeline</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">finance.src.schedule_jobs.</span></span><span class="sig-name descname"><span class="pre">ScheduleJobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'annual'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">500</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class that schedules jobs in the CI/CD pipeline use for updating the
-database and extracting data from yfinance</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch">
-<span class="sig-name descname"><span class="pre">get_tickers_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'annual'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.get_tickers_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch" title="Permalink to this definition"></a></dt>
-<dd><p>Method to get a batch of oldest tickers from a table that have not #
-been updated for a while</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table_name</strong> (<em>str</em>) – name of the table to get the tickers from</p></li>
-<li><p><strong>engine</strong> (<em>sqlalchemy.engine.Engine</em>) – engine to connect to the database, defines if it is local or neon</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_backfill">
-<span class="sig-name descname"><span class="pre">get_tickers_batch_backfill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'annual'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.get_tickers_batch_backfill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_backfill" title="Permalink to this definition"></a></dt>
-<dd><p>TODO: make this docs better
-TODO: make the query better</p>
-<p>Method to get a batch of tickers from valid_tickers table that have not
-been inserted into other main tables (financials, balance_sheet,
-cashflow, etc.).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table_name</strong> (<em>str</em>) – name of the table to get the tickers from</p></li>
-<li><p><strong>engine</strong> (<em>sqlalchemy.engine.Engine</em>) – engine to connect to the database, defines if it is local or neon</p></li>
-<li><p><strong>frequency</strong> (<em>str</em>) – frequency of the data (either annual or quarterly)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of tickers</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_yf_object">
-<span class="sig-name descname"><span class="pre">get_tickers_batch_yf_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tickers_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">yfinance.ticker.Ticker</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.get_tickers_batch_yf_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_yf_object" title="Permalink to this definition"></a></dt>
-<dd><p>Method to get a batch of yfinance tickers from a list of tickers</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>tickers</strong> (<em>list</em>) – list of tickers to get the yfinance tickers from</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.run_pipeline">
-<span class="sig-name descname"><span class="pre">run_pipeline</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.run_pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.run_pipeline" title="Permalink to this definition"></a></dt>
-<dd><p>Main method that each of the jobs in the CI/CD pipeline will run
-It includes steps like:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>getting a batch of tickers to update from valid_tickers table</p></li>
-<li><p>extracting data from yfinance for each ticker</p></li>
-<li><p>inserting the data into the database</p></li>
-<li><p>updating the validity of the tickers in valid_tickers table</p></li>
-</ul>
-</div></blockquote>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.update_validy_in_valid_tickers_table">
-<span class="sig-name descname"><span class="pre">update_validy_in_valid_tickers_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.update_validy_in_valid_tickers_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.update_validy_in_valid_tickers_table" title="Permalink to this definition"></a></dt>
-<dd><p>Method that gets a list of tickers and updates their validity in the
-valid_tickers table</p>
-</dd></dl>
-
-</dd></dl>
-
+<section id="finance-src-schedule-jobs-module">
+<h2>finance.src.schedule_jobs module<a class="headerlink" href="#finance-src-schedule-jobs-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-finance.src.utils">
 <span id="finance-src-utils-module"></span><h2>finance.src.utils module<a class="headerlink" href="#module-finance.src.utils" title="Permalink to this heading"></a></h2>
