@@ -91,7 +91,6 @@ class Ticker:
         """
 
         # query all the tickers from the tickers_list table that are not in valid_tickers table
-
         tickers_list = Table(
             "tickers_list", MetaData(), autoload_with=self.engine, schema="stocks"
         )
