@@ -112,7 +112,9 @@ class PostgresInterface:
                     data = [tuple(row) for row in conn_local.execute(query).fetchall()]
 
                     # cast data into batches of 1000 rows
-                    data = [data[i : i + 1000] for i in range(0, len(data), 1000)]  # noqa: E203
+                    data = [
+                        data[i : i + 1000] for i in range(0, len(data), 1000)  # noqa: E203
+                    ]
 
                     table_neon = self.create_table_object(table, engine_neon)
                     inserted_batches = 0
