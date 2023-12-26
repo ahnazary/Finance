@@ -15,11 +15,11 @@ sys.path.insert(
 import sqlalchemy
 import yfinance as yf
 from sqlalchemy import asc, distinct, func, select
-from finance.src.yahoo_ticker import Ticker
 from src.postgres_interface import PostgresInterface
 from src.utils import custom_logger
 
 from config import CURRENCIES
+from finance.src.yahoo_ticker import Ticker
 
 
 class ScheduleJobs:
