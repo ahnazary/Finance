@@ -1,7 +1,7 @@
 """ This is a module that generates csv files of of the data in the database."""
 
 from postgres_interface import PostgresInterface
-from sqlalchemy import MetaData, Table, create_engine, select
+from sqlalchemy import MetaData, Table, select
 
 pg_interface = PostgresInterface()
 engine = pg_interface.create_engine()
@@ -12,7 +12,7 @@ def generate_valid_tickers_csv():
     valid_tickers = Table(
         "valid_tickers", MetaData(), autoload_with=engine, schema="stocks"
     )
-    query = select(valid_tickers).where(valid_tickers.columns.validity == True)
+    query = select(valid_tickers).where(valid_tickers.columns.validity)
 
     schema_table = Table(
         "columns", MetaData(), autoload_with=engine, schema="information_schema"

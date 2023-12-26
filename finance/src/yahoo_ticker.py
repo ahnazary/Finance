@@ -187,7 +187,8 @@ class Ticker:
                         }
                     )
 
-            except:
+            except Exception as e:
+                self.logger.warning(f"Error checking validity of {ticker_symbol}: {e}")
                 self.logger.warning(f"Ticker {ticker_symbol} is invalid")
                 invalids_df.loc[len(invalids_df)] = pd.Series(
                     {"ticker": ticker_symbol, "validity": False}
@@ -217,7 +218,7 @@ class Ticker:
             select(valid_tickers.c.ticker)
             .outerjoin(balance_sheet, valid_tickers.c.ticker == balance_sheet.c.ticker)
             .where(balance_sheet.c.ticker == null())
-            .where(valid_tickers.c.validity == True)
+            .where(valid_tickers.c.validity)
         )
 
         with self.engine.connect() as conn:
@@ -336,7 +337,8 @@ class Ticker:
             if df.empty:
                 self.logger.warning(f"Data is empty for {ticker}, returning None")
                 return None
-        except:
+        except Exception as e:
+            self.logger.warning(f"Error extracting data for {ticker}: {e}")
             self.logger.warning(
                 f"Ticker {ticker} has no {table_name} data, returning None"
             )

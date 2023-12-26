@@ -14,7 +14,7 @@ sys.path.insert(
 
 import sqlalchemy
 import yfinance as yf
-from sqlalchemy import asc, distinct, func, select
+from sqlalchemy import asc, func, select
 from src.postgres_interface import PostgresInterface
 from src.utils import custom_logger
 
@@ -137,7 +137,7 @@ class ScheduleJobs:
             select(valid_tickers_table.c.ticker)
             .where(valid_tickers_table.c.ticker.notin_(select(table.c.ticker)))
             # .where(valid_tickers_table.c.currency_code.in_(CURRENCIES))
-            .where(available_column == True)
+            .where(available_column)
             .limit(self.batch_size)
         )
 
@@ -159,7 +159,7 @@ class ScheduleJobs:
                     )
                 )
                 .where(table.c.currency_code.in_(CURRENCIES))
-                .where(available_column == True)
+                .where(available_column)
                 .group_by(valid_tickers_table.c.ticker, table.c.insert_date)
                 .order_by(asc(table.c.insert_date))
                 .limit(self.batch_size)
@@ -214,7 +214,7 @@ class ScheduleJobs:
             - updating the validity of the tickers in valid_tickers table
         """
         self.logger.info(
-            f"""Running pipeline for {self.table_name} with {self.provider} 
+            f"""Running pipeline for {self.table_name} with {self.provider}
             provider and {self.frequency} frequency"""
         )
 
@@ -247,7 +247,8 @@ class ScheduleJobs:
             else:
                 invalid_tickers.append(ticker_yf_obj.ticker)
                 self.logger.warning(
-                    f"ticker: {ticker_yf_obj.ticker} has been added to invalid_tickers, invalid_tickers length: {len(invalid_tickers)}"
+                    f"""ticker: {ticker_yf_obj.ticker} has been added to invalid_tickers,
+                    invalid_tickers length: {len(invalid_tickers)}"""
                 )
 
         # Update availability status in valid_tickers table
