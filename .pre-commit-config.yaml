@@ -1,4 +1,5 @@
 ---
+fail_fast: false
 repos:
   - repo: https://github.com/psf/black
     rev: 22.3.0
@@ -9,13 +10,22 @@ repos:
       args: [--line-length=99, --diff]
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.11.2
+    rev: 5.13.2
     hooks:
     - id: isort
       name: isort (python)
+      args:
+        - --profile=black
+        - --line-width=99
+        - --diff
 
   - repo: https://github.com/pycqa/flake8
-    rev: 3.9.2
+    rev: 6.1.0
     hooks:
     - id: flake8
-      args: [--max-line-length=99, --diff]
+      name: flake8 (python)
+      # ignore E722 and W291
+      args: [
+             --max-line-length=99,
+             --extend-ignore=E402
+      ] 
