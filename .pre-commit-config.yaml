@@ -24,8 +24,7 @@ repos:
     hooks:
     - id: flake8
       name: flake8 (python)
-      # ignore E722 and W291
       args: [
              --max-line-length=99,
-             --extend-ignore=E402
+              --extend-ignore=E402
       ] 
