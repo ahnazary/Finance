@@ -82,7 +82,7 @@
 
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
 <span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">asc</span><span class="p">,</span> <span class="n">distinct</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">asc</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span>
 <span class="kn">from</span> <span class="nn">src.postgres_interface</span> <span class="kn">import</span> <span class="n">PostgresInterface</span>
 <span class="kn">from</span> <span class="nn">src.utils</span> <span class="kn">import</span> <span class="n">custom_logger</span>
 
@@ -205,7 +205,7 @@
             <span class="n">select</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
             <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">notin_</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)))</span>
             <span class="c1"># .where(valid_tickers_table.c.currency_code.in_(CURRENCIES))</span>
-            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">available_column</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">available_column</span><span class="p">)</span>
             <span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
         <span class="p">)</span>
 
@@ -227,7 +227,7 @@
                     <span class="p">)</span>
                 <span class="p">)</span>
                 <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">currency_code</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">CURRENCIES</span><span class="p">))</span>
-                <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">available_column</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">available_column</span><span class="p">)</span>
                 <span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">insert_date</span><span class="p">)</span>
                 <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">asc</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">insert_date</span><span class="p">))</span>
                 <span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
@@ -282,7 +282,7 @@
 <span class="sd">            - updating the validity of the tickers in valid_tickers table</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Running pipeline for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="si">}</span><span class="s2"> </span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Running pipeline for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="si">}</span>
 <span class="s2">            provider and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="si">}</span><span class="s2"> frequency&quot;&quot;&quot;</span>
         <span class="p">)</span>
 
@@ -315,7 +315,8 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">invalid_tickers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ticker_yf_obj</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;ticker: </span><span class="si">{</span><span class="n">ticker_yf_obj</span><span class="o">.</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has been added to invalid_tickers, invalid_tickers length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">invalid_tickers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;ticker: </span><span class="si">{</span><span class="n">ticker_yf_obj</span><span class="o">.</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> has been added to invalid_tickers,</span>
+<span class="s2">                    invalid_tickers length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">invalid_tickers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
                 <span class="p">)</span>
 
         <span class="c1"># Update availability status in valid_tickers table</span>
