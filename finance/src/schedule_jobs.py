@@ -227,7 +227,7 @@ class ScheduleJobs:
         # getting a list[yf.Ticker] of old tickers with batch_size
         tickers_yf_batch = self.get_tickers_batch_yf_object(tickers_list=tickers_list)
 
-        ticker_interface = Ticker(provider=self.provider, frequency=self.frequency)
+        ticker_interface = Ticker(frequency=self.frequency)
 
         table_columns = ticker_interface.get_columns_names(table_name=self.table_name)
 
