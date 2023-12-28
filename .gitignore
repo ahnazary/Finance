@@ -7,3 +7,4 @@
 **/.pytest_cache
 **/*.ipynb
 **.log
+finance/src/data**
