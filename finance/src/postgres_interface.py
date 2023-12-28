@@ -113,7 +113,8 @@ class PostgresInterface:
 
                     # cast data into batches of 1000 rows
                     data = [
-                        data[i : i + 1000] for i in range(0, len(data), 1000)  # noqa: E203
+                        data[i : i + 1000]  # noqa: E203
+                        for i in range(0, len(data), 1000)
                     ]
 
                     table_neon = self.create_table_object(table, engine_neon)
