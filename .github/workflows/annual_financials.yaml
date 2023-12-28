@@ -3,7 +3,7 @@ name: annual financials
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 8,14,20,2 * * *"
+    - cron: "0 2 * * *"
     
 jobs:
   run-script:
