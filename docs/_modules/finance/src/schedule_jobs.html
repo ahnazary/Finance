@@ -123,7 +123,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span> <span class="o">=</span> <span class="n">PostgresInterface</span><span class="p">()</span>
 
         <span class="c1"># create engines to connect to the databases</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="n">provider</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ScheduleJobs.get_tickers_batch"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch">[docs]</a>    <span class="k">def</span> <span class="nf">get_tickers_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
