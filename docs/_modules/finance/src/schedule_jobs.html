@@ -295,7 +295,7 @@
         <span class="c1"># getting a list[yf.Ticker] of old tickers with batch_size</span>
         <span class="n">tickers_yf_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tickers_batch_yf_object</span><span class="p">(</span><span class="n">tickers_list</span><span class="o">=</span><span class="n">tickers_list</span><span class="p">)</span>
 
-        <span class="n">ticker_interface</span> <span class="o">=</span> <span class="n">Ticker</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="p">)</span>
+        <span class="n">ticker_interface</span> <span class="o">=</span> <span class="n">Ticker</span><span class="p">(</span><span class="n">frequency</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="p">)</span>
 
         <span class="n">table_columns</span> <span class="o">=</span> <span class="n">ticker_interface</span><span class="o">.</span><span class="n">get_columns_names</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">)</span>
 
