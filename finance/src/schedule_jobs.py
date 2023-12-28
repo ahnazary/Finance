@@ -55,7 +55,7 @@ class ScheduleJobs:
         self.postgres_interface = PostgresInterface()
 
         # create engines to connect to the databases
-        self.engine = self.postgres_interface.create_engine(provider=provider)
+        self.engine = self.postgres_interface.create_engine()
 
     def get_tickers_batch(
         self,

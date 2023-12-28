@@ -6,7 +6,6 @@ the data they contain
 """
 
 import os
-from typing import Literal
 
 import pandas as pd
 import sqlalchemy
@@ -24,10 +23,9 @@ class PostgresInterface:
     def __init__(self):
         load_dotenv()
         self.logger = custom_logger(logger_name="postgres_interface")
+        self.provider = os.environ.get("PROVIDER")
 
-    def create_engine(
-        self, provider: Literal["LOCAL", "NEON"] = "LOCAL"
-    ) -> sqlalchemy.engine.Engine:
+    def create_engine(self) -> sqlalchemy.engine.Engine:
         """
         function that creates engines to connect to postgres databases
 
@@ -36,13 +34,13 @@ class PostgresInterface:
         dict
             dictionary with the engines to connect to the databases
         """
-        user = os.environ.get(f"{provider}_POSTGRES_USER")
-        password = os.environ.get(f"{provider}_POSTGRES_PASSWORD")
-        host = os.environ.get(f"{provider}_POSTGRES_HOST")
-        port = os.environ.get(f"{provider}_POSTGRES_PORT")
-        db = os.environ.get(f"{provider}_POSTGRES_DB")
+        user = os.environ.get(f"{self.provider}_POSTGRES_USER")
+        password = os.environ.get(f"{self.provider}_POSTGRES_PASSWORD")
+        host = os.environ.get(f"{self.provider}_POSTGRES_HOST")
+        port = os.environ.get(f"{self.provider}_POSTGRES_PORT")
+        db = os.environ.get(f"{self.provider}_POSTGRES_DB")
 
-        ssl_mode = "" if provider == "LOCAL" else "?sslmode=require"
+        ssl_mode = "" if self.provider == "LOCAL" else "?sslmode=require"
 
         engine = sqlalchemy.create_engine(
             f"postgresql://{user}:{password}@{host}:{port}/{db}{ssl_mode}"

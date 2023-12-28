@@ -28,7 +28,7 @@ class Ticker:
         self.provider = provider
 
         self.postgres_interface = PostgresInterface()
-        self.engine = self.postgres_interface.create_engine(provider=provider)
+        self.engine = self.postgres_interface.create_engine()
 
     def _create_yf_ticker(self, ticker_symbol: str) -> yf.Ticker:
         """
