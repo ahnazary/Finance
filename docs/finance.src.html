@@ -53,6 +53,7 @@
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.create_table_object"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.create_table_object()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.insert_batch"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.insert_batch()</span></code></a></li>
 <li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.migrate_local_to_cloud"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.migrate_local_to_cloud()</span></code></a></li>
+<li><a class="reference internal" href="#finance.src.postgres_interface.PostgresInterface.read_table_to_df"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.read_table_to_df()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -188,6 +189,23 @@ to a target neon database (for now NEON cloud database)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="finance.src.postgres_interface.PostgresInterface.read_table_to_df">
+<span class="sig-name descname"><span class="pre">read_table_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'stocks'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface.read_table_to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface.read_table_to_df" title="Permalink to this definition"></a></dt>
+<dd><p>Method to read a table into a dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>table</strong> (<em>tabble name to read</em>) – </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataframe with the data from the table</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
