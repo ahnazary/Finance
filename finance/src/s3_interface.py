@@ -5,6 +5,7 @@ from datetime import datetime
 
 import boto3
 from src.postgres_interface import PostgresInterface
+from src.utils import custom_logger
 
 from config import BACKUP_TABLES
 
@@ -17,6 +18,7 @@ class S3Interface:
     def __init__(self):
         self.s3_client = boto3.client("s3")
         self.s3_resource = boto3.resource("s3")
+        self.logger = custom_logger(logger_name="s3_interface")
 
     def get_bucket_names(self) -> list:
         """
@@ -51,3 +53,5 @@ class S3Interface:
                 Bucket=bucket_name,
                 Key=f"backup/{table_name}/{current_date}.parquet",
             )
+
+            self.logger.info(f"Uploaded {table_name} to s3")

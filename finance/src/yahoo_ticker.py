@@ -18,14 +18,12 @@ class Ticker:
         chunksize: int = 20,
         frequency: Literal["annual", "quarterly"] = "annual",
         schema: str = "stocks",
-        provider: Literal["LOCAL", "NEON"] = "LOCAL",
     ):
         self.logger = custom_logger(logger_name="ticker")
         self.countries = countries
         self.chunksize = chunksize
         self.frequency = frequency
         self.schema = schema
-        self.provider = provider
 
         self.postgres_interface = PostgresInterface()
         self.engine = self.postgres_interface.create_engine()
