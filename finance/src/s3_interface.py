@@ -1,6 +1,12 @@
 """Module to interact with s3"""
 
+import os
+from datetime import datetime
+
 import boto3
+from src.postgres_interface import PostgresInterface
+
+from config import BACKUP_TABLES
 
 
 class S3Interface:
@@ -24,3 +30,24 @@ class S3Interface:
         response = self.s3_client.list_buckets()
         buckets = [bucket["Name"] for bucket in response["Buckets"]]
         return buckets
+
+    def backup_tables(self, bucket_name: str = "ahnazary-finance-prod"):
+        """
+        Method to backup tables to s3
+        """
+        pf_interface = PostgresInterface()
+        for table_name in BACKUP_TABLES:
+            df = pf_interface.read_table_to_df(table=table_name)
+
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            file_path = f"{os.getcwd()}/finance/src/data/{table_name}.parquet"
+
+            # write df to parquet file in data directory
+            df.to_parquet(file_path)
+
+            # upload parquet file to s3
+            self.s3_client.upload_file(
+                Filename=file_path,
+                Bucket=bucket_name,
+                Key=f"backup/{table_name}/{current_date}.parquet",
+            )

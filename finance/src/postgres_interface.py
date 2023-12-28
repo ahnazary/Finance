@@ -8,6 +8,7 @@ the data they contain
 import os
 from typing import Literal
 
+import pandas as pd
 import sqlalchemy
 from dotenv import load_dotenv
 from sqlalchemy import MetaData, Table, select
@@ -148,3 +149,24 @@ class PostgresInterface:
         insert_statement = insert(table).values(batch).on_conflict_do_nothing()
         conn.execute(insert_statement)
         conn.commit()
+
+    def read_table_to_df(self, table: str, schema: str = "stocks") -> pd.DataFrame:
+        """
+        Method to read a table into a dataframe
+
+        Parameters
+        ----------
+        table : tabble name to read
+
+        Returns
+        -------
+        pd.DataFrame
+            dataframe with the data from the table
+        """
+        engine = self.create_engine()
+        table = self.create_table_object(table, engine, schema)
+        query = select(table)
+        with engine.connect() as conn:
+            result = conn.execute(query).fetchall()
+        df = pd.DataFrame(result, columns=table.columns.keys())
+        return df

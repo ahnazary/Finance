@@ -8,3 +8,14 @@ CURRENCIES = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF"]
 
 # warning log level
 LOG_LEVEL = 30
+
+# List of tables to be backed up through backup workflow
+# (read tables into parquet files and load them into s3)
+BACKUP_TABLES = [
+    "balance_sheet",
+    "cashflow",
+    "financials",
+    "income_stmt",
+    "tickers_list",
+    "valid_tickers",
+]
