@@ -56,7 +56,7 @@ class ScheduleJobs:
         # create engines to connect to the databases
         self.engine = self.postgres_interface.create_engine()
 
-    def get_tickers_batch_backfill(
+    def tickers_to_query(
         self,
         table_name: str,
         engine: sqlalchemy.engine.Engine,
@@ -181,7 +181,7 @@ class ScheduleJobs:
         )
 
         # getting a list[str] of old tickers with batch_size
-        tickers_list = self.get_tickers_batch_backfill(
+        tickers_list = self.tickers_to_query(
             table_name=self.table_name, engine=self.engine, frequency=self.frequency
         )
         tickers_list = [x for x in tickers_list if x is not None]
