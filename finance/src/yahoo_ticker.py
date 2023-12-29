@@ -1,4 +1,4 @@
-""" Module to extract data from the yahoo finance API and load it into the database """
+""" Module to perform operations on the yahoo finance API data (tickers) """
 
 from typing import List, Literal, Union
 
@@ -85,6 +85,11 @@ class Ticker:
         ----------
         sink_table : str
             The name of the table to load the tickers from
+
+        Returns
+        -------
+        List[str]
+            A list of the valid tickers
         """
 
         valid_tickers = Table(
@@ -93,13 +98,13 @@ class Ticker:
             autoload_with=self.engine,
             schema=self.schema,
         )
-        balance_sheet = Table(
+        table_obj = Table(
             sink_table, MetaData(), autoload_with=self.engine, schema=self.schema
         )
         query = (
             select(valid_tickers.c.ticker)
-            .outerjoin(balance_sheet, valid_tickers.c.ticker == balance_sheet.c.ticker)
-            .where(balance_sheet.c.ticker == null())
+            .outerjoin(table_obj, valid_tickers.c.ticker == table_obj.c.ticker)
+            .where(table_obj.c.ticker == null())
             .where(valid_tickers.c.validity)
         )
 
@@ -228,25 +233,53 @@ class Ticker:
 
         # make column names all lower case and replace spaces with underscores
         df.columns = [i.replace(" ", "_").lower() for i in list(df.columns)]
-
-        missed_columns = []
-
-        # if a column does not exist in the stocks.table_name table, drop it from the df
-        for column in [i.replace(" ", "_") for i in list(df.columns)]:
-            if column not in table_columns:
-                self.logger.warning(f"Column {column} not in {table_name} columns")
-                missed_columns.append(column)
-                df.drop(columns=column, inplace=True)
-        # if a column does not exist in the df, It will be added with null values
-        for column in table_columns:
-            if column not in df.columns:
-                df[column] = None
+        df = self._adjust_df_columns(
+            df=df, table_name=table_name, table_columns=table_columns
+        )
 
         # convert pd.dataframe to list of tuples
         result = df.to_dict("records")
 
         self.logger.warning(f"Data transformed for {ticker} {table_name}")
         return result
+
+    def _adjust_df_columns(
+        self, df: pd.DataFrame, table_name: str, table_columns: list
+    ) -> pd.DataFrame:
+        """
+        Function that gets a df that contains data for a specific ticker, and
+        adjusts the columns of the df to match the columns of the table in the
+        database
+
+        Parameters
+        ----------
+        df: pd.DataFrame
+            The dataframe that contains the data for a specific ticker
+        table_name: str
+            The name of the table that the data is extracted for
+        table_columns: list
+            The columns of the table
+
+        Returns
+        -------
+        pd.DataFrame
+            The dataframe with the adjusted columns ready to be inserted into the database
+        """
+
+        missed_columns = []
+        # if a column does not exist in the stocks.table_name table, drop it from the df
+        for column in [i.replace(" ", "_") for i in list(df.columns)]:
+            if column not in table_columns:
+                self.logger.warning(f"Column {column} not in {table_name} columns")
+                missed_columns.append(column)
+                df.drop(columns=column, inplace=True)
+
+        # if a column does not exist in the df, It will be added with null values
+        for column in table_columns:
+            if column not in df.columns:
+                df[column] = None
+
+        return df
 
     def get_columns_names(self, table_name: str):
         """

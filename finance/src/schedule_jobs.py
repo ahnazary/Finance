@@ -18,7 +18,6 @@ from sqlalchemy import asc, func, select
 from src.postgres_interface import PostgresInterface
 from src.utils import custom_logger
 
-from config import CURRENCIES
 from finance.src.yahoo_ticker import Ticker
 
 
@@ -57,41 +56,6 @@ class ScheduleJobs:
         # create engines to connect to the databases
         self.engine = self.postgres_interface.create_engine()
 
-    def get_tickers_batch(
-        self,
-        table_name: str,
-        engine: sqlalchemy.engine.Engine,
-        frequency: str = "annual",
-    ) -> list:
-        """
-        Method to get a batch of oldest tickers from a table that have not #
-        been updated for a while
-
-        Parameters
-        ----------
-        table_name : str
-            name of the table to get the tickers from
-        engine : sqlalchemy.engine.Engine
-            engine to connect to the database, defines if it is local or neon
-        """
-
-        table = self.postgres_interface.create_table_object(table_name, engine)
-        query = (
-            select(
-                table.c.ticker,
-                func.max(table.c.insert_date).label("latest_insert_date"),
-            )
-            .where(table.c.currency_code.in_(CURRENCIES))
-            .where(table.c.frequency == frequency)
-            .group_by(table.c.ticker)
-            .order_by(asc("latest_insert_date"))
-        )
-
-        with engine.connect() as conn:
-            result = conn.execute(query).fetchmany(self.batch_size)
-
-        return [result[0] for result in result]
-
     def get_tickers_batch_backfill(
         self,
         table_name: str,
@@ -116,6 +80,19 @@ class ScheduleJobs:
         frequency : str
             frequency of the data (either annual or quarterly)
 
+        The query is equivalent to (for cahsflow table):
+            select valid_tickers.ticker, valid_tickers.cashflow_annual_available,
+            subquery.max_insert_date
+            from stocks.valid_tickers
+            left join (
+                select cashflow.ticker, max(cashflow.insert_date) as max_insert_date
+                from stocks.cashflow
+                group by cashflow.ticker
+            ) as subquery
+            on valid_tickers.ticker = subquery.ticker
+            where valid_tickers.cashflow_annual_available
+            order by subquery.max_insert_date asc
+
         Returns
         -------
         list
@@ -126,50 +103,35 @@ class ScheduleJobs:
             "valid_tickers", engine
         )
         table = self.postgres_interface.create_table_object(table_name, engine)
+
         # this is the column that will be used to check if the ticker is available
-        available_column = getattr(
+        availablility_column = getattr(
             valid_tickers_table.c, f"{table_name}_{frequency}_available"
         )
 
-        # get first batch size tickers that are in valid_tickers table and not
-        # in table
+        subquery = (
+            select(
+                table.c.ticker,
+                func.max(table.c.insert_date).label("max_insert_date"),
+            )
+            .group_by(table.c.ticker)
+            .alias()
+        )
+
         query = (
-            select(valid_tickers_table.c.ticker)
-            .where(valid_tickers_table.c.ticker.notin_(select(table.c.ticker)))
-            # .where(valid_tickers_table.c.currency_code.in_(CURRENCIES))
-            .where(available_column)
-            .limit(self.batch_size)
+            select(valid_tickers_table.c.ticker, availablility_column)
+            .join(
+                subquery,
+                valid_tickers_table.c.ticker == subquery.c.ticker,
+                isouter=True,
+            )
+            .order_by(asc(subquery.c.max_insert_date))
+            .where(availablility_column)
         )
 
         with engine.connect() as conn:
-            result = conn.execute(query).fetchall()
+            result = conn.execute(query).fetchmany(self.batch_size)
 
-        if len(result) == 0:
-            query = (
-                # join valid_tickers table with the table on ticker column and get only one row
-                # from table with latest insert_date
-                select(
-                    valid_tickers_table.c.ticker,
-                )
-                .select_from(
-                    table.join(
-                        valid_tickers_table,
-                        table.c.ticker == valid_tickers_table.c.ticker,
-                        isouter=True,
-                    )
-                )
-                .where(table.c.currency_code.in_(CURRENCIES))
-                .where(available_column)
-                .group_by(valid_tickers_table.c.ticker, table.c.insert_date)
-                .order_by(asc(table.c.insert_date))
-                .limit(self.batch_size)
-            )
-
-            with engine.connect() as conn:
-                result = conn.execute(query).fetchall()
-
-        # drop duplicates
-        result = list(set(result))
         return [result[0] for result in result]
 
     def update_validy_in_valid_tickers_table(
