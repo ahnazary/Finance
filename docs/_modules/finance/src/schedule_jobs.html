@@ -86,7 +86,6 @@
 <span class="kn">from</span> <span class="nn">src.postgres_interface</span> <span class="kn">import</span> <span class="n">PostgresInterface</span>
 <span class="kn">from</span> <span class="nn">src.utils</span> <span class="kn">import</span> <span class="n">custom_logger</span>
 
-<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">CURRENCIES</span>
 <span class="kn">from</span> <span class="nn">finance.src.yahoo_ticker</span> <span class="kn">import</span> <span class="n">Ticker</span>
 
 
@@ -125,41 +124,6 @@
         <span class="c1"># create engines to connect to the databases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
 
-<div class="viewcode-block" id="ScheduleJobs.get_tickers_batch"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch">[docs]</a>    <span class="k">def</span> <span class="nf">get_tickers_batch</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">engine</span><span class="p">:</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">Engine</span><span class="p">,</span>
-        <span class="n">frequency</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;annual&quot;</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Method to get a batch of oldest tickers from a table that have not #</span>
-<span class="sd">        been updated for a while</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        table_name : str</span>
-<span class="sd">            name of the table to get the tickers from</span>
-<span class="sd">        engine : sqlalchemy.engine.Engine</span>
-<span class="sd">            engine to connect to the database, defines if it is local or neon</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_table_object</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">select</span><span class="p">(</span>
-                <span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">,</span>
-                <span class="n">func</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">insert_date</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;latest_insert_date&quot;</span><span class="p">),</span>
-            <span class="p">)</span>
-            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">currency_code</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">CURRENCIES</span><span class="p">))</span>
-            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">frequency</span> <span class="o">==</span> <span class="n">frequency</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">asc</span><span class="p">(</span><span class="s2">&quot;latest_insert_date&quot;</span><span class="p">))</span>
-        <span class="p">)</span>
-
-        <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchmany</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span></div>
-
 <div class="viewcode-block" id="ScheduleJobs.get_tickers_batch_backfill"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_backfill">[docs]</a>    <span class="k">def</span> <span class="nf">get_tickers_batch_backfill</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -184,6 +148,19 @@
 <span class="sd">        frequency : str</span>
 <span class="sd">            frequency of the data (either annual or quarterly)</span>
 
+<span class="sd">        The query is equivalent to (for cahsflow table):</span>
+<span class="sd">            select valid_tickers.ticker, valid_tickers.cashflow_annual_available,</span>
+<span class="sd">            subquery.max_insert_date</span>
+<span class="sd">            from stocks.valid_tickers</span>
+<span class="sd">            left join (</span>
+<span class="sd">                select cashflow.ticker, max(cashflow.insert_date) as max_insert_date</span>
+<span class="sd">                from stocks.cashflow</span>
+<span class="sd">                group by cashflow.ticker</span>
+<span class="sd">            ) as subquery</span>
+<span class="sd">            on valid_tickers.ticker = subquery.ticker</span>
+<span class="sd">            where valid_tickers.cashflow_annual_available</span>
+<span class="sd">            order by subquery.max_insert_date asc</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list</span>
@@ -194,50 +171,35 @@
             <span class="s2">&quot;valid_tickers&quot;</span><span class="p">,</span> <span class="n">engine</span>
         <span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_table_object</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+
         <span class="c1"># this is the column that will be used to check if the ticker is available</span>
-        <span class="n">available_column</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+        <span class="n">availablility_column</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
             <span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">frequency</span><span class="si">}</span><span class="s2">_available&quot;</span>
         <span class="p">)</span>
 
-        <span class="c1"># get first batch size tickers that are in valid_tickers table and not</span>
-        <span class="c1"># in table</span>
+        <span class="n">subquery</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">select</span><span class="p">(</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">,</span>
+                <span class="n">func</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">insert_date</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;max_insert_date&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">alias</span><span class="p">()</span>
+        <span class="p">)</span>
+
         <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">select</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">notin_</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">)))</span>
-            <span class="c1"># .where(valid_tickers_table.c.currency_code.in_(CURRENCIES))</span>
-            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">available_column</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+            <span class="n">select</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">,</span> <span class="n">availablility_column</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">subquery</span><span class="p">,</span>
+                <span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span> <span class="o">==</span> <span class="n">subquery</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">,</span>
+                <span class="n">isouter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">asc</span><span class="p">(</span><span class="n">subquery</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">max_insert_date</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">availablility_column</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchmany</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="c1"># join valid_tickers table with the table on ticker column and get only one row</span>
-                <span class="c1"># from table with latest insert_date</span>
-                <span class="n">select</span><span class="p">(</span>
-                    <span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="o">.</span><span class="n">select_from</span><span class="p">(</span>
-                    <span class="n">table</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="n">valid_tickers_table</span><span class="p">,</span>
-                        <span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span> <span class="o">==</span> <span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">,</span>
-                        <span class="n">isouter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="p">)</span>
-                <span class="p">)</span>
-                <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">currency_code</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">CURRENCIES</span><span class="p">))</span>
-                <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">available_column</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">valid_tickers_table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ticker</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">insert_date</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">asc</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">insert_date</span><span class="p">))</span>
-                <span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
-            <span class="p">)</span>
-
-            <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-
-        <span class="c1"># drop duplicates</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="ScheduleJobs.update_validy_in_valid_tickers_table"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs.update_validy_in_valid_tickers_table">[docs]</a>    <span class="k">def</span> <span class="nf">update_validy_in_valid_tickers_table</span><span class="p">(</span>
