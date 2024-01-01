@@ -124,7 +124,7 @@
         <span class="c1"># create engines to connect to the databases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
 
-<div class="viewcode-block" id="ScheduleJobs.get_tickers_batch_backfill"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_backfill">[docs]</a>    <span class="k">def</span> <span class="nf">get_tickers_batch_backfill</span><span class="p">(</span>
+<div class="viewcode-block" id="ScheduleJobs.tickers_to_query"><a class="viewcode-back" href="../../../finance.src.html#finance.src.schedule_jobs.ScheduleJobs.tickers_to_query">[docs]</a>    <span class="k">def</span> <span class="nf">tickers_to_query</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">engine</span><span class="p">:</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">Engine</span><span class="p">,</span>
@@ -249,7 +249,7 @@
         <span class="p">)</span>
 
         <span class="c1"># getting a list[str] of old tickers with batch_size</span>
-        <span class="n">tickers_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tickers_batch_backfill</span><span class="p">(</span>
+        <span class="n">tickers_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tickers_to_query</span><span class="p">(</span>
             <span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frequency</span>
         <span class="p">)</span>
         <span class="n">tickers_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tickers_list</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
