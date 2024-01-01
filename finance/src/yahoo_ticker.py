@@ -231,8 +231,6 @@ class Ticker:
             )
             return None
 
-        # make column names all lower case and replace spaces with underscores
-        df.columns = [i.replace(" ", "_").lower() for i in list(df.columns)]
         df = self._adjust_df_columns(
             df=df, table_name=table_name, table_columns=table_columns
         )
@@ -265,6 +263,8 @@ class Ticker:
         pd.DataFrame
             The dataframe with the adjusted columns ready to be inserted into the database
         """
+        # make column names all lower case and replace spaces with underscores
+        df.columns = [i.replace(" ", "_").lower() for i in list(df.columns)]
 
         missed_columns = []
         # if a column does not exist in the stocks.table_name table, drop it from the df
