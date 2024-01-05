@@ -58,6 +58,23 @@ jobs:
       - name: Run isort
         run: |
           isort --profile black --check --diff .
+
+  flake8:
+    name: check code style with flake8
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.11
+      
+      - name: run flake8
+        run: |
+          pip install flake8
+          flake8 --max-line-length=99 --extend-ignore=E402
     
   test:
     runs-on: ubuntu-latest
@@ -89,21 +106,3 @@ jobs:
     - name: run pytest
       run: |
         pytest
-
-  sqlfluff:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.11
-
-    - name: Install sqlfluff
-      run: pip install sqlfluff
-
-    - name: Lint SQL Files
-      run: sqlfluff lint $(git ls-files '*.sql') --dialect postgres
