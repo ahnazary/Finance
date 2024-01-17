@@ -50,7 +50,7 @@ class PostgresInterface:
 
     def create_table_object(
         self, table_name: str, engine: sqlalchemy.engine.Engine, schema: str = "stocks"
-    ):
+    ) -> sqlalchemy.Table:
         """
         Method to create a table object
 
