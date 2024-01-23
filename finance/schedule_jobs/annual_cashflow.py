@@ -13,17 +13,18 @@ import config
 
 load_dotenv()
 
-provider = os.getenv("PROVIDER")
-table_name = "cashflow"
-frequency = "annual"
-logger = custom_logger(logger_name=table_name, log_level=config.LOG_LEVEL)
+if __name__ == "__main__":
+    provider = os.getenv("PROVIDER")
+    table_name = "cashflow"
+    frequency = "annual"
+    logger = custom_logger(logger_name=table_name, log_level=config.LOG_LEVEL)
 
-schedule_jobs = ScheduleJobs(
-    provider=provider,
-    batch_size=config.BATCH_SIZE,
-    table_name=table_name,
-    frequency=frequency,
-)
+    schedule_jobs = ScheduleJobs(
+        provider=provider,
+        batch_size=config.BATCH_SIZE,
+        table_name=table_name,
+        frequency=frequency,
+    )
 
-# run the pipeline
-schedule_jobs.run_pipeline()
+    # run the pipeline
+    schedule_jobs.run_pipeline()

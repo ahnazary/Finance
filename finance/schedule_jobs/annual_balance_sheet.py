@@ -12,17 +12,19 @@ import config
 
 load_dotenv()
 
-provider = os.environ.get("PROVIDER")
-table_name = "balance_sheet"
-frequency = "annual"
-logger = custom_logger(logger_name=table_name, log_level=config.LOG_LEVEL)
 
-schedule_jobs = ScheduleJobs(
-    provider=provider,
-    batch_size=config.BATCH_SIZE,
-    table_name=table_name,
-    frequency=frequency,
-)
+if __name__ == "__main__":
+    provider = os.environ.get("PROVIDER")
+    table_name = "balance_sheet"
+    frequency = "annual"
+    logger = custom_logger(logger_name=table_name, log_level=config.LOG_LEVEL)
 
-# run the pipeline
-schedule_jobs.run_pipeline()
+    schedule_jobs = ScheduleJobs(
+        provider=provider,
+        batch_size=config.BATCH_SIZE,
+        table_name=table_name,
+        frequency=frequency,
+    )
+
+    # run the pipeline
+    schedule_jobs.run_pipeline()
