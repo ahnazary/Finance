@@ -1,7 +1,7 @@
 """ This is a module that generates csv files of of the data in the database."""
 
-from src.postgres_interface import PostgresInterface
 from sqlalchemy import MetaData, Table, select
+from src.postgres_interface import PostgresInterface
 
 pg_interface = PostgresInterface()
 engine = pg_interface.create_engine()
