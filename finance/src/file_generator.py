@@ -1,6 +1,6 @@
 """ This is a module that generates csv files of of the data in the database."""
 
-from postgres_interface import PostgresInterface
+from src.postgres_interface import PostgresInterface
 from sqlalchemy import MetaData, Table, select
 
 pg_interface = PostgresInterface()
@@ -31,4 +31,5 @@ def generate_valid_tickers_csv():
             file_handler.write(f"{row}\n")
 
 
-generate_valid_tickers_csv()
+if __name__ == "__main__":
+    generate_valid_tickers_csv()
