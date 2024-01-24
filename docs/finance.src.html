@@ -239,14 +239,12 @@ database and extracting data from yfinance</p>
 <span class="sig-name descname"><span class="pre">run_pipeline</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.run_pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.run_pipeline" title="Permalink to this definition"></a></dt>
 <dd><p>Main method that each of the jobs in the CI/CD pipeline will run
 It includes steps like:</p>
-<blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li><p>getting a batch of tickers to update from valid_tickers table</p></li>
 <li><p>extracting data from yfinance for each ticker</p></li>
 <li><p>inserting the data into the database</p></li>
 <li><p>updating the validity of the tickers in valid_tickers table</p></li>
 </ul>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -263,20 +261,17 @@ cashflow, etc.).</p>
 <li><p><strong>table_name</strong> (<em>str</em>) – name of the table to get the tickers from</p></li>
 <li><p><strong>engine</strong> (<em>sqlalchemy.engine.Engine</em>) – engine to connect to the database, defines if it is local or neon</p></li>
 <li><p><strong>frequency</strong> (<em>str</em>) – frequency of the data (either annual or quarterly)</p></li>
-<li><p><strong>table</strong><strong>)</strong> (<em>The query is equivalent to</em><em> (</em><em>for cahsflow</em>) – <p>select valid_tickers.ticker, valid_tickers.cashflow_annual_available,
+<li><p><strong>table</strong><strong>)</strong> (<em>The query is equivalent to</em><em> (</em><em>for cahsflow</em>) – select valid_tickers.ticker, valid_tickers.cashflow_annual_available,
 subquery.max_insert_date
 from stocks.valid_tickers
-left join (</p>
-<blockquote>
-<div><p>select cashflow.ticker, max(cashflow.insert_date) as max_insert_date
+left join (
+select cashflow.ticker, max(cashflow.insert_date) as max_insert_date
 from stocks.cashflow
-group by cashflow.ticker</p>
-</div></blockquote>
-<p>) as subquery
+group by cashflow.ticker
+) as subquery
 on valid_tickers.ticker = subquery.ticker
 where valid_tickers.cashflow_annual_available
-order by subquery.max_insert_date asc</p>
-</p></li>
+order by subquery.max_insert_date asc</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

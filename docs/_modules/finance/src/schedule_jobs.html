@@ -153,9 +153,9 @@
 <span class="sd">            subquery.max_insert_date</span>
 <span class="sd">            from stocks.valid_tickers</span>
 <span class="sd">            left join (</span>
-<span class="sd">                select cashflow.ticker, max(cashflow.insert_date) as max_insert_date</span>
-<span class="sd">                from stocks.cashflow</span>
-<span class="sd">                group by cashflow.ticker</span>
+<span class="sd">            select cashflow.ticker, max(cashflow.insert_date) as max_insert_date</span>
+<span class="sd">            from stocks.cashflow</span>
+<span class="sd">            group by cashflow.ticker</span>
 <span class="sd">            ) as subquery</span>
 <span class="sd">            on valid_tickers.ticker = subquery.ticker</span>
 <span class="sd">            where valid_tickers.cashflow_annual_available</span>
@@ -238,10 +238,11 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main method that each of the jobs in the CI/CD pipeline will run</span>
 <span class="sd">        It includes steps like:</span>
-<span class="sd">            - getting a batch of tickers to update from valid_tickers table</span>
-<span class="sd">            - extracting data from yfinance for each ticker</span>
-<span class="sd">            - inserting the data into the database</span>
-<span class="sd">            - updating the validity of the tickers in valid_tickers table</span>
+
+<span class="sd">        - getting a batch of tickers to update from valid_tickers table</span>
+<span class="sd">        - extracting data from yfinance for each ticker</span>
+<span class="sd">        - inserting the data into the database</span>
+<span class="sd">        - updating the validity of the tickers in valid_tickers table</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Running pipeline for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="si">}</span>
