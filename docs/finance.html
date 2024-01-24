@@ -18,7 +18,9 @@
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="finance.src package" href="finance.src.html" />
+    <link rel="prev" title="finance" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,18 +42,22 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">finance package</a><ul>
-<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#finance-main-module">finance.main module</a></li>
-<li><a class="reference internal" href="#finance-schedule-entry-module">finance.schedule_entry module</a></li>
-<li><a class="reference internal" href="#module-finance">Module contents</a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">finance</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">finance package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html">finance.src package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="finance.tests.html">finance.tests package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-finance">Module contents</a></li>
 </ul>
 </li>
 </ul>
-</div>
+</li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -66,6 +72,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">finance</a></li>
       <li class="breadcrumb-item active">finance package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/finance.rst.txt" rel="nofollow"> View page source</a>
@@ -84,8 +91,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="finance.src.html">finance.src package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="finance.src.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="finance.src.html#finance-src-constants-module">finance.src.constants module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="finance.src.html#finance-src-extract-module">finance.src.extract module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="finance.src.html#finance-src-file-generator-module">finance.src.file_generator module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="finance.src.html#module-finance.src.postgres_interface">finance.src.postgres_interface module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="finance.src.html#finance.src.postgres_interface.PostgresInterface"><code class="docutils literal notranslate"><span class="pre">PostgresInterface</span></code></a><ul>
@@ -94,6 +99,14 @@
 <li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.postgres_interface.PostgresInterface.insert_batch"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.insert_batch()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.postgres_interface.PostgresInterface.migrate_local_to_cloud"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.migrate_local_to_cloud()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.postgres_interface.PostgresInterface.read_table_to_df"><code class="docutils literal notranslate"><span class="pre">PostgresInterface.read_table_to_df()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="finance.src.html#module-finance.src.s3_interface">finance.src.s3_interface module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="finance.src.html#finance.src.s3_interface.S3Interface"><code class="docutils literal notranslate"><span class="pre">S3Interface</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.s3_interface.S3Interface.backup_tables"><code class="docutils literal notranslate"><span class="pre">S3Interface.backup_tables()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.s3_interface.S3Interface.get_bucket_names"><code class="docutils literal notranslate"><span class="pre">S3Interface.get_bucket_names()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -113,6 +126,20 @@
 <li class="toctree-l3"><a class="reference internal" href="finance.src.html#finance.src.utils.custom_logger"><code class="docutils literal notranslate"><span class="pre">custom_logger()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="finance.src.html#module-finance.src.yahoo_ticker">finance.src.yahoo_ticker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="finance.src.html#finance.src.yahoo_ticker.Ticker"><code class="docutils literal notranslate"><span class="pre">Ticker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.yahoo_ticker.Ticker.extract_tickers_data"><code class="docutils literal notranslate"><span class="pre">Ticker.extract_tickers_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.yahoo_ticker.Ticker.flush_records"><code class="docutils literal notranslate"><span class="pre">Ticker.flush_records()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.yahoo_ticker.Ticker.get_columns_names"><code class="docutils literal notranslate"><span class="pre">Ticker.get_columns_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.yahoo_ticker.Ticker.get_currency_code"><code class="docutils literal notranslate"><span class="pre">Ticker.get_currency_code()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.yahoo_ticker.Ticker.get_data_df"><code class="docutils literal notranslate"><span class="pre">Ticker.get_data_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.yahoo_ticker.Ticker.load_valid_tickers"><code class="docutils literal notranslate"><span class="pre">Ticker.load_valid_tickers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.yahoo_ticker.Ticker.update_tickers_list_table"><code class="docutils literal notranslate"><span class="pre">Ticker.update_tickers_list_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="finance.src.html#finance.src.yahoo_ticker.Ticker.update_validity_status"><code class="docutils literal notranslate"><span class="pre">Ticker.update_validity_status()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="finance.src.html#module-finance.src">Module contents</a></li>
 </ul>
 </li>
@@ -129,15 +156,6 @@
 </ul>
 </div>
 </section>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
-</section>
-<section id="finance-main-module">
-<h2>finance.main module<a class="headerlink" href="#finance-main-module" title="Permalink to this heading"></a></h2>
-</section>
-<section id="finance-schedule-entry-module">
-<h2>finance.schedule_entry module<a class="headerlink" href="#finance-schedule-entry-module" title="Permalink to this heading"></a></h2>
-</section>
 <section id="module-finance">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-finance" title="Permalink to this heading"></a></h2>
 </section>
@@ -146,7 +164,10 @@
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="finance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="finance.src.html" class="btn btn-neutral float-right" title="finance.src package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

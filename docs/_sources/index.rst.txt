@@ -11,6 +11,14 @@ Welcome to finance's documentation!
    :caption: Contents:
 
 
+.. include modules.rst
+.. toctree::
+   :maxdepth: 4
+   :caption: Contents:
+
+   modules
+
+
 
 Indices and tables
 ==================
