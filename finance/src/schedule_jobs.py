@@ -85,9 +85,9 @@ class ScheduleJobs:
             subquery.max_insert_date
             from stocks.valid_tickers
             left join (
-                select cashflow.ticker, max(cashflow.insert_date) as max_insert_date
-                from stocks.cashflow
-                group by cashflow.ticker
+            select cashflow.ticker, max(cashflow.insert_date) as max_insert_date
+            from stocks.cashflow
+            group by cashflow.ticker
             ) as subquery
             on valid_tickers.ticker = subquery.ticker
             where valid_tickers.cashflow_annual_available
@@ -170,10 +170,11 @@ class ScheduleJobs:
         """
         Main method that each of the jobs in the CI/CD pipeline will run
         It includes steps like:
-            - getting a batch of tickers to update from valid_tickers table
-            - extracting data from yfinance for each ticker
-            - inserting the data into the database
-            - updating the validity of the tickers in valid_tickers table
+
+        - getting a batch of tickers to update from valid_tickers table
+        - extracting data from yfinance for each ticker
+        - inserting the data into the database
+        - updating the validity of the tickers in valid_tickers table
         """
         self.logger.info(
             f"""Running pipeline for {self.table_name} with {self.provider}
