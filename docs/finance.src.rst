@@ -4,22 +4,6 @@ finance.src package
 Submodules
 ----------
 
-finance.src.constants module
-----------------------------
-
-.. automodule:: finance.src.constants
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-finance.src.extract module
---------------------------
-
-.. automodule:: finance.src.extract
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 finance.src.file\_generator module
 ----------------------------------
 
@@ -36,6 +20,14 @@ finance.src.postgres\_interface module
    :undoc-members:
    :show-inheritance:
 
+finance.src.s3\_interface module
+--------------------------------
+
+.. automodule:: finance.src.s3_interface
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 finance.src.schedule\_jobs module
 ---------------------------------
 
@@ -48,6 +40,14 @@ finance.src.utils module
 ------------------------
 
 .. automodule:: finance.src.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+finance.src.yahoo\_ticker module
+--------------------------------
+
+.. automodule:: finance.src.yahoo_ticker
    :members:
    :undoc-members:
    :show-inheritance:
