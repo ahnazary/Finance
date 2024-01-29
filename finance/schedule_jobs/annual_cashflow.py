@@ -17,6 +17,7 @@ if __name__ == "__main__":
     provider = os.getenv("PROVIDER")
     table_name = "cashflow"
     frequency = "annual"
+    print(f"Running {table_name} {frequency} pipeline with {provider} data")
     logger = custom_logger(logger_name=table_name, log_level=config.LOG_LEVEL)
 
     schedule_jobs = ScheduleJobs(
