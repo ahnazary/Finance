@@ -117,7 +117,12 @@ class PostgresInterface:
         df = pd.DataFrame(result, columns=table.columns.keys())
         return df
 
-    def migrate_dbs(self, batch_size: int = 5000) -> None:
+    def migrate_dbs(
+        self,
+        batch_size: int = 5000,
+        tap_cloud_provider: str = "NEON",
+        target_cloud_provider: str = "AVN",
+    ) -> None:
         """
         Method to migrate a database to another one
         Supposed to be used only once to migrate data
@@ -129,11 +134,18 @@ class PostgresInterface:
             number of rows to insert in each batch
             default: 5000
 
+        tap_cloud_provider : str
+            cloud provider of the tap database
+            default: NEON
+
+        target_cloud_provider : str
+            cloud provider of the target database
+            default: AVN
+
         Returns
         -------
         None
         """
-        tap_cloud_provider = "NEON"
         tap_user = os.environ.get(f"{tap_cloud_provider}_POSTGRES_USER")
         tap_password = os.environ.get(f"{tap_cloud_provider}_POSTGRES_PASSWORD")
         tap_host = os.environ.get(f"{tap_cloud_provider}_POSTGRES_HOST")
@@ -143,7 +155,6 @@ class PostgresInterface:
             f"postgresql://{tap_user}:{tap_password}@{tap_host}:{tap_port}/{tap_db}"
         )
 
-        target_cloud_provider = "AVN"
         target_user = os.environ.get(f"{target_cloud_provider}_POSTGRES_USER")
         target_password = os.environ.get(f"{target_cloud_provider}_POSTGRES_PASSWORD")
         target_host = os.environ.get(f"{target_cloud_provider}_POSTGRES_HOST")
