@@ -28,10 +28,10 @@ jobs:
       run: |
         # set secrets as environment variables
         export PROVIDER=${{ secrets.PROVIDER }}
-        export NEON_POSTGRES_DB=${{ secrets.NEON_POSTGRES_DB }}
-        export NEON_POSTGRES_USER=${{ secrets.NEON_POSTGRES_USER }}
-        export NEON_POSTGRES_PASSWORD=${{ secrets.NEON_POSTGRES_PASSWORD }}
-        export NEON_POSTGRES_HOST=${{ secrets.NEON_POSTGRES_HOST }}
-        export NEON_POSTGRES_PORT=${{ secrets.NEON_POSTGRES_PORT }}
+        export AVN_POSTGRES_DB=${{ secrets.AVN_POSTGRES_DB }}
+        export AVN_POSTGRES_USER=${{ secrets.AVN_POSTGRES_USER }}
+        export AVN_POSTGRES_PASSWORD=${{ secrets.AVN_POSTGRES_PASSWORD }}
+        export AVN_POSTGRES_HOST=${{ secrets.AVN_POSTGRES_HOST }}
+        export AVN_POSTGRES_PORT=${{ secrets.AVN_POSTGRES_PORT }}
         echo "Running quarterly_financials.py"
         python finance/schedule_jobs/annual_financials.py
