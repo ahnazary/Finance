@@ -12,7 +12,7 @@ import sqlalchemy
 from dotenv import load_dotenv
 from sqlalchemy import MetaData, Table, select, text
 from sqlalchemy.dialects.postgresql import insert
-from utils import custom_logger
+from src.utils import custom_logger
 
 
 class PostgresInterface:
