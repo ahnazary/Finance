@@ -37,9 +37,9 @@ class S3Interface:
         """
         Method to backup tables to s3
         """
-        pf_interface = PostgresInterface()
+        pg_interface = PostgresInterface()
         for table_name in BACKUP_TABLES:
-            df = pf_interface.read_table_to_df(table=table_name)
+            df = pg_interface.read_table_to_df(table=table_name)
 
             current_date = datetime.now().strftime("%Y-%m-%d")
             file_path = f"{os.getcwd()}/finance/src/data/{table_name}.parquet"
