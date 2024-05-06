@@ -29,14 +29,15 @@ jobs:
 
     - name: Run finance/schedule_jobs/backup_pg_to_s3
       run: |
-        # set secrets as environment variables  
-        export PROVIDER=${{ secrets.PROVIDER }}
-        export NEON_POSTGRES_DB=${{ secrets.NEON_POSTGRES_DB }}
-        export NEON_POSTGRES_USER=${{ secrets.NEON_POSTGRES_USER }}
-        export NEON_POSTGRES_PASSWORD=${{ secrets.NEON_POSTGRES_PASSWORD }}
-        export NEON_POSTGRES_HOST=${{ secrets.NEON_POSTGRES_HOST }}
-        export NEON_POSTGRES_PORT=${{ secrets.NEON_POSTGRES_PORT }}
-        export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-        export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
         echo "running backup_pg_to_s3.py"
         python finance/schedule_jobs/backup_pg_to_s3.py
+      env:
+        PROVIDER: ${{ secrets.PROVIDER }}
+        AVN_POSTGRES_DB: ${{ secrets.AVN_POSTGRES_DB }}
+        AVN_POSTGRES_USER: ${{ secrets.AVN_POSTGRES_USER }}
+        AVN_POSTGRES_PASSWORD: ${{ secrets.AVN_POSTGRES_PASSWORD }}
+        AVN_POSTGRES_HOST: ${{ secrets.AVN_POSTGRES_HOST }}
+        AVN_POSTGRES_PORT: ${{ secrets.AVN_POSTGRES_PORT }}#
+        AVN_SSL_MODE: ${{ secrets.AVN_SSL_MODE }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
