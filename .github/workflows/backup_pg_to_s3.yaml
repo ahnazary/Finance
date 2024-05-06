@@ -37,7 +37,7 @@ jobs:
         AVN_POSTGRES_USER: ${{ secrets.AVN_POSTGRES_USER }}
         AVN_POSTGRES_PASSWORD: ${{ secrets.AVN_POSTGRES_PASSWORD }}
         AVN_POSTGRES_HOST: ${{ secrets.AVN_POSTGRES_HOST }}
-        AVN_POSTGRES_PORT: ${{ secrets.AVN_POSTGRES_PORT }}#
+        AVN_POSTGRES_PORT: ${{ secrets.AVN_POSTGRES_PORT }}
         AVN_SSL_MODE: ${{ secrets.AVN_SSL_MODE }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
