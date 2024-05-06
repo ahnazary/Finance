@@ -108,9 +108,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to backup tables to s3</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">pf_interface</span> <span class="o">=</span> <span class="n">PostgresInterface</span><span class="p">()</span>
+        <span class="n">pg_interface</span> <span class="o">=</span> <span class="n">PostgresInterface</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">BACKUP_TABLES</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">pf_interface</span><span class="o">.</span><span class="n">read_table_to_df</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="n">table_name</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pg_interface</span><span class="o">.</span><span class="n">read_table_to_df</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="n">table_name</span><span class="p">)</span>
 
             <span class="n">current_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">file_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="si">}</span><span class="s2">/finance/src/data/</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">.parquet&quot;</span>
