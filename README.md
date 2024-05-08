@@ -23,3 +23,8 @@ This project is meant to scrape stocks financial data from yahoo finance for a w
 - Yahoo finance does not provide a way to download all the financial data for a wide range of companies at once. This project solves this problem by scraping the data from yahoo finance and storing them in a postgres database. Access to data is quick through SQL queries.
 ### Ability to Filter Companies Based on Their Financial Data:
 - Yahoo finance does not provide a way to filter companies based on their financial data. This project solves this by enabling SQL queries to filter companies based on their financial data.
+
+
+## Backups
+
+Once every month, the database is backed up and stored as parquet files in s3 bucket. The backup job is scheduled using github actions.
