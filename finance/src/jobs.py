@@ -65,7 +65,7 @@ class Jobs:
         """
 
         pd.read_csv("finance/src/database/valid_tickers.csv")[
-            ["ticker", "currency_code"]
+            ["ticker", "currency_code", "validity"]
         ].to_sql(
             "valid_tickers",
             con=self.engine,

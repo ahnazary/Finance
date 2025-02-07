@@ -5,10 +5,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from dotenv import load_dotenv
-from finance.src.jobs import Jobs
 from src.utils import custom_logger
 
 import config
+from finance.src.jobs import Jobs
 
 load_dotenv()
 
