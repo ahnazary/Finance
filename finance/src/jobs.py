@@ -8,6 +8,8 @@ different jobs in the CI/CD pipeline
 import os
 import sys
 
+import pandas as pd
+
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 )
@@ -21,7 +23,7 @@ from src.utils import custom_logger
 from finance.src.yahoo_ticker import Ticker
 
 
-class ScheduleJobs:
+class Jobs:
     """
     Class that schedules jobs in the CI/CD pipeline use for updating the
     database and extracting data from yfinance
@@ -55,6 +57,22 @@ class ScheduleJobs:
 
         # create engines to connect to the databases
         self.engine = self.postgres_interface.create_engine()
+
+    def fill_valid_tickers_table(self):
+        """
+        Method that reads valid tickers from finance/src/database/valid_tickers.csv
+        and inserts them into the valid_tickers table in the database
+        """
+
+        pd.read_csv("finance/src/database/valid_tickers.csv")[
+            ["ticker", "currency_code"]
+        ].to_sql(
+            "valid_tickers",
+            con=self.engine,
+            if_exists="replace",
+            index=False,
+            schema="finance",
+        )
 
     def tickers_to_query(
         self,
