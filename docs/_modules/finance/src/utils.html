@@ -71,10 +71,10 @@
   <h1>Source code for finance.src.utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; This module contains utility functions for the finance package. &quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
 
-<div class="viewcode-block" id="are_incremental"><a class="viewcode-back" href="../../../finance.src.html#finance.src.utils.are_incremental">[docs]</a><span class="k">def</span> <span class="nf">are_incremental</span><span class="p">(</span><span class="n">input_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<div class="viewcode-block" id="are_incremental"><a class="viewcode-back" href="../../../finance.src.html#finance.src.utils.are_incremental">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">are_incremental</span><span class="p">(</span><span class="n">input_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
     <span class="n">flag_list</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
@@ -89,7 +89,7 @@
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="custom_logger"><a class="viewcode-back" href="../../../finance.src.html#finance.src.utils.custom_logger">[docs]</a><span class="k">def</span> <span class="nf">custom_logger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">):</span>
+<div class="viewcode-block" id="custom_logger"><a class="viewcode-back" href="../../../finance.src.html#finance.src.utils.custom_logger">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">custom_logger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a custom logger.</span>
 
 <span class="sd">    Args:</span>

@@ -71,19 +71,19 @@
   <h1>Source code for finance.src.yahoo_ticker</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Module to perform operations on the yahoo finance API data (tickers) &quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.dialects.postgresql</span> <span class="kn">import</span> <span class="n">insert</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.sql</span> <span class="kn">import</span> <span class="n">null</span>
-<span class="kn">from</span> <span class="nn">src.postgres_interface</span> <span class="kn">import</span> <span class="n">PostgresInterface</span>
-<span class="kn">from</span> <span class="nn">src.utils</span> <span class="kn">import</span> <span class="n">custom_logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yfinance</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">yf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">select</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">insert</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">null</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.postgres_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostgresInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_logger</span>
 
 
-<div class="viewcode-block" id="Ticker"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker">[docs]</a><span class="k">class</span> <span class="nc">Ticker</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="Ticker"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Ticker</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">countries</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">chunksize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
@@ -99,7 +99,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span> <span class="o">=</span> <span class="n">PostgresInterface</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postgres_interface</span><span class="o">.</span><span class="n">create_engine</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_create_yf_ticker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticker_symbol</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_yf_ticker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticker_symbol</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to create a yfinance.Ticker object</span>
 
@@ -117,7 +117,7 @@
         <span class="n">ticker</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">ticker_symbol</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ticker</span>
 
-<div class="viewcode-block" id="Ticker.update_tickers_list_table"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.update_tickers_list_table">[docs]</a>    <span class="k">def</span> <span class="nf">update_tickers_list_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Ticker.update_tickers_list_table"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.update_tickers_list_table">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_tickers_list_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to update the tickers_list table in postgres</span>
 <span class="sd">        Gets all the data in the data dir excel file (all available tickers) and</span>
@@ -147,7 +147,7 @@
             <span class="n">chunksize</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ticker.load_valid_tickers"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.load_valid_tickers">[docs]</a>    <span class="k">def</span> <span class="nf">load_valid_tickers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sink_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="Ticker.load_valid_tickers"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.load_valid_tickers">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">load_valid_tickers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sink_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to load the valid tickers from the database based</span>
 <span class="sd">        on the validity status of the tickers in the valid_tickers table</span>
@@ -184,7 +184,7 @@
 
         <span class="k">return</span> <span class="n">valid_tickers</span></div>
 
-<div class="viewcode-block" id="Ticker.flush_records"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.flush_records">[docs]</a>    <span class="k">def</span> <span class="nf">flush_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<div class="viewcode-block" id="Ticker.flush_records"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.flush_records">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">flush_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">records</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to flush records to a table</span>
 
@@ -218,7 +218,7 @@
             <span class="sa">f</span><span class="s2">&quot;Data flushed with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">)</span><span class="si">}</span><span class="s2"> records inserted into </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ticker.get_data_df"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.get_data_df">[docs]</a>    <span class="k">def</span> <span class="nf">get_data_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frequency</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">):</span>
+<div class="viewcode-block" id="Ticker.get_data_df"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.get_data_df">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_data_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frequency</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method that returns a df based on the name of the table and frequency</span>
 
@@ -250,7 +250,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ticker</span><span class="p">,</span> <span class="nb">property</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="Ticker.extract_tickers_data"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.extract_tickers_data">[docs]</a>    <span class="k">def</span> <span class="nf">extract_tickers_data</span><span class="p">(</span>
+<div class="viewcode-block" id="Ticker.extract_tickers_data"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.extract_tickers_data">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract_tickers_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_columns</span><span class="p">:</span> <span class="nb">list</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -312,7 +312,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data transformed for </span><span class="si">{</span><span class="n">ticker</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-    <span class="k">def</span> <span class="nf">_adjust_df_columns</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_adjust_df_columns</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_columns</span><span class="p">:</span> <span class="nb">list</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -352,7 +352,7 @@
 
         <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="Ticker.get_columns_names"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.get_columns_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_columns_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="Ticker.get_columns_names"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.get_columns_names">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_columns_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method that returns the columns names of a table</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -363,7 +363,7 @@
         <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">column</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">columns</span></div>
 
-<div class="viewcode-block" id="Ticker.update_validity_status"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.update_validity_status">[docs]</a>    <span class="k">def</span> <span class="nf">update_validity_status</span><span class="p">(</span>
+<div class="viewcode-block" id="Ticker.update_validity_status"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.update_validity_status">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_validity_status</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tickers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">availability</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -414,7 +414,7 @@
             <span class="sa">f</span><span class="s2">&quot;Validity status updated to </span><span class="si">{</span><span class="n">availability</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tickers</span><span class="p">)</span><span class="si">}</span><span class="s2"> tickers&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ticker.get_currency_code"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.get_currency_code">[docs]</a>    <span class="k">def</span> <span class="nf">get_currency_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="Ticker.get_currency_code"><a class="viewcode-back" href="../../../finance.src.html#finance.src.yahoo_ticker.Ticker.get_currency_code">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_currency_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticker</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method that gets the currency code of a ticker from valid_tickers table</span>
 <span class="sd">        in the database</span>

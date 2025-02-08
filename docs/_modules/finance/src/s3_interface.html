@@ -71,27 +71,27 @@
   <h1>Source code for finance.src.s3_interface</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module to interact with s3&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 
-<span class="kn">import</span> <span class="nn">boto3</span>
-<span class="kn">from</span> <span class="nn">src.postgres_interface</span> <span class="kn">import</span> <span class="n">PostgresInterface</span>
-<span class="kn">from</span> <span class="nn">src.utils</span> <span class="kn">import</span> <span class="n">custom_logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">boto3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.postgres_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostgresInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_logger</span>
 
-<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">BACKUP_TABLES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">BACKUP_TABLES</span>
 
 
-<div class="viewcode-block" id="S3Interface"><a class="viewcode-back" href="../../../finance.src.html#finance.src.s3_interface.S3Interface">[docs]</a><span class="k">class</span> <span class="nc">S3Interface</span><span class="p">:</span>
+<div class="viewcode-block" id="S3Interface"><a class="viewcode-back" href="../../../finance.src.html#finance.src.s3_interface.S3Interface">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">S3Interface</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to interact with s3</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s3_resource</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">custom_logger</span><span class="p">(</span><span class="n">logger_name</span><span class="o">=</span><span class="s2">&quot;s3_interface&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="S3Interface.get_bucket_names"><a class="viewcode-back" href="../../../finance.src.html#finance.src.s3_interface.S3Interface.get_bucket_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_bucket_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<div class="viewcode-block" id="S3Interface.get_bucket_names"><a class="viewcode-back" href="../../../finance.src.html#finance.src.s3_interface.S3Interface.get_bucket_names">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_bucket_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to get the names of the buckets in s3</span>
 
@@ -104,7 +104,7 @@
         <span class="n">buckets</span> <span class="o">=</span> <span class="p">[</span><span class="n">bucket</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">bucket</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;Buckets&quot;</span><span class="p">]]</span>
         <span class="k">return</span> <span class="n">buckets</span></div>
 
-<div class="viewcode-block" id="S3Interface.backup_tables"><a class="viewcode-back" href="../../../finance.src.html#finance.src.s3_interface.S3Interface.backup_tables">[docs]</a>    <span class="k">def</span> <span class="nf">backup_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ahnazary-finance-prod&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="S3Interface.backup_tables"><a class="viewcode-back" href="../../../finance.src.html#finance.src.s3_interface.S3Interface.backup_tables">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">backup_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ahnazary-finance-prod&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Method to backup tables to s3</span>
 <span class="sd">        &quot;&quot;&quot;</span>

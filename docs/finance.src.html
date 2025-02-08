@@ -229,86 +229,8 @@ default: AVN</p></li>
 </dd></dl>
 
 </section>
-<section id="module-finance.src.schedule_jobs">
-<span id="finance-src-schedule-jobs-module"></span><h2>finance.src.schedule_jobs module<a class="headerlink" href="#module-finance.src.schedule_jobs" title="Permalink to this heading"></a></h2>
-<p>Module that schedules jobs in the CI/CD pipeline use to update the database</p>
-<p>This module contains Methods and classes that can be reused over all the
-different jobs in the CI/CD pipeline</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">finance.src.schedule_jobs.</span></span><span class="sig-name descname"><span class="pre">ScheduleJobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'annual'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">500</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class that schedules jobs in the CI/CD pipeline use for updating the
-database and extracting data from yfinance</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_yf_object">
-<span class="sig-name descname"><span class="pre">get_tickers_batch_yf_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tickers_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">yfinance.ticker.Ticker</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.get_tickers_batch_yf_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.get_tickers_batch_yf_object" title="Permalink to this definition"></a></dt>
-<dd><p>Method to get a batch of yfinance tickers from a list of tickers</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>tickers</strong> (<em>list</em>) – list of tickers to get the yfinance tickers from</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.run_pipeline">
-<span class="sig-name descname"><span class="pre">run_pipeline</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.run_pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.run_pipeline" title="Permalink to this definition"></a></dt>
-<dd><p>Main method that each of the jobs in the CI/CD pipeline will run
-It includes steps like:</p>
-<ul class="simple">
-<li><p>getting a batch of tickers to update from valid_tickers table</p></li>
-<li><p>extracting data from yfinance for each ticker</p></li>
-<li><p>inserting the data into the database</p></li>
-<li><p>updating the validity of the tickers in valid_tickers table</p></li>
-</ul>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.tickers_to_query">
-<span class="sig-name descname"><span class="pre">tickers_to_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Engine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'annual'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.tickers_to_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.tickers_to_query" title="Permalink to this definition"></a></dt>
-<dd><p>TODO: make this docs better
-TODO: make the query better</p>
-<p>Method to get a batch of tickers from valid_tickers table that have not
-been inserted into other main tables (financials, balance_sheet,
-cashflow, etc.).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table_name</strong> (<em>str</em>) – name of the table to get the tickers from</p></li>
-<li><p><strong>engine</strong> (<em>sqlalchemy.engine.Engine</em>) – engine to connect to the database, defines if it is local or neon</p></li>
-<li><p><strong>frequency</strong> (<em>str</em>) – frequency of the data (either annual or quarterly)</p></li>
-<li><p><strong>table</strong><strong>)</strong> (<em>The query is equivalent to</em><em> (</em><em>for cahsflow</em>) – select valid_tickers.ticker, valid_tickers.cashflow_annual_available,
-subquery.max_insert_date
-from stocks.valid_tickers
-left join (
-select cashflow.ticker, max(cashflow.insert_date) as max_insert_date
-from stocks.cashflow
-group by cashflow.ticker
-) as subquery
-on valid_tickers.ticker = subquery.ticker
-where valid_tickers.cashflow_annual_available
-order by subquery.max_insert_date asc</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of tickers</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="finance.src.schedule_jobs.ScheduleJobs.update_validy_in_valid_tickers_table">
-<span class="sig-name descname"><span class="pre">update_validy_in_valid_tickers_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/schedule_jobs.html#ScheduleJobs.update_validy_in_valid_tickers_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.schedule_jobs.ScheduleJobs.update_validy_in_valid_tickers_table" title="Permalink to this definition"></a></dt>
-<dd><p>Method that gets a list of tickers and updates their validity in the
-valid_tickers table</p>
-</dd></dl>
-
-</dd></dl>
-
+<section id="finance-src-schedule-jobs-module">
+<h2>finance.src.schedule_jobs module<a class="headerlink" href="#finance-src-schedule-jobs-module" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-finance.src.utils">
 <span id="finance-src-utils-module"></span><h2>finance.src.utils module<a class="headerlink" href="#module-finance.src.utils" title="Permalink to this heading"></a></h2>
