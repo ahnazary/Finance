@@ -34,6 +34,7 @@ class PostgresInterface:
         dict
             dictionary with the engines to connect to the databases
         """
+        conn_str = os.environ.get(f"{self.provider}_POSTGRES_CONNECTION_STRING")
         user = os.environ.get(f"{self.provider}_POSTGRES_USER")
         password = os.environ.get(f"{self.provider}_POSTGRES_PASSWORD")
         host = os.environ.get(f"{self.provider}_POSTGRES_HOST")
@@ -41,8 +42,12 @@ class PostgresInterface:
         db = os.environ.get(f"{self.provider}_POSTGRES_DB")
         ssl_mode = "?sslmode=" + os.environ.get(f"{self.provider}_SSL_MODE") or ""
 
-        engine = sqlalchemy.create_engine(
-            f"postgresql://{user}:{password}@{host}:{port}/{db}{ssl_mode}"
+        engine = (
+            sqlalchemy.create_engine(
+                f"postgresql://{user}:{password}@{host}:{port}/{db}{ssl_mode}"
+            )
+            if not conn_str
+            else sqlalchemy.create_engine(conn_str)
         )
 
         return engine
