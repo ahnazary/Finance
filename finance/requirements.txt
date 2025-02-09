@@ -1,8 +1,7 @@
 pandas==2.2.3
 python-dotenv==1.0.0
-SQLAlchemy==2.0.19
-yfinance==0.2.26
-psycopg2-binary==2.9.6
+SQLAlchemy
+psycopg2-binary
 sphinx-rtd-theme==1.2.2
 sphinxcontrib-applehelp==1.0.4
 sphinxcontrib-devhelp==1.0.2
