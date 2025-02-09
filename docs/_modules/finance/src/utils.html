@@ -89,19 +89,31 @@
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="custom_logger"><a class="viewcode-back" href="../../../finance.src.html#finance.src.utils.custom_logger">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">custom_logger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a custom logger.</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="emit_log"><a class="viewcode-back" href="../../../finance.src.html#finance.src.utils.emit_log">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">emit_log</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a custom logger and emits logs.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        logger_name (str): Name of the logger.</span>
 <span class="sd">        log_level (int): Log level.</span>
+<span class="sd">        message (str): Message to log.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        logging.Logger: A custom logger.</span>
+<span class="sd">        None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">logger</span></div>
+    <span class="n">ch</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+    <span class="n">ch</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(name)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">ch</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">log_level</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

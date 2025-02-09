@@ -83,7 +83,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dotenv</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">select</span><span class="p">,</span> <span class="n">text</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">insert</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">src.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">custom_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">emit_log</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOG_LEVEL</span>
 
 
 <div class="viewcode-block" id="PostgresInterface"><a class="viewcode-back" href="../../../finance.src.html#finance.src.postgres_interface.PostgresInterface">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PostgresInterface</span><span class="p">:</span>
@@ -93,7 +95,6 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">load_dotenv</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">custom_logger</span><span class="p">(</span><span class="n">logger_name</span><span class="o">=</span><span class="s2">&quot;postgres_interface&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">provider</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PROVIDER&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PostgresInterface.create_engine"><a class="viewcode-back" href="../../../finance.src.html#finance.src.postgres_interface.PostgresInterface.create_engine">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">create_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">Engine</span><span class="p">:</span>
@@ -167,7 +168,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># statement to insert data into neon database</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inserting batch of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows&quot;</span><span class="p">)</span>
+        <span class="n">emit_log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inserting batch of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows&quot;</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">LOG_LEVEL</span><span class="p">)</span>
         <span class="n">insert_statement</span> <span class="o">=</span> <span class="n">insert</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span><span class="o">.</span><span class="n">on_conflict_do_nothing</span><span class="p">()</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">insert_statement</span><span class="p">)</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
@@ -191,121 +192,7 @@
         <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">df</span></div>
-
-<div class="viewcode-block" id="PostgresInterface.migrate_dbs"><a class="viewcode-back" href="../../../finance.src.html#finance.src.postgres_interface.PostgresInterface.migrate_dbs">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">migrate_dbs</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
-        <span class="n">tap_cloud_provider</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;NEON&quot;</span><span class="p">,</span>
-        <span class="n">target_cloud_provider</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;AVN&quot;</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Method to migrate a database to another one</span>
-<span class="sd">        Supposed to be used only once to migrate data</span>
-<span class="sd">        to a target database</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        batch_size : int</span>
-<span class="sd">            number of rows to insert in each batch</span>
-<span class="sd">            default: 5000</span>
-
-<span class="sd">        tap_cloud_provider : str</span>
-<span class="sd">            cloud provider of the tap database</span>
-<span class="sd">            default: NEON</span>
-
-<span class="sd">        target_cloud_provider : str</span>
-<span class="sd">            cloud provider of the target database</span>
-<span class="sd">            default: AVN</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tap_user</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tap_cloud_provider</span><span class="si">}</span><span class="s2">_POSTGRES_USER&quot;</span><span class="p">)</span>
-        <span class="n">tap_password</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tap_cloud_provider</span><span class="si">}</span><span class="s2">_POSTGRES_PASSWORD&quot;</span><span class="p">)</span>
-        <span class="n">tap_host</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tap_cloud_provider</span><span class="si">}</span><span class="s2">_POSTGRES_HOST&quot;</span><span class="p">)</span>
-        <span class="n">tap_port</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tap_cloud_provider</span><span class="si">}</span><span class="s2">_POSTGRES_PORT&quot;</span><span class="p">)</span>
-        <span class="n">tap_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tap_cloud_provider</span><span class="si">}</span><span class="s2">_POSTGRES_DB&quot;</span><span class="p">)</span>
-        <span class="n">engine_tap</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;postgresql://</span><span class="si">{</span><span class="n">tap_user</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">tap_password</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">tap_host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">tap_port</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">tap_db</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-
-        <span class="n">target_user</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_cloud_provider</span><span class="si">}</span><span class="s2">_POSTGRES_USER&quot;</span><span class="p">)</span>
-        <span class="n">target_password</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_cloud_provider</span><span class="si">}</span><span class="s2">_POSTGRES_PASSWORD&quot;</span><span class="p">)</span>
-        <span class="n">target_host</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_cloud_provider</span><span class="si">}</span><span class="s2">_POSTGRES_HOST&quot;</span><span class="p">)</span>
-        <span class="n">target_port</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_cloud_provider</span><span class="si">}</span><span class="s2">_POSTGRES_PORT&quot;</span><span class="p">)</span>
-        <span class="n">target_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_cloud_provider</span><span class="si">}</span><span class="s2">_POSTGRES_DB&quot;</span><span class="p">)</span>
-        <span class="n">engine_target</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;postgresql://</span><span class="si">{</span><span class="n">target_user</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">target_password</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">target_host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">target_port</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">target_db</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-
-        <span class="c1"># List of tables in local postgres database in stocks schema</span>
-        <span class="n">metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
-        <span class="n">information_schema_tables</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
-            <span class="s2">&quot;tables&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">autoload_with</span><span class="o">=</span><span class="n">engine_tap</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;information_schema&quot;</span>
-        <span class="p">)</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">select</span><span class="p">(</span><span class="n">information_schema_tables</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">table_name</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">information_schema_tables</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">table_schema</span> <span class="o">==</span> <span class="s2">&quot;stocks&quot;</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">information_schema_tables</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">table_name</span><span class="p">)</span>
-        <span class="p">)</span>
-
-        <span class="k">with</span> <span class="n">engine_tap</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn_local</span><span class="p">:</span>
-            <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">conn_local</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()]</span>
-
-        <span class="c1"># if &quot;alembic&quot; of &quot;dbt&quot; are in table&#39;s name, remove them</span>
-        <span class="n">blacklist</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;alembic&quot;</span><span class="p">,</span> <span class="s2">&quot;dbt&quot;</span><span class="p">]</span>
-        <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">table</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">table</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">blacklist</span><span class="p">)]</span>
-
-        <span class="c1"># insert table&#39;s data into neon database</span>
-        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inserting data from </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2"> into target database&quot;</span><span class="p">)</span>
-            <span class="k">with</span> <span class="n">engine_tap</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn_tap</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">engine_target</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn_target</span><span class="p">:</span>
-                    <span class="n">table_tap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_table_object</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">engine_tap</span><span class="p">)</span>
-                    <span class="n">total_rows</span> <span class="o">=</span> <span class="n">conn_tap</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                        <span class="n">text</span><span class="p">(</span><span class="s2">&quot;SELECT COUNT(*) FROM stocks.&quot;</span> <span class="o">+</span> <span class="n">table</span><span class="p">)</span>
-                    <span class="p">)</span><span class="o">.</span><span class="n">scalar</span><span class="p">()</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Total rows in </span><span class="si">{</span><span class="n">table_tap</span><span class="si">}</span><span class="s2"> from tap database: </span><span class="si">{</span><span class="n">total_rows</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="p">)</span>
-
-                    <span class="c1"># Calculate how many iterations you will need</span>
-                    <span class="n">iterations</span> <span class="o">=</span> <span class="n">total_rows</span> <span class="o">//</span> <span class="n">batch_size</span> <span class="o">+</span> <span class="p">(</span>
-                        <span class="mi">1</span> <span class="k">if</span> <span class="n">total_rows</span> <span class="o">%</span> <span class="n">batch_size</span> <span class="k">else</span> <span class="mi">0</span>
-                    <span class="p">)</span>
-
-                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
-                        <span class="n">offset</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">batch_size</span>
-                        <span class="c1"># Create a SELECT statement with LIMIT and OFFSET</span>
-                        <span class="n">select_stmt</span> <span class="o">=</span> <span class="n">conn_tap</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                            <span class="n">text</span><span class="p">(</span>
-                                <span class="s2">&quot;SELECT * FROM stocks.&quot;</span>
-                                <span class="o">+</span> <span class="n">table</span>
-                                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; LIMIT </span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s2"> OFFSET </span><span class="si">{</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;</span>
-                            <span class="p">)</span>
-                        <span class="p">)</span>
-                        <span class="n">result_set</span> <span class="o">=</span> <span class="n">select_stmt</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-                        <span class="c1"># convert result set to list of dicts</span>
-                        <span class="n">result_set</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result_set</span><span class="p">]</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Selected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result_set</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows from </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2"> from tap database</span>
-<span class="s2">                             with offset </span><span class="si">{</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
-                        <span class="p">)</span>
-
-                        <span class="n">table_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_table_object</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">engine_target</span><span class="p">)</span>
-
-                        <span class="c1"># statement to insert data into neon database</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Inserting batch of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result_set</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows&quot;</span>
-                        <span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">insert_batch</span><span class="p">(</span><span class="n">table_target</span><span class="p">,</span> <span class="n">result_set</span><span class="p">,</span> <span class="n">conn_target</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Inserted </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result_set</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows from </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2"> into target database&quot;</span>
-                        <span class="p">)</span>
-
-                        <span class="k">del</span> <span class="n">result_set</span></div></div>
+        <span class="k">return</span> <span class="n">df</span></div></div>
 </pre></div>
 
            </div>
