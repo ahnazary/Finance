@@ -16,7 +16,6 @@ sys.path.insert(
 
 from datetime import datetime
 
-import yfinance as yf
 from sqlalchemy import text
 from src.postgres_interface import PostgresInterface
 from src.utils import custom_logger
@@ -93,45 +92,37 @@ class Jobs:
         # processed
         query = text(
             f"""
-            select vt.ticker, vt.currency_code
+            select vt.ticker, vt.currency_code, t.insert_date
             from finance.valid_tickers vt left join finance.{self.table_name} t
             on vt.ticker = t.ticker
-            where vt.validity = 'true' and t.insert_date is null
-            limit {BATCH_SIZE}
+            where vt.validity = 'true'
+            order by t.insert_date nulls first
+            limit {self.batch_size}
             """
         )
 
         with self.engine.connect() as connection:
             result = connection.execute(query)
             tickers = [(row[0], row[1]) for row in result]
-            if tickers:
-                return tickers
-            else:
-                query = text(
-                    f"""
-                    select distinct vt.ticker, vt.currency_code, t.insert_date
-                    from finance.valid_tickers vt left join finance.{self.table_name} t
-                    on vt.ticker = t.ticker
-                    where vt.validity = 'true'
-                    order by t.insert_date asc
-                    limit {BATCH_SIZE}
-                    """
-                )
-                result = connection.execute(query)
-                return [(row[0], row[1]) for row in result]
+            return tickers
 
-    def get_tickers_batch_yf_object(self, tickers_list: list) -> list[yf.Ticker]:
+    def update_validity_of_tickers(self, ticker: str, validity: bool = False) -> None:
         """
-        Method to get a batch of yfinance tickers from a list of tickers
-
-        Parameters
-        ----------
-        tickers : list
-            list of tickers to get the yfinance tickers from
+        Method that updates the validity of a ticker in the valid_tickers table
         """
-        return [yf.Ticker(ticker) for ticker in tickers_list]
 
-    def run_pipeline(self, attribute: str, frequency: str = "annual"):
+        query = text(
+            f"""
+            update finance.valid_tickers
+            set validity = {validity}
+            where ticker = '{ticker[0] }'
+            """
+        )
+
+        with self.engine.connect() as connection:
+            connection.execute(query)
+
+    def run_pipeline(self, attribute: str) -> None:
         """
         Main method that each of the jobs in the CI/CD pipeline will run
         """
@@ -155,7 +146,12 @@ class Jobs:
         tickers_list = self.tickers_to_query(frequency=self.frequency)
 
         for ticker in tickers_list:
-            data = Ticker(ticker[0]).__getattribute__(f"yahoo_api_{attribute}")()
+            try:
+                data = Ticker(ticker[0]).__getattribute__(f"yahoo_api_{attribute}")()
+            except Exception as e:
+                self.logger.error(f"Error while fetching data for {ticker[0]}: {e}")
+                self.update_validity_of_tickers(ticker, validity=False)
+                continue
 
             for row in data.iterrows():
                 insert_df.loc[-1] = [
@@ -163,7 +159,7 @@ class Jobs:
                     datetime.now(),
                     row[0],
                     ticker[1],
-                    frequency,
+                    self.frequency,
                     row[1].to_json(),
                 ]
                 insert_df.index = insert_df.index + 1
