@@ -7,7 +7,7 @@ BATCH_SIZE = 100
 CURRENCIES = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF"]
 
 # warning log level
-LOG_LEVEL = 30
+LOG_LEVEL = 20
 
 # List of tables to be backed up through backup workflow
 # (read tables into parquet files and load them into s3)

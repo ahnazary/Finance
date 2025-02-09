@@ -18,16 +18,28 @@ def are_incremental(input_list: list):
         return True
 
 
-def custom_logger(logger_name: str, log_level: int = logging.WARNING):
-    """Creates a custom logger.
+logger = logging.getLogger(__name__)
+
+
+def emit_log(message: str, log_level: int = logging.INFO):
+    """Creates a custom logger and emits logs.
 
     Args:
-        logger_name (str): Name of the logger.
         log_level (int): Log level.
+        message (str): Message to log.
 
     Returns:
-        logging.Logger: A custom logger.
+        None
     """
-    logger = logging.getLogger(logger_name)
+    logger.setLevel(log_level)
 
-    return logger
+    ch = logging.StreamHandler()
+    ch.setLevel(log_level)
+
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    ch.setFormatter(formatter)
+
+    logger.addHandler(ch)
+    logger.log(log_level, message)

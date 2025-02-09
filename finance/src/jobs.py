@@ -18,10 +18,10 @@ from datetime import datetime
 
 from sqlalchemy import text
 from src.postgres_interface import PostgresInterface
-from src.utils import custom_logger
+from src.utils import emit_log
 from stockdex import Ticker
 
-from config import BATCH_SIZE
+from config import BATCH_SIZE, LOG_LEVEL
 
 
 class Jobs:
@@ -47,8 +47,6 @@ class Jobs:
             size of the batch to insert into the database for each table
             default: BATCH_SIZE from config.py
         """
-
-        self.logger = custom_logger(logger_name="schedule_jobs")
         self.batch_size = batch_size
         self.provider = provider
         self.table_name = table_name
@@ -126,9 +124,9 @@ class Jobs:
         """
         Main method that each of the jobs in the CI/CD pipeline will run
         """
-        self.logger.info(
-            f"""Running pipeline for {self.table_name} with {self.provider}
-            provider and {self.frequency} frequency"""
+        emit_log(
+            f"Running pipeline for {self.table_name} with attribute {attribute}",
+            log_level=LOG_LEVEL,
         )
 
         insert_df = pd.DataFrame(
@@ -149,7 +147,10 @@ class Jobs:
             try:
                 data = Ticker(ticker[0]).__getattribute__(f"yahoo_api_{attribute}")()
             except Exception as e:
-                self.logger.error(f"Error while fetching data for {ticker[0]}: {e}")
+                emit_log(
+                    f"Data for {ticker[0]} could not be fetched: {e}",
+                    log_level=LOG_LEVEL,
+                )
                 self.update_validity_of_tickers(ticker, validity=False)
                 continue
 
@@ -164,7 +165,10 @@ class Jobs:
                 ]
                 insert_df.index = insert_df.index + 1
                 insert_df = insert_df.sort_index()
-                self.logger.info(f"Data fetched for {ticker[0]}")
+                emit_log(
+                    f"Data for {ticker[0]} on {row[0]} fetched successfully",
+                    log_level=LOG_LEVEL,
+                )
 
         insert_df.to_sql(
             self.table_name,
