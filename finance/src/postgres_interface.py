@@ -44,6 +44,7 @@ class PostgresInterface:
         engine = sqlalchemy.create_engine(
             f"postgresql://{user}:{password}@{host}:{port}/{db}{ssl_mode}"
         )
+        print(f"Connected to postgresql://{user}:{password}@{host}:{port}/{db}{ssl_mode}")
 
         return engine
 
