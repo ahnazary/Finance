@@ -1,7 +1,8 @@
+numpy<2.0.0
 pandas==2.2.3
 python-dotenv==1.0.0
-SQLAlchemy
-psycopg2-binary
+SQLAlchemy==2.0.19
+psycopg2-binary==2.9.6
 sphinx-rtd-theme==1.2.2
 sphinxcontrib-applehelp==1.0.4
 sphinxcontrib-devhelp==1.0.2
@@ -15,4 +16,4 @@ requests
 fastparquet==2023.10.1
 pyarrow==14.0.2
 boto3==1.34.9
-stockdex==1.0.2
+stockdex==1.0.3

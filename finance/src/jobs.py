@@ -164,6 +164,7 @@ class Jobs:
                 ]
                 insert_df.index = insert_df.index + 1
                 insert_df = insert_df.sort_index()
+                self.logger.info(f"Data fetched for {ticker[0]}")
 
         insert_df.to_sql(
             self.table_name,
