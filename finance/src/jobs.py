@@ -115,7 +115,7 @@ class Jobs:
             f"""
             update finance.valid_tickers
             set validity = {validity}
-            where ticker = '{ticker[0] }'
+            where ticker = '{ticker[0]}'
             """
         )
 
