@@ -3,7 +3,7 @@ name: quarterly balance_sheet
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 4,16 * * *"
+    - cron: "30 3,15 * * *"
 
 jobs:
   run-script:
