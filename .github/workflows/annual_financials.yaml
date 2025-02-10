@@ -1,0 +1,41 @@
+name: annual financials
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2,14 * * *"
+    
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    environment: prod
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r finance/requirements.txt
+
+    - name: Run finance/schedule_jobs/financials.py with annual frequency
+      run: |
+        # set secrets as environment variables
+        export PROVIDER=${{ secrets.PROVIDER }}
+        export AVN_POSTGRES_DB=${{ secrets.AVN_POSTGRES_DB }}
+        export AVN_POSTGRES_USER=${{ secrets.AVN_POSTGRES_USER }}
+        export AVN_POSTGRES_PASSWORD=${{ secrets.AVN_POSTGRES_PASSWORD }}
+        export AVN_POSTGRES_HOST=${{ secrets.AVN_POSTGRES_HOST }}
+        export AVN_POSTGRES_PORT=${{ secrets.AVN_POSTGRES_PORT }}
+        export AVN_SSL_MODE=${{ secrets.AVN_SSL_MODE }}
+        echo "Running financials.py with frequency: annual"
+        export AVN_POSTGRES_CONNECTION_STRING="${{ secrets.AVN_POSTGRES_CONNECTION_STRING }}"
+        export FREQUENCY=annual
+        echo "Running cashflow.py with frequency: $FREQUENCY"
+        python finance/schedule_jobs/financials.py
