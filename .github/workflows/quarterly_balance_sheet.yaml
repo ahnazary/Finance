@@ -3,7 +3,7 @@ name: quarterly balance_sheet
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 9,15,21,3 * * *"
+    - cron: "0 4,16 * * *"
 
 jobs:
   run-script:
@@ -24,7 +24,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r finance/requirements.txt
 
-    - name: Run finance/schedule_jobs/quarterly_balance_sheet.py
+    - name: Run finance/schedule_jobs/balance_sheet.py with quarterly frequency
       run: |
         # set secrets as environment variables
         export PROVIDER=${{ secrets.PROVIDER }}
@@ -34,5 +34,6 @@ jobs:
         export AVN_POSTGRES_HOST=${{ secrets.AVN_POSTGRES_HOST }}
         export AVN_POSTGRES_PORT=${{ secrets.AVN_POSTGRES_PORT }}
         export AVN_SSL_MODE=${{ secrets.AVN_SSL_MODE }}
-        echo "Running quarterly_balance_sheet.py"
-        python finance/schedule_jobs/quarterly_balance_sheet.py
+        export AVN_POSTGRES_CONNECTION_STRING="${{ secrets.AVN_POSTGRES_CONNECTION_STRING }}"
+        echo "Running balance_sheet.py with frequency: $FREQUENCY"
+        python finance/schedule_jobs/balance_sheet.py
