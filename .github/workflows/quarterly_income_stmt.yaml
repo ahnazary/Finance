@@ -24,7 +24,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r finance/requirements.txt
 
-    - name: Run finance/schedule_jobs/quarterly_income_sttm.py
+    - name: Run finance/schedule_jobs/income_sttm.py with quarterly frequency
       run: |
         # set secrets as environment variables  
         export PROVIDER=${{ secrets.PROVIDER }}
@@ -35,4 +35,8 @@ jobs:
         export AVN_POSTGRES_PORT=${{ secrets.AVN_POSTGRES_PORT }}
         export AVN_SSL_MODE=${{ secrets.AVN_SSL_MODE }}
         echo "running quarterly_income_sttm.py"
-        python finance/schedule_jobs/quarterly_income_sttm.py
+        echo "running income_sttm.py with frequency: quarterly"
+        export AVN_POSTGRES_CONNECTION_STRING="${{ secrets.AVN_POSTGRES_CONNECTION_STRING }}"
+        export FREQUENCY=quarterly
+        echo "Running income_sttm.py with frequency: $FREQUENCY"
+        python finance/schedule_jobs/income_sttm.py

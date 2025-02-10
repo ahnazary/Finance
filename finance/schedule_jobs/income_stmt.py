@@ -15,7 +15,7 @@ load_dotenv()
 if __name__ == "__main__":
     provider = os.getenv("PROVIDER")
     frequency = os.getenv("FREQUENCY")
-    table_name = "balance_sheet"
+    table_name = "income_stmt"
     emit_log(f"Running pipeline for {table_name} table", log_level=config.LOG_LEVEL)
 
     jobs = Jobs(
@@ -23,4 +23,4 @@ if __name__ == "__main__":
         table_name=table_name,
         frequency=frequency,
     )
-    tickers = jobs.run_pipeline(attribute="balance_sheet")
+    tickers = jobs.run_pipeline(attribute="income_statement")

@@ -119,6 +119,10 @@ class Jobs:
 
         with self.engine.connect() as connection:
             connection.execute(query)
+            emit_log(
+                f"Validity of {ticker[0]} set to {validity}",
+                log_level=LOG_LEVEL,
+            )
 
     def run_pipeline(self, attribute: str) -> None:
         """
