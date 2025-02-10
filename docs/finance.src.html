@@ -157,7 +157,7 @@ default: stocks</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="finance.src.postgres_interface.PostgresInterface.read_table_to_df">
-<span class="sig-name descname"><span class="pre">read_table_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'stocks'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface.read_table_to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface.read_table_to_df" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">read_table_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'finance'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/finance/src/postgres_interface.html#PostgresInterface.read_table_to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.postgres_interface.PostgresInterface.read_table_to_df" title="Permalink to this definition"></a></dt>
 <dd><p>Method to read a table into a dataframe</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -175,8 +175,36 @@ default: stocks</p></li>
 </dd></dl>
 
 </section>
-<section id="finance-src-s3-interface-module">
-<h2>finance.src.s3_interface module<a class="headerlink" href="#finance-src-s3-interface-module" title="Permalink to this heading"></a></h2>
+<section id="module-finance.src.s3_interface">
+<span id="finance-src-s3-interface-module"></span><h2>finance.src.s3_interface module<a class="headerlink" href="#module-finance.src.s3_interface" title="Permalink to this heading"></a></h2>
+<p>Module to interact with s3</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="finance.src.s3_interface.S3Interface">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">finance.src.s3_interface.</span></span><span class="sig-name descname"><span class="pre">S3Interface</span></span><a class="reference internal" href="_modules/finance/src/s3_interface.html#S3Interface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.s3_interface.S3Interface" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to interact with s3</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="finance.src.s3_interface.S3Interface.backup_tables">
+<span class="sig-name descname"><span class="pre">backup_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ahnazary-finance-prod'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/finance/src/s3_interface.html#S3Interface.backup_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.s3_interface.S3Interface.backup_tables" title="Permalink to this definition"></a></dt>
+<dd><p>Method to backup tables to s3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="finance.src.s3_interface.S3Interface.get_bucket_names">
+<span class="sig-name descname"><span class="pre">get_bucket_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/finance/src/s3_interface.html#S3Interface.get_bucket_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#finance.src.s3_interface.S3Interface.get_bucket_names" title="Permalink to this definition"></a></dt>
+<dd><p>Method to get the names of the buckets in s3</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list with the names of the buckets in s3</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="finance-src-schedule-jobs-module">
 <h2>finance.src.schedule_jobs module<a class="headerlink" href="#finance-src-schedule-jobs-module" title="Permalink to this heading"></a></h2>
