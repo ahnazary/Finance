@@ -35,5 +35,6 @@ jobs:
         export AVN_POSTGRES_PORT=${{ secrets.AVN_POSTGRES_PORT }}
         export AVN_SSL_MODE=${{ secrets.AVN_SSL_MODE }}
         export AVN_POSTGRES_CONNECTION_STRING="${{ secrets.AVN_POSTGRES_CONNECTION_STRING }}"
+        export FREQUENCY=quarterly
         echo "Running balance_sheet.py with frequency: $FREQUENCY"
         python finance/schedule_jobs/balance_sheet.py
