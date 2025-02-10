@@ -16,6 +16,5 @@ BACKUP_TABLES = [
     "cashflow",
     "financials",
     "income_stmt",
-    "tickers_list",
     "valid_tickers",
 ]

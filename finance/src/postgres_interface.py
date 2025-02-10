@@ -102,7 +102,7 @@ class PostgresInterface:
         conn.execute(insert_statement)
         conn.commit()
 
-    def read_table_to_df(self, table: str, schema: str = "stocks") -> pd.DataFrame:
+    def read_table_to_df(self, table: str, schema: str = "finance") -> pd.DataFrame:
         """
         Method to read a table into a dataframe
 

@@ -29,7 +29,7 @@ jobs:
 
     - name: Run finance/schedule_jobs/backup_pg_to_s3
       run: |
-        echo "running backup_pg_to_s3.py"
+        echo "running backup_pg_to_s3.py to copy tables to s3 into parquet format"
         python finance/schedule_jobs/backup_pg_to_s3.py
       env:
         PROVIDER: ${{ secrets.PROVIDER }}
