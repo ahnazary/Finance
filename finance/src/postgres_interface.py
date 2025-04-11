@@ -54,7 +54,7 @@ class PostgresInterface:
         return engine
 
     def create_table_object(
-        self, table_name: str, engine: sqlalchemy.engine.Engine, schema: str = "stocks"
+        self, table_name: str, engine: sqlalchemy.engine.Engine, schema: str = "finance"
     ) -> sqlalchemy.Table:
         """
         Method to create a table object

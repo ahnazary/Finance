@@ -10,7 +10,7 @@ engine = pg_interface.create_engine()
 def generate_valid_tickers_csv():
     # create a csv file containing all valid tickers in valid_tickers table
     valid_tickers = Table(
-        "valid_tickers", MetaData(), autoload_with=engine, schema="stocks"
+        "valid_tickers", MetaData(), autoload_with=engine, schema="finance"
     )
     query = select(valid_tickers).where(valid_tickers.columns.validity)
 
