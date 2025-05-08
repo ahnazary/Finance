@@ -43,3 +43,4 @@ def emit_log(message: str, log_level: int = logging.INFO):
 
     logger.addHandler(ch)
     logger.log(log_level, message)
+    logger.removeHandler(ch)
