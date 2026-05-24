@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" font-family="Arial, sans-serif">
+  <!-- Background -->
+  <rect width="900" height="500" fill="#f8f9fa" rx="10"/>
+
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" font-size="20" font-weight="bold" fill="#333">Finance Data Pipeline - Architecture</text>
+
+  <!-- Stage 1: Data Source -->
+  <rect x="30" y="70" width="180" height="80" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="8"/>
+  <text x="120" y="100" text-anchor="middle" font-size="12" font-weight="bold" fill="#1976d2">Data Source</text>
+  <text x="120" y="120" text-anchor="middle" font-size="11" fill="#333">tickers_list.xlsx</text>
+  <text x="120" y="138" text-anchor="middle" font-size="10" fill="#666">106,328 tickers</text>
+
+  <!-- Arrow 1 -->
+  <path d="M 210 110 L 260 110" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- Stage 2: Active Tickers Check -->
+  <rect x="260" y="60" width="200" height="100" fill="#fff3e0" stroke="#f57c00" stroke-width="2" rx="8"/>
+  <text x="360" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#f57c00">Active Tickers Check</text>
+  <text x="360" y="105" text-anchor="middle" font-size="10" fill="#333">ThreadPoolExecutor</text>
+  <text x="360" y="120" text-anchor="middle" font-size="10" fill="#333">30 threads × 100 batch</text>
+  <text x="360" y="140" text-anchor="middle" font-size="10" fill="#666">Short-circuit on first</text>
+  <text x="360" y="155" text-anchor="middle" font-size="10" fill="#666">valid API response</text>
+
+  <!-- Arrow 2 -->
+  <path d="M 460 110 L 510 110" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- Stage 3: Financial Data ETL -->
+  <rect x="510" y="60" width="200" height="100" fill="#e8f5e9" stroke="#388e3c" stroke-width="2" rx="8"/>
+  <text x="610" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#388e3c">Financial Data ETL</text>
+  <text x="610" y="105" text-anchor="middle" font-size="10" fill="#333">4 parallel jobs</text>
+  <text x="610" y="120" text-anchor="middle" font-size="10" fill="#333">10 threads × 50 batch</text>
+  <text x="610" y="140" text-anchor="middle" font-size="10" fill="#666">Priority: new first,</text>
+  <text x="610" y="155" text-anchor="middle" font-size="10" fill="#666">then oldest data</text>
+
+  <!-- Arrow 3 -->
+  <path d="M 710 110 L 760 110" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- Database -->
+  <rect x="760" y="60" width="120" height="100" fill="#fce4ec" stroke="#c62828" stroke-width="2" rx="8"/>
+  <text x="820" y="88" text-anchor="middle" font-size="12" font-weight="bold" fill="#c62828">Neon</text>
+  <text x="820" y="104" text-anchor="middle" font-size="12" font-weight="bold" fill="#c62828">PostgreSQL</text>
+  <text x="820" y="125" text-anchor="middle" font-size="9" fill="#333">finance schema</text>
+  <text x="820" y="140" text-anchor="middle" font-size="9" fill="#333">500MB limit</text>
+  <text x="820" y="155" text-anchor="middle" font-size="9" fill="#333">Long format</text>
+
+  <!-- Tables Section -->
+  <rect x="30" y="200" width="840" height="280" fill="#fff" stroke="#ddd" stroke-width="1" rx="8"/>
+  <text x="450" y="225" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">Database Tables (finance schema)</text>
+
+  <!-- active_tickers table -->
+  <rect x="50" y="245" width="200" height="120" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" rx="5"/>
+  <text x="150" y="265" text-anchor="middle" font-size="11" font-weight="bold" fill="#1976d2">active_tickers</text>
+  <text x="60" y="285" font-size="9" fill="#333">ticker (PK) VARCHAR(20)</text>
+  <text x="60" y="300" font-size="9" fill="#333">name VARCHAR</text>
+  <text x="60" y="315" font-size="9" fill="#333">exchange VARCHAR</text>
+  <text x="60" y="330" font-size="9" fill="#333">is_active BOOLEAN</text>
+  <text x="60" y="345" font-size="9" fill="#333">upsert_datetime TIMESTAMP</text>
+  <text x="150" y="362" text-anchor="middle" font-size="9" font-style="italic" fill="#666">~106K rows</text>
+
+  <!-- income_stmt table -->
+  <rect x="270" y="245" width="180" height="120" fill="#e8f5e9" stroke="#388e3c" stroke-width="1.5" rx="5"/>
+  <text x="360" y="265" text-anchor="middle" font-size="11" font-weight="bold" fill="#388e3c">income_stmt</text>
+  <text x="280" y="285" font-size="9" fill="#333">ticker VARCHAR</text>
+  <text x="280" y="300" font-size="9" fill="#333">frequency VARCHAR</text>
+  <text x="280" y="315" font-size="9" fill="#333">report_date DATE</text>
+  <text x="280" y="330" font-size="9" fill="#333">metric VARCHAR</text>
+  <text x="280" y="345" font-size="9" fill="#333">value FLOAT</text>
+  <text x="280" y="360" font-size="9" fill="#333">insert_datetime TIMESTAMP</text>
+
+  <!-- cash_flow table -->
+  <rect x="470" y="245" width="180" height="120" fill="#fff3e0" stroke="#f57c00" stroke-width="1.5" rx="5"/>
+  <text x="560" y="265" text-anchor="middle" font-size="11" font-weight="bold" fill="#f57c00">cash_flow</text>
+  <text x="480" y="285" font-size="9" fill="#333">ticker VARCHAR</text>
+  <text x="480" y="300" font-size="9" fill="#333">frequency VARCHAR</text>
+  <text x="480" y="315" font-size="9" fill="#333">report_date DATE</text>
+  <text x="480" y="330" font-size="9" fill="#333">metric VARCHAR</text>
+  <text x="480" y="345" font-size="9" fill="#333">value FLOAT</text>
+  <text x="480" y="360" font-size="9" fill="#333">insert_datetime TIMESTAMP</text>
+
+  <!-- balance_sheet + financials -->
+  <rect x="670" y="245" width="180" height="55" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5" rx="5"/>
+  <text x="760" y="265" text-anchor="middle" font-size="11" font-weight="bold" fill="#7b1fa2">balance_sheet</text>
+  <text x="760" y="285" text-anchor="middle" font-size="9" fill="#333">(same schema)</text>
+
+  <rect x="670" y="310" width="180" height="55" fill="#fce4ec" stroke="#c62828" stroke-width="1.5" rx="5"/>
+  <text x="760" y="330" text-anchor="middle" font-size="11" font-weight="bold" fill="#c62828">financials</text>
+  <text x="760" y="350" text-anchor="middle" font-size="9" fill="#333">(same schema)</text>
+
+  <!-- GitHub Actions badge -->
+  <rect x="50" y="385" width="800" height="80" fill="#f5f5f5" stroke="#ddd" stroke-width="1" rx="5"/>
+  <text x="450" y="408" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">GitHub Actions (Scheduled every 6 hours)</text>
+  <rect x="70" y="420" width="180" height="30" fill="#e3f2fd" stroke="#1976d2" stroke-width="1" rx="4"/>
+  <text x="160" y="440" text-anchor="middle" font-size="10" fill="#333">check_active_tickers</text>
+  <rect x="270" y="420" width="140" height="30" fill="#e8f5e9" stroke="#388e3c" stroke-width="1" rx="4"/>
+  <text x="340" y="440" text-anchor="middle" font-size="10" fill="#333">income_stmt ETL</text>
+  <rect x="430" y="420" width="140" height="30" fill="#fff3e0" stroke="#f57c00" stroke-width="1" rx="4"/>
+  <text x="500" y="440" text-anchor="middle" font-size="10" fill="#333">cash_flow ETL</text>
+  <rect x="590" y="420" width="140" height="30" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1" rx="4"/>
+  <text x="660" y="440" text-anchor="middle" font-size="10" fill="#333">balance_sheet ETL</text>
+  <rect x="750" y="420" width="130" height="30" fill="#fce4ec" stroke="#c62828" stroke-width="1" rx="4"/>
+  <text x="815" y="440" text-anchor="middle" font-size="10" fill="#333">financials ETL</text>
+
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#666"/>
+    </marker>
+  </defs>
+</svg>
