@@ -1,28 +1,13 @@
-.. finance documentation master file, created by
-   sphinx-quickstart on Mon Sep 11 17:48:20 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to finance's documentation!
-===================================
+.. include:: landing_page.rst
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
+   :hidden:
 
-
-.. include modules.rst
-.. toctree::
-   :maxdepth: 4
-   :caption: Contents:
-
-   modules
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   architecture
+   database_schema
+   etl_jobs
+   configuration
+   github_actions
+   contributing
