@@ -1,20 +1,25 @@
-# Description: Configuration file for the application
+"""
+Configuration file for the Finance data pipeline.
+"""
 
-# Number of tickers to be processed in a batch for jobs that fill the database
-BATCH_SIZE = 100
+# --- Active Tickers Check Job ---
+ACTIVE_TICKERS_BATCH_SIZE = 100
+ACTIVE_TICKERS_THREADS = 30
 
-# Only stocks that have earnings released in the following currencies will be processed
-CURRENCIES = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF"]
+# --- Financial Data ETL Jobs ---
+# Number of tickers to fetch per job run
+ETL_BATCH_SIZE = 50
+# Concurrent threads for fetching financial data from Yahoo
+ETL_THREADS = 10
 
-# warning log level
-LOG_LEVEL = 20
+# --- General ---
+SCHEMA = "finance"
+LOG_LEVEL = 20  # INFO
 
-# List of tables to be backed up through backup workflow
-# (read tables into parquet files and load them into s3)
-BACKUP_TABLES = [
-    "balance_sheet",
-    "cashflow",
-    "financials",
-    "income_stmt",
-    "valid_tickers",
-]
+# Table name -> stockdex method mapping
+FINANCIAL_TABLES = {
+    "income_stmt": "yahoo_api_income_statement",
+    "cash_flow": "yahoo_api_cash_flow",
+    "balance_sheet": "yahoo_api_balance_sheet",
+    "financials": "yahoo_api_financials",
+}
