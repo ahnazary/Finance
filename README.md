@@ -14,6 +14,8 @@
 
 An automated financial data pipeline that collects stock financial statements (income statements, cash flow, balance sheets, and financials) from Yahoo Finance for **106,000+ tickers** worldwide and stores them in a cloud-hosted PostgreSQL (Neon) database in a normalized long-format schema.
 
+Built using the [**stockdex**](https://github.com/ahnazary/stockdex) package for Yahoo Finance data extraction. Database schema and migrations are managed in the [**database-version-control**](https://github.com/ahnazary/database-version-control) repository.
+
 ## Key Features
 
 - **106K+ Tickers**: Validates and tracks active tickers across global exchanges
@@ -82,36 +84,15 @@ All financial tables use a **long (melted) format**:
 | `value` | FLOAT | Numeric value |
 | `insert_datetime` | TIMESTAMP | When the row was inserted |
 
-## Project Structure
-
-```
-Finance/
-├── config.py                          # Central configuration
-├── finance/
-│   ├── requirements.txt               # Python dependencies
-│   ├── src/
-│   │   ├── postgres_interface.py      # SQLAlchemy DB connection
-│   │   ├── etl_job.py                 # Active tickers validation job
-│   │   ├── financial_data_etl.py      # Financial data fetching jobs
-│   │   ├── run_active_tickers_check.py # CLI runner for ticker check
-│   │   ├── run_financial_etl.py       # CLI runner for financial ETL
-│   │   └── data/
-│   │       └── tickers_list.xlsx      # 106K tickers source file
-│   └── tests/
-├── .github/workflows/                 # GitHub Actions CI/CD
-├── docs/                              # Sphinx documentation
-└── README.md
-```
-
 ## What Problem Does It Solve?
 
-### 📈 Access to Historical Data
+### Access to Historical Data
 Yahoo Finance only provides the last 4 quarters/years of financial data. This pipeline accumulates data over time, building a growing historical database.
 
-### 🔍 Easy Access via SQL
+### Easy Access via SQL
 Instead of scraping Yahoo Finance manually for each company, query thousands of companies at once with SQL.
 
-### 🎯 Filtering by Financial Metrics
+### Filtering by Financial Metrics
 Filter and rank companies across any financial metric (revenue, net income, EPS, etc.) using standard SQL queries.
 
 ## License
