@@ -18,11 +18,9 @@ An automated financial data pipeline that collects stock financial statements (i
 
 - **106K+ Tickers**: Validates and tracks active tickers across global exchanges
 - **4 Financial Statement Types**: Income Statement, Cash Flow, Balance Sheet, Financials
-- **Long-Format Storage**: EAV (Entity-Attribute-Value) schema for flexible querying
 - **Parallel Processing**: Multi-threaded HTTP calls (configurable threads) for high throughput
 - **Incremental Updates**: Prioritizes new tickers, then refreshes oldest data
 - **Idempotent Jobs**: Safe to re-run; uses upsert/delete+insert patterns
-- **Scheduled via GitHub Actions**: Runs every 6 hours automatically
 
 ## Architecture
 

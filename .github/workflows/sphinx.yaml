@@ -1,8 +1,8 @@
 name: Build Sphinx Docs and Deploy to GitHub Pages
 
 on:
-  release:
-    types: [published, edited, deleted]
+  push:
+    branches: [master]
   workflow_dispatch:
 
 jobs:

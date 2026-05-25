@@ -42,48 +42,48 @@
   <text x="820" y="150" text-anchor="middle" font-size="9" fill="#64748b">500MB</text>
 
   <!-- Tables Section -->
-  <rect x="40" y="210" width="800" height="250" fill="#1e293b" stroke="#334155" stroke-width="1" rx="10"/>
+  <rect x="40" y="210" width="800" height="260" fill="#1e293b" stroke="#334155" stroke-width="1" rx="10"/>
   <text x="440" y="240" text-anchor="middle" font-size="13" font-weight="600" fill="#e2e8f0">Database Tables — finance schema</text>
 
   <!-- active_tickers -->
-  <rect x="65" y="260" width="200" height="130" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
-  <text x="165" y="286" text-anchor="middle" font-size="11" font-weight="600" fill="#7dd3fc">active_tickers</text>
-  <text x="85" y="308" font-size="9" fill="#94a3b8">ticker (PK) VARCHAR(20)</text>
-  <text x="85" y="324" font-size="9" fill="#94a3b8">name VARCHAR</text>
-  <text x="85" y="340" font-size="9" fill="#94a3b8">exchange VARCHAR</text>
-  <text x="85" y="356" font-size="9" fill="#94a3b8">is_active BOOLEAN</text>
-  <text x="85" y="372" font-size="9" fill="#94a3b8">upsert_datetime TIMESTAMP</text>
-  <text x="165" y="388" text-anchor="middle" font-size="9" fill="#64748b">~106K rows</text>
+  <rect x="60" y="260" width="220" height="145" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
+  <text x="170" y="288" text-anchor="middle" font-size="11" font-weight="600" fill="#7dd3fc">active_tickers</text>
+  <text x="82" y="312" font-size="9" fill="#94a3b8">ticker (PK) VARCHAR(20)</text>
+  <text x="82" y="330" font-size="9" fill="#94a3b8">name VARCHAR</text>
+  <text x="82" y="348" font-size="9" fill="#94a3b8">exchange VARCHAR</text>
+  <text x="82" y="366" font-size="9" fill="#94a3b8">is_active BOOLEAN</text>
+  <text x="82" y="384" font-size="9" fill="#94a3b8">upsert_datetime TIMESTAMP</text>
+  <text x="170" y="400" text-anchor="middle" font-size="9" fill="#64748b">~106K rows</text>
 
   <!-- income_stmt -->
-  <rect x="290" y="260" width="175" height="130" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
-  <text x="377" y="286" text-anchor="middle" font-size="11" font-weight="600" fill="#7dd3fc">income_stmt</text>
-  <text x="310" y="308" font-size="9" fill="#94a3b8">ticker VARCHAR</text>
-  <text x="310" y="324" font-size="9" fill="#94a3b8">frequency VARCHAR</text>
-  <text x="310" y="340" font-size="9" fill="#94a3b8">report_date DATE</text>
-  <text x="310" y="356" font-size="9" fill="#94a3b8">metric VARCHAR</text>
-  <text x="310" y="372" font-size="9" fill="#94a3b8">value FLOAT</text>
-  <text x="310" y="388" font-size="9" fill="#94a3b8">insert_datetime TIMESTAMP</text>
+  <rect x="300" y="260" width="200" height="145" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
+  <text x="400" y="288" text-anchor="middle" font-size="11" font-weight="600" fill="#7dd3fc">income_stmt</text>
+  <text x="322" y="312" font-size="9" fill="#94a3b8">ticker VARCHAR</text>
+  <text x="322" y="330" font-size="9" fill="#94a3b8">frequency VARCHAR</text>
+  <text x="322" y="348" font-size="9" fill="#94a3b8">report_date DATE</text>
+  <text x="322" y="366" font-size="9" fill="#94a3b8">metric VARCHAR</text>
+  <text x="322" y="384" font-size="9" fill="#94a3b8">value FLOAT</text>
+  <text x="322" y="402" font-size="9" fill="#94a3b8">insert_datetime TIMESTAMP</text>
 
   <!-- cash_flow -->
-  <rect x="490" y="260" width="160" height="55" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
-  <text x="570" y="286" text-anchor="middle" font-size="11" font-weight="600" fill="#7dd3fc">cash_flow</text>
-  <text x="570" y="304" text-anchor="middle" font-size="9" fill="#64748b">(same schema)</text>
+  <rect x="520" y="260" width="160" height="62" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
+  <text x="600" y="288" text-anchor="middle" font-size="11" font-weight="600" fill="#7dd3fc">cash_flow</text>
+  <text x="600" y="310" text-anchor="middle" font-size="9" fill="#64748b">(same schema)</text>
 
   <!-- balance_sheet -->
-  <rect x="490" y="325" width="160" height="55" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
-  <text x="570" y="351" text-anchor="middle" font-size="11" font-weight="600" fill="#7dd3fc">balance_sheet</text>
-  <text x="570" y="369" text-anchor="middle" font-size="9" fill="#64748b">(same schema)</text>
+  <rect x="520" y="335" width="160" height="62" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
+  <text x="600" y="363" text-anchor="middle" font-size="11" font-weight="600" fill="#7dd3fc">balance_sheet</text>
+  <text x="600" y="385" text-anchor="middle" font-size="9" fill="#64748b">(same schema)</text>
 
   <!-- financials -->
-  <rect x="675" y="260" width="140" height="55" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
-  <text x="745" y="286" text-anchor="middle" font-size="11" font-weight="600" fill="#7dd3fc">financials</text>
-  <text x="745" y="304" text-anchor="middle" font-size="9" fill="#64748b">(same schema)</text>
+  <rect x="700" y="260" width="120" height="62" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
+  <text x="760" y="288" text-anchor="middle" font-size="11" font-weight="600" fill="#7dd3fc">financials</text>
+  <text x="760" y="310" text-anchor="middle" font-size="9" fill="#64748b">(same schema)</text>
 
   <!-- GitHub Actions row -->
-  <rect x="490" y="390" width="325" height="55" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
-  <text x="652" y="414" text-anchor="middle" font-size="10" font-weight="600" fill="#94a3b8">GitHub Actions</text>
-  <text x="652" y="432" text-anchor="middle" font-size="9" fill="#64748b">Scheduled every 6 hours</text>
+  <rect x="700" y="335" width="120" height="62" fill="#0f172a" stroke="#334155" stroke-width="1" rx="8"/>
+  <text x="760" y="363" text-anchor="middle" font-size="10" font-weight="600" fill="#94a3b8">GitHub Actions</text>
+  <text x="760" y="385" text-anchor="middle" font-size="9" fill="#64748b">Every 6 hours</text>
 
   <!-- Arrow marker -->
   <defs>
