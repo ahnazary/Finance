@@ -10,7 +10,7 @@ ACTIVE_TICKERS_THREADS = 30
 # Number of tickers to fetch per job run
 ETL_BATCH_SIZE = 50
 # Concurrent threads for fetching financial data from Yahoo
-ETL_THREADS = 2
+ETL_THREADS = 1
 
 # --- General ---
 SCHEMA = "finance"
