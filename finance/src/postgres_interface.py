@@ -9,10 +9,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-NEON_CONNECTION_STRING = os.environ.get(
-    "PG_NEON_FINANCE_URL",
-    "postgresql://neondb_owner:npg_Wwa7m3tXzTxr@ep-ancient-fog-a92ex8u0-pooler.gwc.azure.neon.tech/neondb?sslmode=require",
-)
+NEON_CONNECTION_STRING = os.environ.get("PG_NEON_FINANCE_URL")
+
+if not NEON_CONNECTION_STRING:
+    raise EnvironmentError(
+        "PG_NEON_FINANCE_URL environment variable is not set. "
+        "Please set it in .env or as a system environment variable."
+    )
 
 
 class PostgresInterface:
