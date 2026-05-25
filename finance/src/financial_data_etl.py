@@ -137,6 +137,8 @@ class FinancialDataETL:
             SELECT a.ticker
             FROM active a
             LEFT JOIN existing e ON a.ticker = e.ticker
+            WHERE e.last_insert IS NULL
+               OR e.last_insert < NOW() - INTERVAL '3 months'
             ORDER BY
                 CASE WHEN e.ticker IS NULL THEN 0 ELSE 1 END,  -- new tickers first
                 e.last_insert ASC NULLS FIRST                    -- then oldest data
