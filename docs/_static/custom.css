@@ -1,9 +1,20 @@
 /* Make images have rounded corners */
 img.rounded {
-  border-radius: 15px;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-img.rounded {
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+/* SVG diagrams - responsive */
+object[type="image/svg+xml"], img[src$=".svg"] {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+/* Dark mode image adjustments */
+@media (prefers-color-scheme: dark) {
+  img.rounded {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
 }

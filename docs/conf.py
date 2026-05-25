@@ -29,6 +29,21 @@ html_theme = "furo"
 pygments_style = "sphinx"
 pygments_dark_style = "monokai"
 
+html_theme_options = {
+    "dark_css_variables": {
+        "color-brand-primary": "#7dd3fc",
+        "color-brand-content": "#7dd3fc",
+        "color-background-primary": "#0f172a",
+        "color-background-secondary": "#1e293b",
+        "color-foreground-primary": "#e2e8f0",
+        "color-foreground-secondary": "#94a3b8",
+    },
+    "light_css_variables": {
+        "color-brand-primary": "#0369a1",
+        "color-brand-content": "#0369a1",
+    },
+}
+
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 
