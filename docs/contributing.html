@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Architecture" href="architecture.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="prev" title="GitHub Actions" href="github_actions.html">
 
     <!-- Generated with Sphinx 7.2.2 and Furo 2025.12.19 -->
-        <title>Finance Data Pipeline documentation</title>
+        <title>Contributing - Finance Data Pipeline documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -177,7 +177,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">Finance Data Pipeline  documentation</div></a>
+      <a href="index.html"><div class="brand">Finance Data Pipeline  documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -196,7 +196,7 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   <span class="sidebar-brand-text">Finance Data Pipeline  documentation</span>
   
@@ -207,13 +207,13 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="database_schema.html">Database Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="etl_jobs.html">ETL Jobs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="github_actions.html">GitHub Actions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Contributing</a></li>
 </ul>
 
 </div>
@@ -234,7 +234,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/index.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/contributing.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -252,73 +252,60 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="finance-data-pipeline">
-<h1>Finance Data Pipeline<a class="headerlink" href="#finance-data-pipeline" title="Link to this heading"></a></h1>
-<a class="rounded reference internal image-reference" href="_images/architecture_diagram.svg"><img alt="_images/architecture_diagram.svg" class="rounded align-center" src="_images/architecture_diagram.svg" width="100%" /></a>
-<div class="line-block">
-<div class="line"><br /></div>
+          <section id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h1>
+<section id="development-setup">
+<h2>Development Setup<a class="headerlink" href="#development-setup" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Clone the repository:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ahnazary/Finance.git
+<span class="nb">cd</span><span class="w"> </span>Finance
+</pre></div>
 </div>
-<p>An automated financial data pipeline that collects stock financial statements from Yahoo Finance
-for <strong>106,000+ tickers</strong> worldwide and stores them in a cloud-hosted PostgreSQL database.</p>
-<div class="line-block">
-<div class="line"><br /></div>
+<ol class="arabic simple" start="2">
+<li><p>Install dependencies:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>finance/requirements.txt
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements_sphinx.txt
+</pre></div>
 </div>
-<section id="key-features">
-<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p>🌍 <strong>106K+ Global Tickers</strong> validated against Yahoo Finance API</p></li>
-<li><p>📊 <strong>4 Financial Statement Types</strong>: Income Statement, Cash Flow, Balance Sheet, Financials</p></li>
-<li><p>🗄️ <strong>Long-Format Storage</strong> (EAV schema) for maximum flexibility</p></li>
-<li><p>⚡ <strong>Multi-threaded Execution</strong> for high throughput (configurable concurrency)</p></li>
-<li><p>🔄 <strong>Incremental Updates</strong>: New tickers first, then refresh stale data</p></li>
-<li><p>🤖 <strong>Fully Automated</strong> via GitHub Actions (runs every 6 hours)</p></li>
-</ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</section>
-<section id="pipeline-flow">
-<h2>Pipeline Flow<a class="headerlink" href="#pipeline-flow" title="Link to this heading"></a></h2>
-<a class="rounded reference internal image-reference" href="_images/pipeline_flow.svg"><img alt="_images/pipeline_flow.svg" class="rounded align-center" src="_images/pipeline_flow.svg" width="100%" /></a>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</section>
-<section id="quick-start">
-<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dependencies</span>
-pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>finance/requirements.txt
-
-<span class="c1"># Set up environment</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">PG_NEON_FINANCE_URL</span><span class="o">=</span><span class="s2">&quot;your-connection-string&quot;</span>
-
-<span class="c1"># Run active tickers check</span>
-python<span class="w"> </span>-m<span class="w"> </span>finance.src.run_active_tickers_check<span class="w"> </span>--mode<span class="w"> </span>single<span class="w"> </span>--threads<span class="w"> </span><span class="m">30</span>
-
-<span class="c1"># Run financial data ETL</span>
-python<span class="w"> </span>-m<span class="w"> </span>finance.src.run_financial_etl<span class="w"> </span>--table<span class="w"> </span>income_stmt<span class="w"> </span>--max-batches<span class="w"> </span><span class="m">5</span>
+<ol class="arabic simple" start="3">
+<li><p>Set up environment variables:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PG_NEON_FINANCE_URL</span><span class="o">=</span><span class="s2">&quot;your-connection-string&quot;</span>
 </pre></div>
 </div>
 </section>
-<section id="what-problem-does-it-solve">
-<h2>What Problem Does It Solve?<a class="headerlink" href="#what-problem-does-it-solve" title="Link to this heading"></a></h2>
-<dl class="simple">
-<dt><strong>📈 Historical Data Accumulation</strong></dt><dd><p>Yahoo Finance only shows the last 4 quarters/years. This pipeline builds a growing historical database over time.</p>
-</dd>
-<dt><strong>🔍 SQL Access to Financial Data</strong></dt><dd><p>Query thousands of companies at once with standard SQL instead of manual scraping.</p>
-</dd>
-<dt><strong>🎯 Cross-Company Filtering</strong></dt><dd><p>Filter and rank companies by any financial metric (revenue, EPS, margins, etc.).</p>
-</dd>
-</dl>
-</section>
-<section id="quick-links">
-<h2>Quick Links<a class="headerlink" href="#quick-links" title="Link to this heading"></a></h2>
+<section id="code-style">
+<h2>Code Style<a class="headerlink" href="#code-style" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/ahnazary/Finance">GitHub Repository</a></p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/stockdex/">stockdex Package</a> (underlying data source)</p></li>
+<li><p><strong>Formatter</strong>: Black (line length 88)</p></li>
+<li><p><strong>Import sorting</strong>: isort</p></li>
+<li><p><strong>Linting</strong>: pylint (minimum score: 1)</p></li>
 </ul>
-<div class="toctree-wrapper compound">
+<p>Run formatting:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>black<span class="w"> </span>.
+isort<span class="w"> </span>.
+</pre></div>
 </div>
+</section>
+<section id="building-docs">
+<h2>Building Docs<a class="headerlink" href="#building-docs" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
+sphinx-build<span class="w"> </span>.<span class="w"> </span>build
+<span class="c1"># Open build/index.html in browser</span>
+</pre></div>
+</div>
+</section>
+<section id="adding-a-new-financial-table">
+<h2>Adding a New Financial Table<a class="headerlink" href="#adding-a-new-financial-table" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Add the table migration in Alembic (<code class="docutils literal notranslate"><span class="pre">database-version-control</span></code> repo)</p></li>
+<li><p>Add the stockdex method mapping to <code class="docutils literal notranslate"><span class="pre">FINANCIAL_TABLES</span></code> in <code class="docutils literal notranslate"><span class="pre">config.py</span></code></p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">FinancialDataETL</span></code> class will automatically support it</p></li>
+<li><p>Add a new workflow job in <code class="docutils literal notranslate"><span class="pre">financial_data_etl.yaml</span></code></p></li>
+</ol>
 </section>
 </section>
 
@@ -327,16 +314,18 @@ python<span class="w"> </span>-m<span class="w"> </span>finance.src.run_financia
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="architecture.html">
+          
+          <a class="prev-page" href="github_actions.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
-                  <span>Next</span>
+                  <span>Previous</span>
                 </div>
-                <div class="title">Architecture</div>
+                
+                <div class="title">GitHub Actions</div>
+                
               </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -367,12 +356,11 @@ python<span class="w"> </span>-m<span class="w"> </span>finance.src.run_financia
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Finance Data Pipeline</a><ul>
-<li><a class="reference internal" href="#key-features">Key Features</a></li>
-<li><a class="reference internal" href="#pipeline-flow">Pipeline Flow</a></li>
-<li><a class="reference internal" href="#quick-start">Quick Start</a></li>
-<li><a class="reference internal" href="#what-problem-does-it-solve">What Problem Does It Solve?</a></li>
-<li><a class="reference internal" href="#quick-links">Quick Links</a></li>
+<li><a class="reference internal" href="#">Contributing</a><ul>
+<li><a class="reference internal" href="#development-setup">Development Setup</a></li>
+<li><a class="reference internal" href="#code-style">Code Style</a></li>
+<li><a class="reference internal" href="#building-docs">Building Docs</a></li>
+<li><a class="reference internal" href="#adding-a-new-financial-table">Adding a New Financial Table</a></li>
 </ul>
 </li>
 </ul>

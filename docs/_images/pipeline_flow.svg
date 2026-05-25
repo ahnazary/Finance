@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" font-family="Inter, -apple-system, Arial, sans-serif">
+  <rect width="700" height="420" fill="#0f172a" rx="12"/>
+  <text x="350" y="36" text-anchor="middle" font-size="16" font-weight="600" fill="#e2e8f0">Pipeline Flow</text>
+
+  <!-- Step 1 -->
+  <rect x="40" y="60" width="620" height="80" fill="#1e293b" stroke="#334155" stroke-width="1.5" rx="10"/>
+  <text x="350" y="90" text-anchor="middle" font-size="12" font-weight="600" fill="#7dd3fc">Stage 1: Active Tickers Validation</text>
+  <text x="350" y="112" text-anchor="middle" font-size="10" fill="#cbd5e1">Excel (106K) → Skip existing → ThreadPool (30 threads) → Yahoo API → Upsert active_tickers</text>
+  <text x="350" y="130" text-anchor="middle" font-size="9" fill="#64748b">~7s per batch of 100 tickers · Short-circuits on first valid response</text>
+
+  <!-- Arrow -->
+  <line x1="350" y1="140" x2="350" y2="168" stroke="#475569" stroke-width="1.5" marker-end="url(#arrowD)"/>
+
+  <!-- Step 2 -->
+  <rect x="40" y="168" width="620" height="80" fill="#1e293b" stroke="#334155" stroke-width="1.5" rx="10"/>
+  <text x="350" y="198" text-anchor="middle" font-size="12" font-weight="600" fill="#7dd3fc">Stage 2: Financial Data ETL (×4 jobs)</text>
+  <text x="350" y="220" text-anchor="middle" font-size="10" fill="#cbd5e1">Priority query → ThreadPool (10 threads) → stockdex fetch → Melt wide→long → DELETE+INSERT</text>
+  <text x="350" y="238" text-anchor="middle" font-size="9" fill="#64748b">~50 tickers/batch · Handles B/M/K/T value suffixes · Parses dates from index</text>
+
+  <!-- Arrow -->
+  <line x1="350" y1="248" x2="350" y2="276" stroke="#475569" stroke-width="1.5" marker-end="url(#arrowD)"/>
+
+  <!-- Priority Logic -->
+  <rect x="40" y="276" width="620" height="65" fill="#1e293b" stroke="#334155" stroke-width="1.5" rx="10"/>
+  <text x="350" y="304" text-anchor="middle" font-size="12" font-weight="600" fill="#7dd3fc">Ticker Priority Logic</text>
+  <text x="350" y="326" text-anchor="middle" font-size="10" fill="#cbd5e1">1st: Active tickers NOT yet in target table → 2nd: Tickers with oldest insert_datetime</text>
+
+  <!-- Arrow -->
+  <line x1="350" y1="341" x2="350" y2="364" stroke="#475569" stroke-width="1.5" marker-end="url(#arrowD)"/>
+
+  <!-- Scheduling -->
+  <rect x="40" y="364" width="620" height="45" fill="#1e293b" stroke="#334155" stroke-width="1.5" rx="10"/>
+  <text x="350" y="391" text-anchor="middle" font-size="11" font-weight="600" fill="#94a3b8">GitHub Actions · Every 6 hours · 1 ticker check + 4 financial ETL jobs (parallel)</text>
+
+  <defs>
+    <marker id="arrowD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+</svg>

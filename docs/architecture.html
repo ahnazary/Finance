@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Architecture" href="architecture.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Database Schema" href="database_schema.html"><link rel="prev" title="Finance Data Pipeline" href="index.html">
 
     <!-- Generated with Sphinx 7.2.2 and Furo 2025.12.19 -->
-        <title>Finance Data Pipeline documentation</title>
+        <title>Architecture - Finance Data Pipeline documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -177,7 +177,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">Finance Data Pipeline  documentation</div></a>
+      <a href="index.html"><div class="brand">Finance Data Pipeline  documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -196,7 +196,7 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   <span class="sidebar-brand-text">Finance Data Pipeline  documentation</span>
   
@@ -207,8 +207,8 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Architecture</a></li>
 <li class="toctree-l1"><a class="reference internal" href="database_schema.html">Database Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="etl_jobs.html">ETL Jobs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
@@ -234,7 +234,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/index.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/architecture.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -252,73 +252,94 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="finance-data-pipeline">
-<h1>Finance Data Pipeline<a class="headerlink" href="#finance-data-pipeline" title="Link to this heading"></a></h1>
-<a class="rounded reference internal image-reference" href="_images/architecture_diagram.svg"><img alt="_images/architecture_diagram.svg" class="rounded align-center" src="_images/architecture_diagram.svg" width="100%" /></a>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p>An automated financial data pipeline that collects stock financial statements from Yahoo Finance
-for <strong>106,000+ tickers</strong> worldwide and stores them in a cloud-hosted PostgreSQL database.</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<section id="key-features">
-<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p>🌍 <strong>106K+ Global Tickers</strong> validated against Yahoo Finance API</p></li>
-<li><p>📊 <strong>4 Financial Statement Types</strong>: Income Statement, Cash Flow, Balance Sheet, Financials</p></li>
-<li><p>🗄️ <strong>Long-Format Storage</strong> (EAV schema) for maximum flexibility</p></li>
-<li><p>⚡ <strong>Multi-threaded Execution</strong> for high throughput (configurable concurrency)</p></li>
-<li><p>🔄 <strong>Incremental Updates</strong>: New tickers first, then refresh stale data</p></li>
-<li><p>🤖 <strong>Fully Automated</strong> via GitHub Actions (runs every 6 hours)</p></li>
-</ul>
+          <section id="architecture">
+<h1>Architecture<a class="headerlink" href="#architecture" title="Link to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>The Finance Data Pipeline consists of two main stages:</p>
+<ol class="arabic simple">
+<li><p><strong>Active Tickers Check</strong> — Validates 106K tickers against Yahoo Finance API to determine which are active</p></li>
+<li><p><strong>Financial Data ETL</strong> — Fetches financial statements for active tickers and stores them in PostgreSQL</p></li>
+</ol>
+<a class="rounded reference internal image-reference" href="_images/pipeline_flow.svg"><img alt="_images/pipeline_flow.svg" class="rounded align-center" src="_images/pipeline_flow.svg" width="700" /></a>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 </section>
 <section id="pipeline-flow">
 <h2>Pipeline Flow<a class="headerlink" href="#pipeline-flow" title="Link to this heading"></a></h2>
-<a class="rounded reference internal image-reference" href="_images/pipeline_flow.svg"><img alt="_images/pipeline_flow.svg" class="rounded align-center" src="_images/pipeline_flow.svg" width="100%" /></a>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</section>
-<section id="quick-start">
-<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dependencies</span>
-pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>finance/requirements.txt
-
-<span class="c1"># Set up environment</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">PG_NEON_FINANCE_URL</span><span class="o">=</span><span class="s2">&quot;your-connection-string&quot;</span>
-
-<span class="c1"># Run active tickers check</span>
-python<span class="w"> </span>-m<span class="w"> </span>finance.src.run_active_tickers_check<span class="w"> </span>--mode<span class="w"> </span>single<span class="w"> </span>--threads<span class="w"> </span><span class="m">30</span>
-
-<span class="c1"># Run financial data ETL</span>
-python<span class="w"> </span>-m<span class="w"> </span>finance.src.run_financial_etl<span class="w"> </span>--table<span class="w"> </span>income_stmt<span class="w"> </span>--max-batches<span class="w"> </span><span class="m">5</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────────────┐
+│                        STAGE 1: Ticker Validation                    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│   tickers_list.xlsx ──▶ ThreadPoolExecutor ──▶ active_tickers table │
+│   (106K tickers)        (30 threads)           (is_active: bool)    │
+│                                                                     │
+│   • Skips already-checked tickers                                   │
+│   • Short-circuits on first valid API response                      │
+│   • Batches of 100 with parallel HTTP calls                         │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                     STAGE 2: Financial Data ETL                      │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│   active_tickers ──▶ Priority Query ──▶ ThreadPoolExecutor ──▶ DB   │
+│   (is_active=true)   (new first,        (10 threads)                │
+│                       then oldest)                                   │
+│                                                                     │
+│   4 Independent Jobs:                                               │
+│   • income_stmt         (yahoo_api_income_statement)                │
+│   • cash_flow           (yahoo_api_cash_flow)                       │
+│   • balance_sheet       (yahoo_api_balance_sheet)                   │
+│   • financials          (yahoo_api_financials)                      │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 </pre></div>
 </div>
 </section>
-<section id="what-problem-does-it-solve">
-<h2>What Problem Does It Solve?<a class="headerlink" href="#what-problem-does-it-solve" title="Link to this heading"></a></h2>
+<section id="concurrency-model">
+<h2>Concurrency Model<a class="headerlink" href="#concurrency-model" title="Link to this heading"></a></h2>
+<p>The pipeline uses Python’s <code class="docutils literal notranslate"><span class="pre">concurrent.futures</span></code> for parallelism:</p>
 <dl class="simple">
-<dt><strong>📈 Historical Data Accumulation</strong></dt><dd><p>Yahoo Finance only shows the last 4 quarters/years. This pipeline builds a growing historical database over time.</p>
+<dt><strong>Single Mode</strong> (default):</dt><dd><p>One process with a <code class="docutils literal notranslate"><span class="pre">ThreadPoolExecutor</span></code>. Ideal for CI runners and small machines.
+Threads are perfect here because the workload is I/O-bound (HTTP requests to Yahoo).</p>
 </dd>
-<dt><strong>🔍 SQL Access to Financial Data</strong></dt><dd><p>Query thousands of companies at once with standard SQL instead of manual scraping.</p>
-</dd>
-<dt><strong>🎯 Cross-Company Filtering</strong></dt><dd><p>Filter and rank companies by any financial metric (revenue, EPS, margins, etc.).</p>
+<dt><strong>Distributed Mode</strong>:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">ProcessPoolExecutor</span></code> spawns multiple processes, each with its own thread pool.
+Useful for machines with many CPU cores to maximize network throughput.</p>
 </dd>
 </dl>
-</section>
-<section id="quick-links">
-<h2>Quick Links<a class="headerlink" href="#quick-links" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/ahnazary/Finance">GitHub Repository</a></p></li>
-<li><p><a class="reference external" href="https://pypi.org/project/stockdex/">stockdex Package</a> (underlying data source)</p></li>
-</ul>
-<div class="toctree-wrapper compound">
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Single Mode:
+┌──────────────────────────────────────┐
+│ Process                              │
+│  ├── Thread 1 ──▶ check ticker A    │
+│  ├── Thread 2 ──▶ check ticker B    │
+│  ├── Thread 3 ──▶ check ticker C    │
+│  └── ...          (up to N threads) │
+└──────────────────────────────────────┘
+
+Distributed Mode:
+┌────────────────┐  ┌────────────────┐  ┌────────────────┐
+│ Process 1      │  │ Process 2      │  │ Process 3      │
+│  ├── Thread 1  │  │  ├── Thread 1  │  │  ├── Thread 1  │
+│  ├── Thread 2  │  │  ├── Thread 2  │  │  ├── Thread 2  │
+│  └── ...       │  │  └── ...       │  │  └── ...       │
+└────────────────┘  └────────────────┘  └────────────────┘
+</pre></div>
 </div>
+</section>
+<section id="technology-stack">
+<h2>Technology Stack<a class="headerlink" href="#technology-stack" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Python 3.11+</strong> — Core language</p></li>
+<li><p><strong>stockdex</strong> — Yahoo Finance API wrapper (<a class="reference external" href="https://pypi.org/project/stockdex/">PyPI</a>)</p></li>
+<li><p><strong>SQLAlchemy</strong> — Database ORM and connection pooling</p></li>
+<li><p><strong>pandas</strong> — Data transformation (wide → long format)</p></li>
+<li><p><strong>PostgreSQL (Neon)</strong> — Cloud-hosted database with connection pooling</p></li>
+<li><p><strong>GitHub Actions</strong> — CI/CD and scheduled job execution</p></li>
+</ul>
 </section>
 </section>
 
@@ -327,16 +348,26 @@ python<span class="w"> </span>-m<span class="w"> </span>finance.src.run_financia
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="architecture.html">
+          <a class="next-page" href="database_schema.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Architecture</div>
+                <div class="title">Database Schema</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          
+          <a class="prev-page" href="index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -367,12 +398,11 @@ python<span class="w"> </span>-m<span class="w"> </span>finance.src.run_financia
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Finance Data Pipeline</a><ul>
-<li><a class="reference internal" href="#key-features">Key Features</a></li>
+<li><a class="reference internal" href="#">Architecture</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#pipeline-flow">Pipeline Flow</a></li>
-<li><a class="reference internal" href="#quick-start">Quick Start</a></li>
-<li><a class="reference internal" href="#what-problem-does-it-solve">What Problem Does It Solve?</a></li>
-<li><a class="reference internal" href="#quick-links">Quick Links</a></li>
+<li><a class="reference internal" href="#concurrency-model">Concurrency Model</a></li>
+<li><a class="reference internal" href="#technology-stack">Technology Stack</a></li>
 </ul>
 </li>
 </ul>
