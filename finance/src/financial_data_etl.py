@@ -108,9 +108,12 @@ class FinancialDataETL:
         postgres_interface: PostgresInterface | None = None,
         batch_size: int = ETL_BATCH_SIZE,
         max_threads: int = ETL_THREADS,
+        frequency: str | None = None,
     ):
         if table_name not in FINANCIAL_TABLES:
             raise ValueError(f"Unknown table: {table_name}. Must be one of {list(FINANCIAL_TABLES.keys())}")
+        if frequency and frequency not in ("annual", "quarterly"):
+            raise ValueError(f"Unknown frequency: {frequency}. Must be 'annual' or 'quarterly'.")
 
         self.table_name = table_name
         self.stockdex_method = FINANCIAL_TABLES[table_name]
@@ -118,6 +121,7 @@ class FinancialDataETL:
         self.engine = self.postgres_interface.get_engine()
         self.batch_size = batch_size
         self.max_threads = max_threads
+        self.frequency = frequency
 
     def get_priority_tickers(self) -> list[str]:
         """
@@ -132,6 +136,7 @@ class FinancialDataETL:
             existing AS (
                 SELECT ticker, MAX(insert_datetime) as last_insert
                 FROM {SCHEMA}.{self.table_name}
+                {"WHERE frequency = '" + self.frequency + "'" if self.frequency else ""}
                 GROUP BY ticker
             )
             SELECT a.ticker
@@ -163,9 +168,13 @@ class FinancialDataETL:
         tickers = df["ticker"].unique().tolist()
 
         with self.engine.begin() as conn:
-            # Delete existing data for these tickers
-            delete_sql = text(f"DELETE FROM {SCHEMA}.{self.table_name} WHERE ticker = ANY(:tickers)")
-            conn.execute(delete_sql, {"tickers": tickers})
+            # Delete existing data for these tickers (scoped by frequency if set)
+            if self.frequency:
+                delete_sql = text(f"DELETE FROM {SCHEMA}.{self.table_name} WHERE ticker = ANY(:tickers) AND frequency = :frequency")
+                conn.execute(delete_sql, {"tickers": tickers, "frequency": self.frequency})
+            else:
+                delete_sql = text(f"DELETE FROM {SCHEMA}.{self.table_name} WHERE ticker = ANY(:tickers)")
+                conn.execute(delete_sql, {"tickers": tickers})
 
             # Insert new data
             records = df.to_dict("records")
@@ -229,6 +238,8 @@ class FinancialDataETL:
             # Combine and upsert
             if all_dfs:
                 combined_df = pd.concat(all_dfs, ignore_index=True)
+                if self.frequency:
+                    combined_df = combined_df[combined_df["frequency"] == self.frequency]
                 rows_inserted = self.upsert_financial_data(combined_df)
                 total_rows_inserted += rows_inserted
             else:

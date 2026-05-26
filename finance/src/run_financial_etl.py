@@ -26,6 +26,7 @@ def main():
     parser.add_argument("--max-batches", type=int, default=None)
     parser.add_argument("--batch-size", type=int, default=ETL_BATCH_SIZE)
     parser.add_argument("--threads", type=int, default=ETL_THREADS)
+    parser.add_argument("--frequency", type=str, default=None, choices=["annual", "quarterly"])
     args = parser.parse_args()
 
     postgres_interface = PostgresInterface()
@@ -34,6 +35,7 @@ def main():
         postgres_interface=postgres_interface,
         batch_size=args.batch_size,
         max_threads=args.threads,
+        frequency=args.frequency,
     )
     etl.run(max_batches=args.max_batches)
 

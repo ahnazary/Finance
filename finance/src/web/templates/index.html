@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Data Explorer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Finance Data Explorer</h1>
+            <button id="theme-toggle" aria-label="Toggle dark mode">
+                <span class="icon-sun">☀️</span>
+                <span class="icon-moon">🌙</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="search-section">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search ticker (e.g. AAPL, MSFT)..." autocomplete="off">
+                <div id="suggestions" class="suggestions hidden"></div>
+            </div>
+        </section>
+
+        <section id="results" class="results hidden">
+            <h2 id="ticker-title"></h2>
+
+            <!-- Tabs for Annual / Quarterly -->
+            <div class="freq-tabs">
+                <button class="tab-btn active" data-freq="annual">Annual</button>
+                <button class="tab-btn" data-freq="quarterly">Quarterly</button>
+            </div>
+
+            <div id="annual-content" class="freq-content active">
+                <div class="grid">
+                    <div class="card"><h3>Income Statement</h3><canvas id="chart-income_stmt-annual"></canvas></div>
+                    <div class="card"><h3>Cash Flow</h3><canvas id="chart-cash_flow-annual"></canvas></div>
+                    <div class="card"><h3>Balance Sheet</h3><canvas id="chart-balance_sheet-annual"></canvas></div>
+                    <div class="card"><h3>Financials</h3><canvas id="chart-financials-annual"></canvas></div>
+                </div>
+                <div class="tables-grid">
+                    <div class="card"><h3>Income Statement</h3><div class="table-wrap" id="table-income_stmt-annual"></div></div>
+                    <div class="card"><h3>Cash Flow</h3><div class="table-wrap" id="table-cash_flow-annual"></div></div>
+                    <div class="card"><h3>Balance Sheet</h3><div class="table-wrap" id="table-balance_sheet-annual"></div></div>
+                    <div class="card"><h3>Financials</h3><div class="table-wrap" id="table-financials-annual"></div></div>
+                </div>
+            </div>
+
+            <div id="quarterly-content" class="freq-content">
+                <div class="grid">
+                    <div class="card"><h3>Income Statement</h3><canvas id="chart-income_stmt-quarterly"></canvas></div>
+                    <div class="card"><h3>Cash Flow</h3><canvas id="chart-cash_flow-quarterly"></canvas></div>
+                    <div class="card"><h3>Balance Sheet</h3><canvas id="chart-balance_sheet-quarterly"></canvas></div>
+                    <div class="card"><h3>Financials</h3><canvas id="chart-financials-quarterly"></canvas></div>
+                </div>
+                <div class="tables-grid">
+                    <div class="card"><h3>Income Statement</h3><div class="table-wrap" id="table-income_stmt-quarterly"></div></div>
+                    <div class="card"><h3>Cash Flow</h3><div class="table-wrap" id="table-cash_flow-quarterly"></div></div>
+                    <div class="card"><h3>Balance Sheet</h3><div class="table-wrap" id="table-balance_sheet-quarterly"></div></div>
+                    <div class="card"><h3>Financials</h3><div class="table-wrap" id="table-financials-quarterly"></div></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

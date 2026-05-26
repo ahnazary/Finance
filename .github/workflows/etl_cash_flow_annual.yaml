@@ -1,0 +1,21 @@
+name: "ETL: Cash Flow (Annual)"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1,7,13,19 * * *'
+
+env:
+  PG_NEON_FINANCE_URL: ${{ secrets.PG_NEON_FINANCE_URL }}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r finance/requirements.txt
+      - run: PYTHONPATH=. python -m finance.src.run_financial_etl --table cash_flow --frequency annual --batch-size 50 --threads 30 --max-batches 20
