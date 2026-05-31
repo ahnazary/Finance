@@ -2,8 +2,8 @@ name: "ETL: Cash Flow (Annual)"
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 1,7,13,19 * * *'
+  # schedule:
+    # - cron: '0 1,7,13,19 * * *'
 
 env:
   PG_NEON_FINANCE_URL: ${{ secrets.PG_NEON_FINANCE_URL }}

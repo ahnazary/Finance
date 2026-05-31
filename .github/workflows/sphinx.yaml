@@ -1,9 +1,9 @@
 name: Build Sphinx Docs and Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [master]
   workflow_dispatch:
+  # push:
+  #   branches: [master]ter]
 
 jobs:
   build:

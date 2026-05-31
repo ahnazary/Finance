@@ -2,8 +2,8 @@ name: "ETL: Financials (Quarterly)"
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '30 3,9,15,21 * * *'
+  # schedule:
+    # - cron: '30 3,9,15,21 * * *'
 
 env:
   PG_NEON_FINANCE_URL: ${{ secrets.PG_NEON_FINANCE_URL }}
